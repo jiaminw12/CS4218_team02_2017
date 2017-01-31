@@ -10,9 +10,14 @@ import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
+import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
 import sg.edu.nus.comp.cs4218.impl.app.HeadApplication;
+import sg.edu.nus.comp.cs4218.impl.app.PwdApplication;
+import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
 import sg.edu.nus.comp.cs4218.impl.app.TailApplication;
+import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
+import sg.edu.nus.comp.cs4218.impl.app.DateApplication;
 
 /**
  * A Shell is a command interpreter and forms the backbone of the entire
@@ -118,12 +123,22 @@ public class ShellImpl implements Shell {
 		Application absApp = null;
 		if (("cat").equals(app)) {// cat [FILE]...
 			absApp = new CatApplication();
+		} else if (("cd").equals(app)) {// cd
+			absApp = new CdApplication();
+		} else if (("pwd").equals(app)) {// pwd
+			absApp = new PwdApplication();
 		} else if (("echo").equals(app)) {// echo [args]...
 			absApp = new EchoApplication();
 		} else if (("head").equals(app)) {// head [OPTIONS] [FILE]
 			absApp = new HeadApplication();
 		} else if (("tail").equals(app)) {// tail [OPTIONS] [FILE]
 			absApp = new TailApplication();
+		} else if (("date").equals(app)) {// date
+			absApp = new DateApplication();
+		} else if (("sed").equals(app)) {// sed
+			absApp = new SedApplication();
+		} else if (("wc").equals(app)) {// wc
+			absApp = new WcApplication();
 		} else { // invalid command
 			throw new ShellException(app + ": " + EXP_INVALID_APP);
 		}
@@ -286,10 +301,107 @@ public class ShellImpl implements Shell {
 				if (("").equals(readLine)) {
 					continue;
 				}
-				//shell.parseAndEvaluate(readLine, System.out);
+				shell.parseAndEvaluate(readLine, System.out);
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public void parseAndEvaluate(String cmdline, OutputStream stdout)
+			throws AbstractApplicationException, ShellException {
+		String[] words = cmdline.split(" ");
+		runApp(words[0], words, System.in, stdout);
+	}
+
+	@Override
+	public String pipeTwoCommands(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pipeMultipleCommands(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pipeWithException(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String globNoPaths(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String globOneFile(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String globFilesDirectories(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String globWithException(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectInput(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectOutput(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectInputWithNoFile(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectOutputWithNoFile(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectInputWithException(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String redirectOutputWithException(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performCommandSubstitution(String args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String performCommandSubstitutionWithException(String args) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
