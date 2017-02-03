@@ -5,13 +5,7 @@ import static org.junit.Assert.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.*;
 
 import sg.edu.nus.comp.cs4218.impl.app.DateApplication;
 
@@ -23,6 +17,7 @@ public class DateTest {
 	@Before
 	public void setUp() {
 		dateApplication = new DateApplication();
+		//dateApplication.run(null, null, null);
 
 		// GregorianCalendar(year, month, day, hours, minutes, seconds)
 		// month - Jan = 0, Dec = 11
@@ -31,9 +26,9 @@ public class DateTest {
 	}
 
 	@Test
-	public void testDate() {
+	public void testPrintDate() {
 		String date1 = dateApplication
-				.printCurrentDate(calendar1.getTime().toString());
+				.printCurrentDate("date");
 		String date2 = dateApplication
 				.printCurrentDate(calendar2.getTime().toString());
 

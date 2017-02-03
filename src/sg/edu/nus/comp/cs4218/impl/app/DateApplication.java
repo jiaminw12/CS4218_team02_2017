@@ -1,10 +1,8 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Calendar;
 
 import sg.edu.nus.comp.cs4218.Application;
@@ -20,8 +18,8 @@ import sg.edu.nus.comp.cs4218.exception.DateException;
  */
 public class DateApplication implements Application, Date {
 
-	PrintWriter writer;
-	
+	private String nextLineString = "\n";
+
 	/**
 	 * Runs the cat application with the specified arguments.
 	 * 
@@ -41,15 +39,17 @@ public class DateApplication implements Application, Date {
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws DateException {
-		
-		if (args.length > 1){
+
+		if (args.length > 1) {
 			throw new DateException("Exception Caught");
 		}
-		
-		writer = new PrintWriter(
-				new BufferedWriter(new OutputStreamWriter(stdout)));
-		writer.println((getCurrentDate()));
-		writer.flush();
+
+		try {
+			stdout.write(getCurrentDate().getBytes());
+			stdout.write(nextLineString.getBytes());
+		} catch (IOException e) {
+			throw new DateException("IOException Caught");
+		}
 	}
 
 	@Override
@@ -57,8 +57,11 @@ public class DateApplication implements Application, Date {
 		// args - date
 		return getCurrentDate();
 	}
-	
-	public String getCurrentDate(){
+
+	/**
+	 * Get the current date
+	 */
+	public String getCurrentDate() {
 		Calendar now = Calendar.getInstance();
 		return now.getTime().toString();
 	}
