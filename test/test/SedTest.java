@@ -28,9 +28,10 @@ public class SedTest {
 	private static final String[] FILE_NAMES = { "test1.txt", "test2.txt", "test3.txt", "test4.txt", "test5.txt" };
 	private static final List<String> lines = Arrays.asList(
 			"The quick brown fox jumps over the lazy dog", 
-			"The quick brown fox jumps over the lazy dog",  
-			"The quick brown fox jumps over the lazy dog", 
-			"The quick brown fox jumps over the lazy dog");
+			"Quick brown fox the jumps over the lazy dog",  
+			"Quick brown fox jumps over the lazy dog", 
+			"Quick brown fox jumps over lazy dog The",
+			"thE Quick brown fox THE jumps over lazy dog The");
 	
 	SedApplication sedApplication;
 	String[] args;
@@ -335,9 +336,10 @@ public class SedTest {
 		String args = "sed s/the/HAHAHA test1.txt";
 		String actual = sedApplication.replaceFirstSubStringInFile(args);
 		assertEquals("HAHAHA quick brown fox jumps over the lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over the lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over the lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over the lazy dog", actual);
+				"Quick brown fox HAHAHA jumps over the lazy dog" + System.getProperty("line.separator") +  
+				"Quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") + 
+				"Quick brown fox jumps over lazy dog HAHAHA" + System.getProperty("line.separator") +
+				"HAHAHA Quick brown fox THE jumps over lazy dog The", actual);
 	}
 
 	@Test
@@ -345,9 +347,10 @@ public class SedTest {
 		String args = "sed s/the/HAHAHA/g test1.txt";
 		String actual = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-					"HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-					"HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-					"HAHAHA quick brown fox jumps over HAHAHA lazy dog", actual);
+				"Quick brown fox HAHAHA jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +  
+				"Quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") + 
+				"Quick brown fox jumps over lazy dog HAHAHA" + System.getProperty("line.separator") +
+				"HAHAHA Quick brown fox HAHAHA jumps over lazy dog HAHAHA", actual);
 	}
 	
 	@Test
@@ -355,9 +358,10 @@ public class SedTest {
 		String args = "sed     s/the/HAHAHA/g     test1.txt";
 		String actual = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +
-				"HAHAHA quick brown fox jumps over HAHAHA lazy dog", actual);
+				"Quick brown fox HAHAHA jumps over HAHAHA lazy dog" + System.getProperty("line.separator") +  
+				"Quick brown fox jumps over HAHAHA lazy dog" + System.getProperty("line.separator") + 
+				"Quick brown fox jumps over lazy dog HAHAHA" + System.getProperty("line.separator") +
+				"HAHAHA Quick brown fox HAHAHA jumps over lazy dog HAHAHA", actual);
 	}
 
 	@After
