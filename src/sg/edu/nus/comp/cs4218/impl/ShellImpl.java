@@ -311,7 +311,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		String[] words = cmdline.split(" ");
+		String[] words = cmdline.replaceAll("\\s{2,}", " ").trim().split(" ");
 		runApp(words[0], words, System.in, stdout);
 	}
 

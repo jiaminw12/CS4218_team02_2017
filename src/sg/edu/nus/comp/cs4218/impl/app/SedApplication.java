@@ -146,7 +146,7 @@ public class SedApplication implements Application, Sed {
 				// file could be read. perform sed command
 				try {
 					byte[] byteFileArray = Files.readAllBytes(filePath);
-					String currLine = new String(byteFileArray);
+					String currLine = new String(byteFileArray).replaceAll("\\s{2,}", " ").trim();
 
 					// try to replace substrings
 					if(currLine != null && !currLine.isEmpty()) {
@@ -214,7 +214,7 @@ public class SedApplication implements Application, Sed {
 	 */
 	String[] getReplacementRule(String[] args) throws SedException {
 		
-		String replacementRule = args[1].replaceAll(" ", "");
+		String replacementRule = args[1];
 		String separator = replacementRule.substring(1, 2);
 		
 		if(replacementRule.contains(separator + separator)) {
@@ -293,37 +293,39 @@ public class SedApplication implements Application, Sed {
 
 	@Override
 	public String replaceFirstSubStringInFile(String args) throws SedException {
-		return readFromFile(args.split(" "));
+		return readFromFile(args.replaceAll("\\s{2,}", " ").trim().split(" "));
 	}
 
 	@Override
 	public String replaceAllSubstringsInFile(String args) throws SedException {
-		return readFromFile(args.split(" "));
+		return readFromFile(args.replaceAll("\\s{2,}", " ").trim().split(" "));
 	}
 
 	@Override
 	public String replaceFirstSubStringFromStdin(String args) throws SedException {
-		return readFromStdin(args.split(" "), new ByteArrayInputStream(SedTest.TEXT.getBytes()));
+		return readFromStdin(args.replaceAll("\\s{2,}", " ").trim().split(" "), 
+				new ByteArrayInputStream(SedTest.TEXT.getBytes()));
 	}
 
 	@Override
 	public String replaceAllSubstringsInStdin(String args) throws SedException {
-		return readFromStdin(args.split(" "), new ByteArrayInputStream(SedTest.TEXT.getBytes()));
+		return readFromStdin(args.replaceAll("\\s{2,}", " ").trim().split(" "), 
+				new ByteArrayInputStream(SedTest.TEXT.getBytes()));
 	}
 	
 	@Override
 	public String replaceSubstringWithInvalidRule(String args) throws SedException {
-		return getReplacementRule(args.split(" ")).toString();
+		return getReplacementRule(args.replaceAll("\\s{2,}", " ").trim().split(" ")).toString();
 	}
 
 	@Override
 	public String replaceSubstringWithInvalidReplacement(String args) throws SedException {
-		return getReplacementRule(args.split(" ")).toString();
+		return getReplacementRule(args.replaceAll("\\s{2,}", " ").trim().split(" ")).toString();
 	}
 
 	@Override
 	public String replaceSubstringWithInvalidRegex(String args) throws SedException {
-		return getReplacementRule(args.split(" ")).toString();
+		return getReplacementRule(args.replaceAll("\\s{2,}", " ").trim().split(" ")).toString();
 	}
 
 }
