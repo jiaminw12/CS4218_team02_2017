@@ -36,6 +36,14 @@ public interface Sed extends Application {
 	 * @throws SedException 
 	 */
 	public String replaceAllSubstringsInStdin(String args) throws SedException;
+	
+	/**
+	 * Returns string containing lines when invalid replacement rule is
+	 * provided
+	 * @param args String containing command and arguments
+	 * @throws SedException 
+	 */
+	public String replaceSubstringWithInvalidRule(String args) throws SedException;
 
 	/**
 	 * Returns string containing lines when invalid replacement string is

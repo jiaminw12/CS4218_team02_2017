@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -54,8 +55,7 @@ public class SedApplication implements Application, Sed {
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout)
-			throws SedException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout) throws SedException {
 		
 		if (args == null || stdin == null || stdout == null) {
 			throw new SedException("Null Pointer Exception");
@@ -213,52 +213,37 @@ public class SedApplication implements Application, Sed {
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
 	String[] getReplacementRule(String[] args) throws SedException {
-
-		String replacementRule = args[1];
+		
+		String replacementRule = args[1].replaceAll(" ", "");
 		String separator = replacementRule.substring(1, 2);
+		
+		if(replacementRule.contains(separator + separator)) {
+			throw new SedException("Invalid Replacement Rule");
+		}
+		
 		String[] splitReplacementRule = replacementRule.split(separator);
 		int length = splitReplacementRule.length;
 
 		if(length < 3 || length > 4) {
 			throw new SedException("Invalid Replacement Rule");
 		} else {
-			if(!replacementRule.substring(0, 1).equals("s")) {
+			if(!splitReplacementRule[0].equals("s")) {
+				throw new SedException("Invalid Replacement Rule");
+			}
+			
+			if(replacementRule.substring(replacementRule.length() - 1, 
+					replacementRule.length()).equals(separator)) {
 				throw new SedException("Invalid Replacement Rule");
 			}
 
 			if(length == 4) {
-				if(!replacementRule.substring(replacementRule.length() - 1, 
-						replacementRule.length()).equals("g")) {
+				if(!splitReplacementRule[3].equals("g")) {
 					throw new SedException("Invalid Replacement Rule");
 				}
-			}
+			} 
 		}
 
 		return splitReplacementRule;
-	}
-	
-	/**
-	 * Replaces first regexp of each line from input string with replacement string.
-	 * 
-	 * @param line
-	 *            Input string to be replaced by substring.
-	 * @param regexp
-	 *            String to be replaced in input string.
-	 * @param replacement
-	 *            Replace regexp found in line string with replacement string.
-	 * 
-	 * @throws SedException
-	 *             If the file(s) specified do not exist or are unreadable.
-	 */
-	String replaceFirstSubString(String line, String regexp, String replacement) {
-		String[] splitLine = line.split(System.getProperty("line.separator"));
-		line = "";
-		
-		for(int i = 0; i < splitLine.length; i++) {
-			line += splitLine[i].replaceFirst(regexp, replacement);
-		}
-		
-		return line;
 	}
 	
 	/**
@@ -275,7 +260,35 @@ public class SedApplication implements Application, Sed {
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
 	String replaceAllSubString(String line, String regexp, String replacement) {
-		return line.replace(regexp, replacement);
+		return line.replaceAll("(?i)" + regexp, replacement);
+	}
+	
+	/**
+	 * Replaces first regexp of each line from input string with replacement string.
+	 * 
+	 * @param line
+	 *            Input string to be replaced by substring.
+	 * @param regexp
+	 *            String to be replaced in input string.
+	 * @param replacement
+	 *            Replace regexp found in line string with replacement string.
+	 * 
+	 * @throws SedException
+	 *             If the file(s) specified do not exist or are unreadable.
+	 */
+	String replaceFirstSubString(String line, String regexp, String replacement) {
+		
+		String[] splitLine = line.split(System.getProperty("line.separator"));
+		line = "";
+		
+		for(int i = 0; i < splitLine.length; i++) {
+			line += splitLine[i].replaceFirst("(?i)" + regexp, replacement);
+			if(i < splitLine.length - 1) {
+				line += System.getProperty("line.separator");
+			}
+		}
+		
+		return line;
 	}
 
 	@Override
@@ -297,15 +310,20 @@ public class SedApplication implements Application, Sed {
 	public String replaceAllSubstringsInStdin(String args) throws SedException {
 		return readFromStdin(args.split(" "), new ByteArrayInputStream(SedTest.TEXT.getBytes()));
 	}
+	
+	@Override
+	public String replaceSubstringWithInvalidRule(String args) throws SedException {
+		return getReplacementRule(args.split(" ")).toString();
+	}
 
 	@Override
 	public String replaceSubstringWithInvalidReplacement(String args) throws SedException {
-		return args;
+		return getReplacementRule(args.split(" ")).toString();
 	}
 
 	@Override
 	public String replaceSubstringWithInvalidRegex(String args) throws SedException {
-		return args;
+		return getReplacementRule(args.split(" ")).toString();
 	}
 
 }
