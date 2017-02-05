@@ -17,7 +17,6 @@ public class DateTest {
 	@Before
 	public void setUp() {
 		dateApplication = new DateApplication();
-		//dateApplication.run(null, null, null);
 
 		// GregorianCalendar(year, month, day, hours, minutes, seconds)
 		// month - Jan = 0, Dec = 11
@@ -27,13 +26,11 @@ public class DateTest {
 
 	@Test
 	public void testPrintDate() {
-		String date1 = dateApplication
-				.printCurrentDate("date");
-		String date2 = dateApplication
-				.printCurrentDate(calendar2.getTime().toString());
-
-		assertEquals(date1, "Fri Feb 01 13:24:56 SGT 2013");
-		assertEquals(date2, "Sun Mar 26 00:00:05 SGT 2017");
+		dateApplication.setCurrentDate(calendar1);
+		assertEquals(dateApplication.printCurrentDate("date"), "Fri Feb 01 13:24:56 SGT 2013");
+		
+		dateApplication.setCurrentDate(calendar2);
+		assertEquals(dateApplication.printCurrentDate("date"), "Sun Mar 26 00:00:05 SGT 2017");
 	}
 
 	@After

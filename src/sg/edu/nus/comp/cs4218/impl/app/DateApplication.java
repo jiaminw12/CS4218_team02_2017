@@ -18,6 +18,7 @@ import sg.edu.nus.comp.cs4218.exception.DateException;
  */
 public class DateApplication implements Application, Date {
 
+	private Calendar now;
 	private String nextLineString = "\n";
 
 	/**
@@ -45,6 +46,7 @@ public class DateApplication implements Application, Date {
 		}
 
 		try {
+			setCurrentDate(Calendar.getInstance());
 			stdout.write(getCurrentDate().getBytes());
 			stdout.write(nextLineString.getBytes());
 		} catch (IOException e) {
@@ -57,12 +59,21 @@ public class DateApplication implements Application, Date {
 		// args - date
 		return getCurrentDate();
 	}
+	
+	/**
+	 * Set current date
+	 *
+	 * @param calendar
+	 *            Use this to set calendar object
+	 */
+	public void setCurrentDate(Calendar calendar){
+		now = calendar;
+	}
 
 	/**
-	 * Get the current date
+	 * Get the current date in [week day] [month] [day] [hh:mm:ss] [time zone] [year]
 	 */
 	public String getCurrentDate() {
-		Calendar now = Calendar.getInstance();
 		return now.getTime().toString();
 	}
 
