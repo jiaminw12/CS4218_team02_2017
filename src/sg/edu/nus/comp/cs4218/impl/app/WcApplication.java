@@ -58,6 +58,7 @@ public class WcApplication implements Application, Wc {
 
 	File tempInput = null;
 	File tempOutput = null;
+	BufferedWriter writer = null;
 	OutputStream fileOutStream = null;
 
 	/**
@@ -111,7 +112,7 @@ public class WcApplication implements Application, Wc {
 				if (checkFileIsDirectory(file)) {
 					throw new WcException(args[i] + " is not a directory");
 				} else if (checkFileExist(file)) {
-					fileNameList.add(args[i]);
+					fileNameList.add(getAbsolutePath(args[i]));
 					fileFlag = true;
 				} else {
 					throw new WcException(
@@ -247,8 +248,7 @@ public class WcApplication implements Application, Wc {
 			throw new WcException("Null Pointer Exception");
 		}
 
-		BufferedWriter writer = new BufferedWriter(
-				new OutputStreamWriter(fileOutStream));
+		writer = new BufferedWriter(new OutputStreamWriter(fileOutStream));
 
 		if (!(lineFlag || charFlag || wordFlag)) {
 			lineFlag = true;
@@ -278,11 +278,11 @@ public class WcApplication implements Application, Wc {
 				writer.write(String.valueOf(lineCount) + tabString);
 			}
 
-			// stdout.write(fileName.getBytes());
+			//stdout.write(fileName.getBytes());
 			stdout.write(String.format("%n").getBytes());
 
-			writer.close();
-			fileOutStream.close();
+			writer.flush();
+			fileOutStream.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -304,8 +304,7 @@ public class WcApplication implements Application, Wc {
 			throw new WcException("Null Pointer Exception");
 		}
 
-		BufferedWriter writer = new BufferedWriter(
-				new OutputStreamWriter(fileOutStream));
+		writer = new BufferedWriter(new OutputStreamWriter(fileOutStream));
 
 		if (!(totalLineCountFlag || totalCharCountFlag || totalWordCountFlag)) {
 			totalLineCountFlag = true;
@@ -338,8 +337,8 @@ public class WcApplication implements Application, Wc {
 			// stdout.write("total".getBytes());
 			stdout.write(String.format("%n").getBytes());
 
-			writer.close();
-			fileOutStream.close();
+			writer.flush();
+			fileOutStream.flush();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -407,12 +406,12 @@ public class WcApplication implements Application, Wc {
 			File[] files = folder.listFiles(new FilenameFilter() {
 				@Override
 				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(FilterExt);
+					return name.endsWith(FilterExt);
 				}
 			});
 
 			for (File alp : files) {
-				fileNameList.add(alp.getName());
+				fileNameList.add(getAbsolutePath(alp.getName()));
 			}
 		} else {
 			throw new WcException(
@@ -426,7 +425,7 @@ public class WcApplication implements Application, Wc {
 	 * @param filePath
 	 *            A string. Use this to generate absolute path
 	 */
-	public String getAbsolutePath(String filePath) {
+	private String getAbsolutePath(String filePath) {
 		if (filePath.startsWith(Environment.currentDirectory)) {
 			return filePath;
 		}
