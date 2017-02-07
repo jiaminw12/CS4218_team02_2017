@@ -95,6 +95,34 @@ public class ShellImpl implements Shell {
 		}
 		return resultArr;
 	}
+	
+	/**
+	 * Searches for and processes the commands enclosed by single quotes for
+	 * command substitution.If no single quotes are found, the argsArray from the
+	 * input is returned unchanged. If single quotes are found, the single quotes
+	 * and its enclosed commands substituted with the output from processing the
+	 * commands enclosed in the single quotes.
+	 * 
+	 * @param argsArray
+	 *            String array of the individual commands.
+	 * 
+	 * @return String array with the single quotes command processed.
+	 * 
+	 * @throws AbstractApplicationException
+	 *             If an exception happens while processing the content in the
+	 *             single quotes.
+	 * @throws ShellException
+	 *             If an exception happens while processing the content in the
+	 *             single quotes.
+	 */
+	public static String [] processSQ(String... argsArray)
+			throws AbstractApplicationException, ShellException {
+		//TODO
+		
+		String [] resultArr = new String[argsArray.length];
+		return resultArr;
+	}
+	
 
 	/**
 	 * Static method to run the application as specified by the application
