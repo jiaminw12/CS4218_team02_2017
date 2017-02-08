@@ -39,15 +39,16 @@ public class EchoApplication implements Application {
 		if (stdout == null) {
 			throw new EchoException("OutputStream not provided");
 		}
+
 		try {
 			if (args.length == 0) {
 				stdout.write("\n\n".getBytes());
 			} else {
-				for (int i = 0; i < args.length - 1; i++) {
-					stdout.write(args[i].getBytes());
+				for (int i = 1; i < args.length; i++) {
+					stdout.write(args[i].getBytes("UTF-8"));
+					stdout.write(" ".getBytes("UTF-8"));
 				}
-				stdout.write(args[args.length].getBytes());
-				stdout.write("\n".getBytes());
+				stdout.write("\n".getBytes("UTF-8"));
 			}
 		} catch (IOException e) {
 			throw new EchoException("IOException");
