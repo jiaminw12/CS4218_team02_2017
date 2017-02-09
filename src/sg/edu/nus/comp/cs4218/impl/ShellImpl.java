@@ -12,7 +12,6 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
 import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
 import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
-import sg.edu.nus.comp.cs4218.impl.app.FindApplication;
 import sg.edu.nus.comp.cs4218.impl.app.HeadApplication;
 import sg.edu.nus.comp.cs4218.impl.app.PwdApplication;
 import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
@@ -219,9 +218,7 @@ public class ShellImpl implements Shell {
 			absApp = new SedApplication();
 		} else if (("wc").equals(app)) {// wc
 			absApp = new WcApplication();
-		} else if (("find").equals(app)) {// find
-			absApp = new FindApplication();
-		}  else { // invalid command
+		} else { // invalid command
 			throw new ShellException(app + ": " + EXP_INVALID_APP);
 		}
 		absApp.run(argsArray, inputStream, outputStream);
