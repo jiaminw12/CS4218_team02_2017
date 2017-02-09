@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -88,7 +87,15 @@ public class WcApplication implements Application, Wc {
 		}
 
 		for (int i = 1; i < args.length; i++) {
-			if (args[i].equals("-m")) { // character counts
+			if (args[i].equals("-lmw")) { // character counts
+				charFlag = true;
+				wordFlag = true;
+				lineFlag = true;
+				
+				totalCharCountFlag = true;
+				totalWordCountFlag = true;
+				totalLineCountFlag = true;
+			} else if (args[i].equals("-m")) { // char counts
 				charFlag = true;
 				totalCharCountFlag = true;
 			} else if (args[i].equals("-w")) { // word counts
@@ -97,11 +104,6 @@ public class WcApplication implements Application, Wc {
 			} else if (args[i].equals("-l")) { // newline counts
 				lineFlag = true;
 				totalLineCountFlag = true;
-			} else if (args[i].contains("*.")) {
-				File folder = new File(Environment.currentDirectory);
-				String fileExt = args[i].substring(1);
-				getAllFilesWithCertainExt(folder, fileExt);
-				fileFlag = true;
 			} else {
 				if (args[i].charAt(0) == '-') {
 					throw new WcException(args[i] + " is a illegal option");
@@ -388,35 +390,6 @@ public class WcApplication implements Application, Wc {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Gets all files with certain extension
-	 *
-	 * @param folder
-	 *            A file.
-	 * @param FilterExt
-	 *            File extension. Use this to get all files with this specific
-	 *            file extension
-	 */
-	private void getAllFilesWithCertainExt(File folder, final String FilterExt)
-			throws WcException {
-		if (folder.exists()) {
-			// files contain all files with FilterExt
-			File[] files = folder.listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(FilterExt);
-				}
-			});
-
-			for (File alp : files) {
-				fileNameList.add(getAbsolutePath(alp.getName()));
-			}
-		} else {
-			throw new WcException(
-					folder.getAbsolutePath() + "Folder not exists");
-		}
 	}
 
 	/**

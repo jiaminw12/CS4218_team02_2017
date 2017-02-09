@@ -114,6 +114,18 @@ public class WcTest {
 		assertEquals("304" + tabString + "54" + tabString + "4" + tabString,
 				expectedResult);
 	}
+	
+	@Test
+	public void testPrintAllCountsInFileAllOptionsTogether() throws WcException {
+		// wc -m -w -l cybody40.txt
+		String[] args = { "wc", "-lmw", "cybody40.txt" };
+		wcApp.run(args, System.in, System.out);
+
+		String expectedResult = wcApp
+				.printAllCountsInFile("wc -m -w -l cybody40.txt");
+		assertEquals("304" + tabString + "54" + tabString + "4" + tabString,
+				expectedResult);
+	}
 
 	@Test
 	public void testPrintAllCharactersInTwoFiles() throws WcException {
