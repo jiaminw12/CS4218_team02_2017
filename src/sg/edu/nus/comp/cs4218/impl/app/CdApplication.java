@@ -32,7 +32,7 @@ public class CdApplication implements Application{
 			setDirectory(args);
 		} catch (DirectoryNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 	
