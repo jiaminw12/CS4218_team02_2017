@@ -87,7 +87,7 @@ public class TailApplication implements Application{
 			int tempNumberOfLines = numberOfLines;
 			String[] linesArray = new String[numberOfLines];
 			int count = 0;
-			
+						
 			while (tempNumberOfLines > 0) {
 				String line = reader.readLine();
 				if (line != null) {
@@ -98,7 +98,7 @@ public class TailApplication implements Application{
 				}
 			}
 			
-			if (numberOfLines > count) {
+			if (numberOfLines >= count) {
 				for (int i = 0; i < count; i++) {
 					System.out.println(linesArray[i]);
 				}
