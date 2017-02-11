@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
@@ -229,32 +230,39 @@ public class SedApplication implements Application, Sed {
 		String replacementRule = args[1];
 		String separator = replacementRule.substring(1, 2);
 		
-		if(!replacementRule.contains(separator + separator)) {
-			splitReplacementRule = null;
-		}
-		
-		splitReplacementRule = replacementRule.split(separator);
-		int length = splitReplacementRule.length;
-
-		if(length < 3 || length > 4) {
+		if(replacementRule.contains(separator + separator)) {
 			splitReplacementRule = null;
 		} else {
-			if(!splitReplacementRule[0].equals("s")) {
-				splitReplacementRule = null;
-			}
-			
-			if(replacementRule.substring(replacementRule.length() - 1, 
-					replacementRule.length()).equals(separator)) {
-				splitReplacementRule = null;
-			}
+			splitReplacementRule = replacementRule.split(separator);
+			int length = splitReplacementRule.length;
 
-			if(length == 4) {
-				if(!splitReplacementRule[3].equals("g")) {
+			if(length < 3 || length > 4) {
+				splitReplacementRule = null;
+			} else {
+				if(!splitReplacementRule[0].equals("s")) {
 					splitReplacementRule = null;
 				}
-			} 
-		}
+				
+				if(length == 3) {
+					if(!replacementRule.substring(replacementRule.length() - 1, 
+							replacementRule.length()).equals(separator)) {
+						splitReplacementRule = null;
+					}
+				}
 
+				if(length == 4) {
+					if(!splitReplacementRule[3].equals("g")) {
+						splitReplacementRule = null;
+					}
+				
+					if(replacementRule.substring(replacementRule.length() - 1, 
+							replacementRule.length()).equals(separator)) {
+						splitReplacementRule = null;
+					}
+				} 
+			}
+		}
+		
 		return splitReplacementRule;
 	}
 	
@@ -281,7 +289,7 @@ public class SedApplication implements Application, Sed {
 			text = new String();
 			
 			for(int i = 0; i < splitLine.length; i++) {
-				text += splitLine[i].replaceFirst("(?i)" + regexp, replacement);
+				text += splitLine[i].replaceFirst(Pattern.quote(regexp), replacement);
 				if(i < splitLine.length - 1) {
 					text += System.getProperty("line.separator");
 				}
@@ -311,7 +319,7 @@ public class SedApplication implements Application, Sed {
 			String regexp = replacementRule[1];	
 			String replacement = replacementRule[2];
 			
-			text = text.replaceAll("(?i)" + regexp, replacement);
+			text = text.replace(regexp, replacement);
 		} 
 		
 		return text;
@@ -355,7 +363,7 @@ public class SedApplication implements Application, Sed {
 		String text = new String();
 		
 		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedTest.TEXT.getBytes());
+			stdin = new ByteArrayInputStream(SedTest.input.getBytes());
 		}
 		
 		try {
@@ -374,7 +382,7 @@ public class SedApplication implements Application, Sed {
 		String text = new String();
 		
 		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedTest.TEXT.getBytes());
+			stdin = new ByteArrayInputStream(SedTest.input.getBytes());
 		}
 		
 		try {
