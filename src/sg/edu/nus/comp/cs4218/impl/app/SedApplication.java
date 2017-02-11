@@ -422,6 +422,8 @@ public class SedApplication implements Application, Sed {
 	/**
 	 * Returns string containing lines when invalid replacement rule is
 	 * provided
+	 * For testing purpose - Actual behaviour when there is invalid regex, 
+	 * Sed exception is thrown 
 	 * 
 	 * @param args String containing command and arguments 
 	 */
@@ -436,6 +438,8 @@ public class SedApplication implements Application, Sed {
 	/**
 	 * Returns string containing lines when invalid replacement string is
 	 * provided
+	 * For testing purpose - Actual behaviour when there is invalid regex, 
+	 * Sed exception is thrown 
 	 * 
 	 * @param args String containing command and arguments
 	 */
@@ -449,6 +453,8 @@ public class SedApplication implements Application, Sed {
 
 	/**
 	 * Returns string containing lines when invalid regex is provided
+	 * For testing purpose - Actual behaviour when there is invalid regex, 
+	 * Sed exception is thrown 
 	 * 
 	 * @param args String containing command and arguments
 	 */
