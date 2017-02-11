@@ -368,10 +368,10 @@ public class SedTest {
 	public void tearDown() {
 		sedApplication = null;
 		
-		for (int i = 0; i != FILE_NAMES.length; i++) {
-			File file = new File(FILE_NAMES[i]);
-			file.delete();
-		}
+//		for (int i = 0; i != FILE_NAMES.length; i++) {
+//			File file = new File(FILE_NAMES[i]);
+//			file.delete();
+//		}
 	}
 
 }
