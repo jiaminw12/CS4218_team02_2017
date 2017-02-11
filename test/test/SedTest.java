@@ -336,6 +336,30 @@ public class SedTest {
 				+ "`#*#*#*#*#-@!!`!!*#`**#*#*#*`#-@!!`!!*`**`*`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#", result);
 	}
 	
+	@Test
+	public void testReplaceSubstringWithInvalidRule() {
+		String args = "sed s/\b/\\/LALA/g";
+		input = "\b/\\\b/\\\b/\\\b/\\\b/\\";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("\b/\\\b/\\\b/\\\b/\\\b/\\", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidReplacement() {
+		String args = "sed s/t/he/to-her/g";
+		input = "the quick brown fox jumps over the lazy dog";
+		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		assertEquals("the quick brown fox jumps over the lazy dog", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRegex() {
+		String args = "sed s/the/to/her/g";
+		input = "the quick brown fox jumps over the lazy dog";
+		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		assertEquals("the quick brown fox jumps over the lazy dog", result);
+	}
+	
 	@After
 	public void tearDown() {
 		sedApplication = null;

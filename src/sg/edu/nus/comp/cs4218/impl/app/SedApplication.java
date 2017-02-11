@@ -319,12 +319,18 @@ public class SedApplication implements Application, Sed {
 			String regexp = replacementRule[1];	
 			String replacement = replacementRule[2];
 			
-			text = text.replace(regexp, replacement);
+			text = text.replaceAll(Pattern.quote(regexp), replacement);
 		} 
 		
 		return text;
 	}
 
+	/**
+	 * Returns string containing lines with the first matched substring replaced
+	 * in file
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceFirstSubStringInFile(String args) {
 
@@ -341,6 +347,12 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
+	/**
+	 * Returns string containing lines with all matched substring replaced in
+	 * file
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceAllSubstringsInFile(String args) {
 		
@@ -357,6 +369,12 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
+	/**
+	 * Returns string containing lines with first matched substring replaced in
+	 * Stdin
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceFirstSubStringFromStdin(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
@@ -376,6 +394,12 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
+	/**
+	 * Returns string containing lines with all matched substring replaced in
+	 * Stdin
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceAllSubstringsInStdin(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
@@ -395,26 +419,43 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 	
+	/**
+	 * Returns string containing lines when invalid replacement rule is
+	 * provided
+	 * 
+	 * @param args String containing command and arguments 
+	 */
 	@Override
 	public String replaceSubstringWithInvalidRule(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = new String();
+		String text = SedTest.input;
 		
 		return replaceFirstSubString(text, splitArgs);
 	}
 
+	/**
+	 * Returns string containing lines when invalid replacement string is
+	 * provided
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceSubstringWithInvalidReplacement(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = new String();
+		String text = SedTest.input;
 		
 		return replaceFirstSubString(text, splitArgs);
 	}
 
+	/**
+	 * Returns string containing lines when invalid regex is provided
+	 * 
+	 * @param args String containing command and arguments
+	 */
 	@Override
 	public String replaceSubstringWithInvalidRegex(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = new String();
+		String text = SedTest.input;
 		
 		return replaceFirstSubString(text, splitArgs);
 	}
