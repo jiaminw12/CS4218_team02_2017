@@ -1,5 +1,7 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,7 +21,6 @@ import sg.edu.nus.comp.cs4218.exception.DateException;
 public class DateApplication implements Application, Date {
 
 	private Calendar now;
-	private String nextLineString = "\n";
 
 	/**
 	 * Runs the cat application with the specified arguments.
@@ -35,29 +36,27 @@ public class DateApplication implements Application, Date {
 	 *            OutputStream.
 	 * 
 	 * @throws DateException
-	 *             If application has error.
+	 *             If exception occurs.
 	 */
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws DateException {
 
-		if (args.length > 1) {
+		if (args == null || args.length > 1) {
 			throw new DateException("Exception Caught");
+		}
+		
+		if (stdout == null){
+			throw new DateException("Null Pointer Exception");
 		}
 
 		try {
 			setCurrentDate(Calendar.getInstance());
 			stdout.write(getCurrentDate().getBytes());
-			stdout.write(nextLineString.getBytes());
+			stdout.write(System.lineSeparator().getBytes());
 		} catch (IOException e) {
 			throw new DateException("IOException Caught");
 		}
-	}
-
-	@Override
-	public String printCurrentDate(String args) {
-		// args - date
-		return getCurrentDate();
 	}
 	
 	/**
@@ -75,6 +74,20 @@ public class DateApplication implements Application, Date {
 	 */
 	public String getCurrentDate() {
 		return now.getTime().toString();
+	}
+	
+
+	@Override
+	public String printCurrentDate(String args) {
+		String[] splitArgs = args.split("\\s{2,}");
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[1]);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+			run(splitArgs, inputStream, outputStream);
+		} catch (DateException e) {
+			e.printStackTrace();
+		}
+		return new String(outputStream.toByteArray()).trim();
 	}
 
 }
