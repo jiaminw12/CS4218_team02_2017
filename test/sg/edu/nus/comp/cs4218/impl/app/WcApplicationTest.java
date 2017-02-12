@@ -17,15 +17,7 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 public class WcApplicationTest {
 
 	static WcApplication wcApp;
-
-	String tempFileInput = "temp-file-input";
-	String tempFileOutput = "temp-file-output";
-	String tmpExt = ".txt";
-	String charString = "-m";
-	String wordString = "-w";
-	String lineString = "-l";
-	String command;
-
+	
 	@BeforeClass
 	public static void setUpOnce() throws WcException {
 		// one-time initialization code
