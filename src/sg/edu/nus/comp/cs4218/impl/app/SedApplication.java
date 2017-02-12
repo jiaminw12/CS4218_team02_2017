@@ -9,7 +9,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -27,10 +29,6 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
  * <p>
  * <b>Command format:</b> <code>sed REPLACEMENT [FILE]</code>
  * <dl>
- * <dt>ASSUMPTIONS</dt>
- * <dd>Regex and replacement must not contain reserved keywords: " " or ";" or "|" or "\" or escape characters </dd>
- * <dd>Separator for replacement rule must only be one character</dd>
- * 
  * <dt>REPLACEMENT</dt>
  * <dd>specifies replacement rule, as follows:</dd>
  * <dd>s/regexp/replacement/:</dd>
@@ -43,7 +41,9 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
  * </p>
  */
 public class SedApplication implements Application, Sed {
-
+	
+	private static final int TYPE_STDIN = 2;
+	private static final int TYPE_FILE = 3;
 	private static final int REPLACE_FIRST_SUBSTRING = 3;
 	private static final int REPLACE_ALL_SUBSTRING = 4;
 
@@ -233,7 +233,7 @@ public class SedApplication implements Application, Sed {
 		}
 
 		String replacementRule = args[1];
-		String separator = replacementRule.substring(1, 2);
+		String separator = replacementRule.substring(1, 2);	
 		String[] splitReplacementRule = null;
 		
 		try {
@@ -276,8 +276,8 @@ public class SedApplication implements Application, Sed {
 		Pattern pattern;
 
 		if(replacementRule != null) {
-			String regexp = replacementRule[1]; 
-			String replacement = replacementRule[2];
+			String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
+			String replacement = replacementRule[2].replaceAll("\"", "").replaceAll("'", ""); 
 			text = new String();
 			
 			try {
@@ -321,8 +321,8 @@ public class SedApplication implements Application, Sed {
 		Pattern pattern;
 
 		if(replacementRule != null) {
-			String regexp = replacementRule[1];	
-			String replacement = replacementRule[2];
+			String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
+			String replacement = replacementRule[2].replaceAll("\"", "").replaceAll("'", ""); 
 
 			try {
 				pattern = Pattern.compile(regexp);
@@ -340,17 +340,49 @@ public class SedApplication implements Application, Sed {
 
 		return text;
 	}
-
+	
 	/**
-	 * Returns string containing lines with the first matched substring replaced
-	 * in file
+	 * Splits the arguments according to the replacement rules.
 	 * 
-	 * @param args String containing command and arguments
+	 * @param text
+	 *            Input string to be replaced by substring.
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 * @throws SedException
+	 *             If the file(s) specified do not exist or are unreadable.
 	 */
+	String[] splitArguments(String args, int inputType) {
+		
+		String separator = args.split(" ")[1].substring(1, 2);
+		String[] splitArgs = new String[inputType];
+		
+		if(inputType == TYPE_STDIN) {
+			splitArgs[0] = args.substring(0, args.indexOf("s" + separator)).trim();	
+			splitArgs[1] = args.substring(args.indexOf("s" + separator), args.length()).trim();
+		} else if(inputType == TYPE_FILE) {
+			splitArgs[0] = args.substring(0, args.indexOf("s" + separator)).trim();
+			
+			if(args.contains(separator + "g")) {
+				splitArgs[1] = args.substring(args.indexOf("s" + separator), args.indexOf(separator + "g") + 2).trim();
+				splitArgs[2] = args.substring(args.indexOf(separator + "g") + 2, args.length()).trim();
+			} else {
+				String reverseString = new StringBuilder(args).reverse().toString();
+				splitArgs[2] = reverseString.substring(0, reverseString.indexOf(separator)).trim();
+				splitArgs[2] = new StringBuilder(splitArgs[2]).reverse().toString();
+				splitArgs[1] = reverseString.substring(reverseString.indexOf(separator), reverseString.indexOf(separator + "s") + 2).trim();
+				splitArgs[1] = new StringBuilder(splitArgs[1]).reverse().toString();
+			}
+		}
+		
+		return splitArgs;
+	}
+
 	@Override
 	public String replaceFirstSubStringInFile(String args) {
 
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);
 		String text = new String();
 
 		try {
@@ -363,16 +395,10 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
-	/**
-	 * Returns string containing lines with all matched substring replaced in
-	 * file
-	 * 
-	 * @param args String containing command and arguments
-	 */
 	@Override
 	public String replaceAllSubstringsInFile(String args) {
 
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);
 		String text = new String();
 
 		try {
@@ -385,16 +411,10 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
-	/**
-	 * Returns string containing lines with first matched substring replaced in
-	 * Stdin
-	 * 
-	 * @param args String containing command and arguments
-	 */
 	@Override
 	public String replaceFirstSubStringFromStdin(String args) {
 		
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
 		String text = new String();
 
 		if(stdin == null) {
@@ -411,16 +431,10 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
-	/**
-	 * Returns string containing lines with all matched substring replaced in
-	 * Stdin
-	 * 
-	 * @param args String containing command and arguments
-	 */
 	@Override
 	public String replaceAllSubstringsInStdin(String args) {
 		
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
 		String text = new String();
 
 		if(stdin == null) {
@@ -437,12 +451,6 @@ public class SedApplication implements Application, Sed {
 		return text;
 	}
 
-	/**
-	 * Returns error message when invalid replacement rule is
-	 * provided
-	 * 
-	 * @param args String containing command and arguments 
-	 */
 	@Override
 	public String replaceSubstringWithInvalidRule(String args) {
 		
@@ -490,22 +498,11 @@ public class SedApplication implements Application, Sed {
 		return errorMessage;
 	}
 
-	/**
-	 * Returns error message when invalid replacement string is
-	 * provided
-	 * 
-	 * @param args String containing command and arguments
-	 */
 	@Override
 	public String replaceSubstringWithInvalidReplacement(String args) {
 		return "Invalid Replacement";
 	}
 
-	/**
-	 * Returns error message when invalid regex is provided
-	 * 
-	 * @param args String containing command and arguments
-	 */
 	@Override
 	public String replaceSubstringWithInvalidRegex(String args) {
 		return "Invalid Regex";

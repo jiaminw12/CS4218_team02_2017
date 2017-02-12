@@ -354,6 +354,82 @@ public class SedApplicationTest {
 				+ "ooool~yea~o~yea~o~yea~ll~yea~o~yea~l~yea~o~yea~", result);
 	}
 	
+	//===
+	
+	@Test
+	public void testReplaceFirstSubStringFromStdinWithSpace() {
+		String args = "sed s/the/'to her'/";
+		input = TEXT;
+		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to her(***&& lazy @@dog#*#*#))(*&^^", result);
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringFromStdinRepeatedWordsWithSpace() {
+		String args = "sed s/lol/\"yea yea\"/";
+		input = "lololololololololololololloololo";
+		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		assertEquals("yea yeaolololololololololololloololo", result);
+	}
+	
+	@Test
+	public void testReplaceAllSubStringInStdinWithSpace() {
+		String args = "sed s/the/'to-her'/g";
+		input = TEXT;
+		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
+	}
+	
+	@Test
+	public void testReplaceAllSubStringInStdinRepeatedWordsWithSpace() {
+		String args = "sed s/\"olol olo\"/'~yea man~'/";
+		input = "lol ololo olol olo lol olol olol olo lolloololo olol olo";
+		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		assertEquals("lol ololo ~yea man~ lol ~yea man~l olo lolloololo ~yea man~", result);
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringInFileWithSpace() {
+		String args = "sed s/the/'to her'/ test1.txt";
+		input = TEXT;
+		String result = sedApplication.replaceFirstSubStringInFile(args);
+		assertEquals("The quick$%^^%% brown fox jumps over to her lazy dog" + System.getProperty("line.separator") 
+				+ "Quick brown fox to her jumps over the lazy dog" + System.getProperty("line.separator") 
+				+ "Quick brown fox jumps over to her lazy dog))(~(!@@" + System.getProperty("line.separator")  
+				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
+				+ "thE Quick brown fox THE jumps over lazy dog to her", result);
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringInFileRepeatedWordsWithSpace() {
+		String args = "sed s/lol/\"yea man!\"/ test2.txt";
+		String result = sedApplication.replaceFirstSubStringInFile(args);
+		assertEquals("yea man!ollllolololllololol" + System.getProperty("line.separator") 
+				+ "llooyea man!olololollllolollololoolllolololoo" + System.getProperty("line.separator")
+				+ "oooolyea man!olololollllolololllololol", result);
+	}
+	
+	@Test
+	public void testReplaceAllSubStringsInFileWithSpace() {
+		String args = "sed s/the/'to her'/g test1.txt";
+		input = TEXT;
+		String result = sedApplication.replaceAllSubstringsInFile(args);
+		assertEquals("The quick$%^^%% brown fox jumps over to her lazy dog" + System.getProperty("line.separator")  
+				+ "Quick brown fox to her jumps over to her lazy dog" + System.getProperty("line.separator")   
+				+ "Quick brown fox jumps over to her lazy dog))(~(!@@" + System.getProperty("line.separator")  
+				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
+				+ "thE Quick brown fox THE jumps over lazy dog to her", result);
+	}
+	
+	@Test
+	public void testReplaceAllSubStringsInFileRepeatedWordsWithSpace() {
+		String args = "sed s/'lol'/'~yea man~'/g test2.txt";
+		String result = sedApplication.replaceAllSubstringsInFile(args);
+		assertEquals("~yea man~olll~yea man~o~yea man~l~yea man~o~yea man~" + System.getProperty("line.separator") 
+				+ "lloo~yea man~o~yea man~o~yea man~ll~yea man~ol~yea man~olooll~yea man~o~yea man~oo" + System.getProperty("line.separator")
+				+ "ooool~yea man~o~yea man~o~yea man~ll~yea man~o~yea man~l~yea man~o~yea man~", result);
+	}
+	
 	@After
 	public void tearDown() {
 		sedApplication = null;
