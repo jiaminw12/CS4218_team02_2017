@@ -10,13 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.Sed;
 import sg.edu.nus.comp.cs4218.exception.SedException;
-import test.SedTest;
 
 /**
  * The sed command copies input file (or input stream) to stdout performing string
@@ -26,6 +27,10 @@ import test.SedTest;
  * <p>
  * <b>Command format:</b> <code>sed REPLACEMENT [FILE]</code>
  * <dl>
+ * <dt>ASSUMPTIONS</dt>
+ * <dd>Regex and replacement must not contain reserved keywords: " " or ";" or "|" or "\" or escape characters </dd>
+ * <dd>Separator for replacement rule must only be one character</dd>
+ * 
  * <dt>REPLACEMENT</dt>
  * <dd>specifies replacement rule, as follows:</dd>
  * <dd>s/regexp/replacement/:</dd>
@@ -38,12 +43,12 @@ import test.SedTest;
  * </p>
  */
 public class SedApplication implements Application, Sed {
-	
+
 	private static final int REPLACE_FIRST_SUBSTRING = 3;
 	private static final int REPLACE_ALL_SUBSTRING = 4;
-	
+
 	private InputStream stdin;
-	
+
 	/**
 	 * Runs the sed application with the specified arguments.
 	 * 
@@ -62,7 +67,7 @@ public class SedApplication implements Application, Sed {
 	 */
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout) throws SedException {
-		
+
 		if (args == null || stdin == null || stdout == null) {
 			throw new SedException("Null Pointer Exception");
 		} else if (args.length < 2) {
@@ -74,39 +79,36 @@ public class SedApplication implements Application, Sed {
 			for(int i = 0; i < args.length; i++) {
 				text += args[i] + " ";
 			}
-			
+
 			try {
 				String[] replacementRule = getReplacementRule(args);
-				if(replacementRule != null) {
-					int replacementType = replacementRule.length;
-					
-					if(args.length == 2) {
-						// Input type stdin
-						this.stdin = stdin;
-						
-						if(replacementType == REPLACE_FIRST_SUBSTRING) {
-							text = replaceFirstSubStringFromStdin(text);
-						} else if(replacementType == REPLACE_ALL_SUBSTRING) { 
-							text = replaceAllSubstringsInStdin(text);
-						} 
-						
-						byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
-						stdout.write(byteString);
-					} else if(args.length == 3) {
-						// Input type file
-						
-						if(replacementType == REPLACE_FIRST_SUBSTRING) {
-							text = replaceFirstSubStringInFile(text);
-						} else if(replacementType == REPLACE_ALL_SUBSTRING) {
-							text = replaceAllSubstringsInFile(text);
-						}
-						
-						byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
-						stdout.write(byteString);
+				int replacementType = replacementRule.length;
+
+				if(args.length == 2) {
+					// Input type stdin
+					this.stdin = stdin;
+
+					if(replacementType == REPLACE_FIRST_SUBSTRING) {
+						text = replaceFirstSubStringFromStdin(text);
+					} else if(replacementType == REPLACE_ALL_SUBSTRING) { 
+						text = replaceAllSubstringsInStdin(text);
+					} 
+
+					byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
+					stdout.write(byteString);
+				} else if(args.length == 3) {
+					// Input type file
+
+					if(replacementType == REPLACE_FIRST_SUBSTRING) {
+						text = replaceFirstSubStringInFile(text);
+					} else if(replacementType == REPLACE_ALL_SUBSTRING) {
+						text = replaceAllSubstringsInFile(text);
 					}
-				} else {
-					throw new SedException("Invalid Replacement Rule");
+
+					byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
+					stdout.write(byteString);
 				}
+
 			} catch (IOException e) {
 				throw new SedException("Could not write to output stream");
 			} 
@@ -130,7 +132,7 @@ public class SedApplication implements Application, Sed {
 
 		String text = null;
 		String input = null;
-		
+
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
 			input = bufferedReader.readLine();
@@ -176,7 +178,7 @@ public class SedApplication implements Application, Sed {
 				try {
 					byte[] byteFileArray = Files.readAllBytes(filePath);
 					String currText = new String(byteFileArray).replaceAll("\\s{2,}", " ").trim();
-					
+
 					if(currText != null && !currText.isEmpty()) {
 						text = currText;
 					} else {
@@ -192,7 +194,7 @@ public class SedApplication implements Application, Sed {
 
 		return text;
 	}
-	
+
 	/**
 	 * Checks if a file is readable.
 	 * 
@@ -213,7 +215,7 @@ public class SedApplication implements Application, Sed {
 			throw new SedException("Could not read file");
 		}
 	}
-	
+
 	/**
 	 * Retrieves replacement rule.
 	 * 
@@ -224,48 +226,37 @@ public class SedApplication implements Application, Sed {
 	 * @throws SedException
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
-	String[] getReplacementRule(String[] args) {
-		
-		String[] splitReplacementRule = null;
+	String[] getReplacementRule(String[] args) throws SedException {
+		String cmdline = new String();
+		for(int i = 0; i < args.length; i++) {
+			cmdline += args[i] + " ";
+		}
+
 		String replacementRule = args[1];
 		String separator = replacementRule.substring(1, 2);
+		String[] splitReplacementRule = null;
 		
-		if(replacementRule.contains(separator + separator)) {
-			splitReplacementRule = null;
-		} else {
-			splitReplacementRule = replacementRule.split(separator);
-			int length = splitReplacementRule.length;
-
-			if(length < 3 || length > 4) {
-				splitReplacementRule = null;
-			} else {
-				if(!splitReplacementRule[0].equals("s")) {
-					splitReplacementRule = null;
-				}
-				
-				if(length == 3) {
-					if(!replacementRule.substring(replacementRule.length() - 1, 
-							replacementRule.length()).equals(separator)) {
-						splitReplacementRule = null;
-					}
-				}
-
-				if(length == 4) {
-					if(!splitReplacementRule[3].equals("g")) {
-						splitReplacementRule = null;
-					}
-				
-					if(replacementRule.substring(replacementRule.length() - 1, 
-							replacementRule.length()).equals(separator)) {
-						splitReplacementRule = null;
-					}
-				} 
-			}
+		try {
+			splitReplacementRule = replacementRule.split("\\" + separator);
+		} catch (PatternSyntaxException e) {
+			throw new SedException(replaceSubstringWithInvalidRule(cmdline));
 		}
 		
+		int length = splitReplacementRule.length;
+
+		if(replacementRule.contains(separator + separator) || length < 3 || length > 4 
+				|| !splitReplacementRule[0].equals("s")
+				|| (length == 3 && !replacementRule.substring(replacementRule.length() - 1, 
+						replacementRule.length()).equals(separator))
+				|| (length == 4 && (!splitReplacementRule[3].equals("g") 
+						|| replacementRule.substring(replacementRule.length() - 1, 
+								replacementRule.length()).equals(separator)))) {
+			throw new SedException(replaceSubstringWithInvalidRule(cmdline));
+		}
+
 		return splitReplacementRule;
 	}
-	
+
 	/**
 	 * Replaces first regexp of each line from input string with replacement string.
 	 * 
@@ -278,27 +269,40 @@ public class SedApplication implements Application, Sed {
 	 * @throws SedException
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
-	String replaceFirstSubString(String text, String[] args) {
+	String replaceFirstSubString(String text, String[] args) throws SedException {
 
 		String[] splitLine = text.split(System.getProperty("line.separator"));
 		String[] replacementRule = getReplacementRule(args);
-		
+		Pattern pattern;
+
 		if(replacementRule != null) {
 			String regexp = replacementRule[1]; 
 			String replacement = replacementRule[2];
 			text = new String();
 			
+			try {
+				pattern = Pattern.compile(regexp);
+			} catch (PatternSyntaxException e) {
+				throw new SedException(replaceSubstringWithInvalidRegex(text));
+			}
+			
 			for(int i = 0; i < splitLine.length; i++) {
-				text += splitLine[i].replaceFirst(Pattern.quote(regexp), replacement);
+				try {
+					Matcher matcher = pattern.matcher(splitLine[i]);
+					text += matcher.replaceFirst(replacement);
+				} catch (PatternSyntaxException e) {
+					throw new SedException(replaceSubstringWithInvalidReplacement(text));
+				}
+				
 				if(i < splitLine.length - 1) {
 					text += System.getProperty("line.separator");
 				}
 			}
 		}
-		
+
 		return text;
 	}
-	
+
 	/**
 	 * Replaces all regexp from input string with replacement string.
 	 * 
@@ -311,17 +315,29 @@ public class SedApplication implements Application, Sed {
 	 * @throws SedException
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
-	String replaceAllSubStrings(String text, String[] args) {
-		
+	String replaceAllSubStrings(String text, String[] args) throws SedException {
+
 		String[] replacementRule = getReplacementRule(args);
-		
+		Pattern pattern;
+
 		if(replacementRule != null) {
 			String regexp = replacementRule[1];	
 			String replacement = replacementRule[2];
+
+			try {
+				pattern = Pattern.compile(regexp);
+			} catch (PatternSyntaxException e) {
+				throw new SedException(replaceSubstringWithInvalidRegex(text));
+			}
 			
-			text = text.replaceAll(Pattern.quote(regexp), replacement);
+			try {
+				Matcher matcher = pattern.matcher(text);
+				text = matcher.replaceAll(replacement);
+			} catch (PatternSyntaxException e) {
+				throw new SedException(replaceSubstringWithInvalidReplacement(text));
+			}
 		} 
-		
+
 		return text;
 	}
 
@@ -336,14 +352,14 @@ public class SedApplication implements Application, Sed {
 
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
 		String text = new String();
-		
+
 		try {
 			text = readFromFile(splitArgs);
 			text = replaceFirstSubString(text, splitArgs);
 		} catch(SedException e) {
-			e.printStackTrace();
+			return e.getMessage();
 		}
-		
+
 		return text;
 	}
 
@@ -355,17 +371,17 @@ public class SedApplication implements Application, Sed {
 	 */
 	@Override
 	public String replaceAllSubstringsInFile(String args) {
-		
+
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
 		String text = new String();
-		
+
 		try {
 			text = readFromFile(splitArgs);
 			text = replaceAllSubStrings(text, splitArgs);
 		} catch(SedException e) {
-			e.printStackTrace();
+			return e.getMessage();
 		}
-		
+
 		return text;
 	}
 
@@ -377,20 +393,21 @@ public class SedApplication implements Application, Sed {
 	 */
 	@Override
 	public String replaceFirstSubStringFromStdin(String args) {
+		
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
 		String text = new String();
-		
+
 		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedTest.input.getBytes());
+			stdin = new ByteArrayInputStream(SedApplicationTest.input.getBytes());
 		}
-		
+
 		try {
 			text = readFromStdin(splitArgs, stdin);
 			text = replaceFirstSubString(text, splitArgs);
 		} catch(SedException e) {
-			e.printStackTrace();
+			return e.getMessage();
 		}
-		
+
 		return text;
 	}
 
@@ -402,68 +419,95 @@ public class SedApplication implements Application, Sed {
 	 */
 	@Override
 	public String replaceAllSubstringsInStdin(String args) {
+		
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
 		String text = new String();
-		
+
 		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedTest.input.getBytes());
+			stdin = new ByteArrayInputStream(SedApplicationTest.input.getBytes());
 		}
-		
+
 		try {
 			text = readFromStdin(splitArgs, stdin);
 			text = replaceAllSubStrings(text, splitArgs);
 		} catch(SedException e) {
-			e.printStackTrace();
+			return e.getMessage();
 		}
-		
+
 		return text;
 	}
-	
+
 	/**
-	 * Returns string containing lines when invalid replacement rule is
+	 * Returns error message when invalid replacement rule is
 	 * provided
-	 * For testing purpose - Actual behaviour when there is invalid regex, 
-	 * Sed exception is thrown 
 	 * 
 	 * @param args String containing command and arguments 
 	 */
 	@Override
 	public String replaceSubstringWithInvalidRule(String args) {
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = SedTest.input;
 		
-		return replaceFirstSubString(text, splitArgs);
+		String[] splitArgs = args.split(" ");
+		String errorMessage = "Invalid Replacement Rule: ";
+		String replacementRule = splitArgs[1];
+		String separator = replacementRule.substring(1, 2);
+		
+		if(replacementRule.contains(separator + separator)) {
+			return errorMessage + "Empty arguments";
+		} 
+		
+		String[] splitReplacementRule = null;
+		
+		try {
+			splitReplacementRule = replacementRule.split("\\" + separator);
+		} catch (PatternSyntaxException e) {
+			return errorMessage + "Invalid separator";
+		}
+		
+		int length = splitReplacementRule.length;
+		
+		if(length < 3) {
+			errorMessage += "Insufficient arguments";
+		} else if(length > 4) {
+			errorMessage += "Extra arguments";
+		} else if(!splitReplacementRule[0].equals("s")) {
+			errorMessage += "Missing \"s\" in front";
+		} else if(length == 3) {
+			if(!replacementRule.substring(replacementRule.length() - 1, 
+					replacementRule.length()).equals(separator)) {
+				errorMessage += "Missing separator at the end";
+			}
+		} else if(length == 4) {
+			if(!splitReplacementRule[3].equals("g")) {
+				errorMessage += "Missing \"g\" at the end";
+			}
+
+			if(replacementRule.substring(replacementRule.length() - 1, 
+					replacementRule.length()).equals(separator)) {
+				errorMessage += "Extra separator at the end";
+			}
+		} 
+
+		return errorMessage;
 	}
 
 	/**
-	 * Returns string containing lines when invalid replacement string is
+	 * Returns error message when invalid replacement string is
 	 * provided
-	 * For testing purpose - Actual behaviour when there is invalid regex, 
-	 * Sed exception is thrown 
 	 * 
 	 * @param args String containing command and arguments
 	 */
 	@Override
 	public String replaceSubstringWithInvalidReplacement(String args) {
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = SedTest.input;
-		
-		return replaceFirstSubString(text, splitArgs);
+		return "Invalid Replacement";
 	}
 
 	/**
-	 * Returns string containing lines when invalid regex is provided
-	 * For testing purpose - Actual behaviour when there is invalid regex, 
-	 * Sed exception is thrown 
+	 * Returns error message when invalid regex is provided
 	 * 
 	 * @param args String containing command and arguments
 	 */
 	@Override
 	public String replaceSubstringWithInvalidRegex(String args) {
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split(" ");
-		String text = SedTest.input;
-		
-		return replaceFirstSubString(text, splitArgs);
+		return "Invalid Regex";
 	}
-
 }

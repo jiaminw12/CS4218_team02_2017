@@ -25,11 +25,11 @@ public class SedApplicationTest {
 	private static final String TEXT = "The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ the(***&& lazy @@dog#*#*#))(*&^^";
 	private static final String[] FILE_NAMES = { "test1.txt", "test2.txt", "test3.txt" };
 	private static final List<String> TEXT1 = Arrays.asList(
-			"The quick$%^^%% brown fox jumps over the$$%#(#&##lazy dog", 
-			"Quick brown fox the^%%$##*#*#*# jumps over#*#*#*# the lazy dog",  
-			"Quick brown fox jumps)(@## over the lazy dog))(~(!@@", 
-			"@((#*#&&@@(#Quick brown fox jumps over((#*#*# lazy dog The",
-			"thE Quick brown fox THE)#(#*$*$$# jumps over lazy dog the");
+			"The quick$%^^%% brown fox jumps over the lazy dog", 
+			"Quick brown fox the jumps over the lazy dog",  
+			"Quick brown fox jumps over the lazy dog))(~(!@@", 
+			"@((#*#&&@@(#Quick brown fox jumps over lazy dog The",
+			"thE Quick brown fox THE jumps over lazy dog the");
 	private static final List<String> TEXT2 = Arrays.asList(
 			"lolollllolololllololol", 
 			"lloolololololollllolollololoolllolololoo",
@@ -183,6 +183,104 @@ public class SedApplicationTest {
 	}
 	
 	@Test
+	public void testReplaceSubstringWithInvalidRuleExtraSeparator() throws SedException {
+		String args = "sed s/hi//bye/";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Empty arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleExtraSeparators() throws SedException {
+		String args = "sed s/hi///g";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Empty arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleExtraSpace() throws SedException {
+		String args = "sed s/hi/ /bye/";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Insufficient arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleInsufficientArgs() throws SedException {
+		String args = "sed s/g/" ;
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Insufficient arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleExtraArgs() throws SedException {
+		String args = "sed s/hi/test/bye/g";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Extra arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleMissingSeparatorBehind() throws SedException {
+		String args = "sed s/hi/bye";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Missing separator at the end", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleS() throws SedException {
+		String args = "sed g/hi/bye/";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Missing \"s\" in front", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleG() throws SedException {
+		String args = "sed s/hi/bye/s";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Missing \"g\" at the end", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleLongS() throws SedException {
+		String args = "sed sss/hi/bye/";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Empty arguments", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleLongG() throws SedException {
+		String args = "sed s/hi/bye/ggg";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Missing \"g\" at the end", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleMissingSeparator() throws SedException {
+		String args = "sed s/hi/bye";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Missing separator at the end", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRuleRedundantSeparator() throws SedException {
+		String args = "sed s/hi/bye/g/";
+		String result = sedApplication.replaceSubstringWithInvalidRule(args);
+		assertEquals("Invalid Replacement Rule: Extra separator at the end", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidRegex() {
+		String args = "sed s/lol***/the/g";
+		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		assertEquals("sed: Invalid Regex", result);
+	}
+	
+	@Test
+	public void testReplaceSubstringWithInvalidReplacement() { //TODO
+//		String args = "sed s/lol/\s/g";
+//		String result = sedApplication.replaceAllSubstringsInStdin(args);
+//		assertEquals("sed: Invalid Replacement", result);
+	}
+	
+	@Test
 	public void testReplaceFirstSubStringFromStdin() {
 		String args = "sed s/the/to-her/";
 		input = TEXT;
@@ -191,27 +289,11 @@ public class SedApplicationTest {
 	}
 	
 	@Test
-	public void testReplaceFirstSubStringFromStdinSymbols() {
-		String args = "sed s/#*#*#/REPLACE!/";
-		input = TEXT;
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
-		assertEquals("The quick brown fox&@#**#HDN(*#&&REPLACE! jumps over((@*@&*#)_$ the(***&& lazy @@dog#*#*#))(*&^^", result);
-	}
-	
-	@Test
 	public void testReplaceFirstSubStringFromStdinRepeatedWords() {
-		String args = "sed s/lol/~yea~/";
+		String args = "sed s/lol/yea/";
 		input = "lololololololololololololloololo";
 		String result = sedApplication.replaceFirstSubStringFromStdin(args);
-		assertEquals("~yea~olololololololololololloololo", result);
-	}
-	
-	@Test
-	public void testReplaceFirstSubStringFromStdinRepeatedSymbols() {
-		String args = "sed s/*#/`-@!!!!/";
-		input = "#*#*#*#*#*#*#**#*#*#*#*#****#**#*#*#**#*#*#";
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
-		assertEquals("#`-@!!!!*#*#*#*#*#**#*#*#*#*#****#**#*#*#**#*#*#", result);
+		assertEquals("yeaolololololololololololloololo", result);
 	}
 	
 	@Test
@@ -223,14 +305,6 @@ public class SedApplicationTest {
 	}
 	
 	@Test
-	public void testReplaceAllSubStringInStdinSymbols() {
-		String args = "sed s/#*#*#/REPLACE!/g";
-		input = TEXT;
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
-		assertEquals("The quick brown fox&@#**#HDN(*#&&REPLACE! jumps over((@*@&*#)_$ the(***&& lazy @@dogREPLACE!))(*&^^", result);
-	}
-	
-	@Test
 	public void testReplaceAllSubStringInStdinRepeatedWords() {
 		String args = "sed s/lol/~yea~/";
 		input = "lololololololololololololloololo";
@@ -239,80 +313,36 @@ public class SedApplicationTest {
 	}
 	
 	@Test
-	public void testReplaceAllSubStringInStdinRepeatedSymbols() {
-		String args = "sed s/*#/`-@!!!!/";
-		input = "#*#*#*#*#*#*#**#*#*#*#*#****#**#*#*#**#*#*#";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
-		assertEquals("#`-@!!!!`-@!!!!`-@!!!!`-@!!!!`-@!!!!`-@!!!!*`-@!!!!`-@!!!!`-@!!!!`-@!!!!"
-				+ "`-@!!!!***`-@!!!!*`-@!!!!`-@!!!!`-@!!!!*`-@!!!!`-@!!!!`-@!!!!", result);
-	}
-	
-	@Test
 	public void testReplaceFirstSubStringInFile() {
 		String args = "sed s/the/to-her/ test1.txt";
 		input = TEXT;
 		String result = sedApplication.replaceFirstSubStringInFile(args);
-		assertEquals("The quick$%^^%% brown fox jumps over to-her$$%#(#&##lazy dog" + System.getProperty("line.separator") 
-				+ "Quick brown fox to-her^%%$##*#*#*# jumps over#*#*#*# the lazy dog" + System.getProperty("line.separator")   
-				+ "Quick brown fox jumps)(@## over to-her lazy dog))(~(!@@" + System.getProperty("line.separator")  
-				+ "@((#*#&&@@(#Quick brown fox jumps over((#*#*# lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE)#(#*$*$$# jumps over lazy dog to-her", result);
-	}
-	
-	@Test
-	public void testReplaceFirstSubStringInFileSymbols() {
-		String args = "sed s/#*#*#/REPLACE!/ test1.txt";
-		input = TEXT;
-		String result = sedApplication.replaceFirstSubStringInFile(args);
-		assertEquals("The quick$%^^%% brown fox jumps over the$$%#(#&##lazy dog" + System.getProperty("line.separator") 
-				+ "Quick brown fox the^%%$#REPLACE!*# jumps over#*#*#*# the lazy dog" + System.getProperty("line.separator")   
-				+ "Quick brown fox jumps)(@## over the lazy dog))(~(!@@" + System.getProperty("line.separator")  
-				+ "@((#*#&&@@(#Quick brown fox jumps over((REPLACE! lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE)#(#*$*$$# jumps over lazy dog the", result);
+		assertEquals("The quick$%^^%% brown fox jumps over to-her lazy dog" + System.getProperty("line.separator") 
+				+ "Quick brown fox to-her jumps over the lazy dog" + System.getProperty("line.separator") 
+				+ "Quick brown fox jumps over to-her lazy dog))(~(!@@" + System.getProperty("line.separator")  
+				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
+				+ "thE Quick brown fox THE jumps over lazy dog to-her", result);
 	}
 	
 	@Test
 	public void testReplaceFirstSubStringInFileRepeatedWords() {
-		String args = "sed s/lol/~yea~/ test2.txt";
+		String args = "sed s/lol/yea!/ test2.txt";
 		String result = sedApplication.replaceFirstSubStringInFile(args);
-		assertEquals("~yea~ollllolololllololol" + System.getProperty("line.separator") 
-				+ "lloo~yea~olololollllolollololoolllolololoo" + System.getProperty("line.separator")
-				+ "ooool~yea~olololollllolololllololol", result);
+		assertEquals("yea!ollllolololllololol" + System.getProperty("line.separator") 
+				+ "llooyea!olololollllolollololoolllolololoo" + System.getProperty("line.separator")
+				+ "oooolyea!olololollllolololllololol", result);
 	}
 	
-	@Test
-	public void testReplaceFirstSubStringInFileRepeatedSymbols() {
-		String args = "sed s/*#/`-@!!!!/ test3.txt";
-		input = "#*#*#*#*#*#*#**#*#*#*#*#****#**#*#*#**#*#*#";
-		String result = sedApplication.replaceFirstSubStringInFile(args);
-		assertEquals("`#`-@!!!!*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#" + System.getProperty("line.separator")
-				+ "`#`-@!!!!*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#" + System.getProperty("line.separator")  
-				+ "`#`-@!!!!*#*#*#-@!!`!!*#`**#*#*#*`#-@!!`!!*`**`*`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#", result);
-	}
-	
-	//-------
 	@Test
 	public void testReplaceAllSubStringsInFile() {
 		String args = "sed s/the/to-her/g test1.txt";
 		input = TEXT;
 		String result = sedApplication.replaceAllSubstringsInFile(args);
-		assertEquals("The quick$%^^%% brown fox jumps over to-her$$%#(#&##lazy dog" + System.getProperty("line.separator") 
-				+ "Quick brown fox to-her^%%$##*#*#*# jumps over#*#*#*# to-her lazy dog" + System.getProperty("line.separator")   
-				+ "Quick brown fox jumps)(@## over to-her lazy dog))(~(!@@" + System.getProperty("line.separator")  
-				+ "@((#*#&&@@(#Quick brown fox jumps over((#*#*# lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE)#(#*$*$$# jumps over lazy dog to-her", result);
-	}
-	
-	@Test
-	public void testReplaceAllSubStringsInFileSymbols() {
-		String args = "sed s/#*#*#/REPLACE!/g test1.txt";
-		input = TEXT;
-		String result = sedApplication.replaceAllSubstringsInFile(args);
-		assertEquals("The quick$%^^%% brown fox jumps over the$$%#(#&##lazy dog" + System.getProperty("line.separator") 
-				+ "Quick brown fox the^%%$#REPLACE!*# jumps overREPLACE!*# the lazy dog" + System.getProperty("line.separator")   
-				+ "Quick brown fox jumps)(@## over the lazy dog))(~(!@@" + System.getProperty("line.separator")  
-				+ "@((#*#&&@@(#Quick brown fox jumps over((REPLACE! lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE)#(#*$*$$# jumps over lazy dog the", result);
+		assertEquals("The quick$%^^%% brown fox jumps over to-her lazy dog" + System.getProperty("line.separator")  
+				+ "Quick brown fox to-her jumps over to-her lazy dog" + System.getProperty("line.separator")   
+				+ "Quick brown fox jumps over to-her lazy dog))(~(!@@" + System.getProperty("line.separator")  
+				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
+				+ "thE Quick brown fox THE jumps over lazy dog to-her", result);
 	}
 	
 	@Test
@@ -322,40 +352,6 @@ public class SedApplicationTest {
 		assertEquals("~yea~olll~yea~o~yea~l~yea~o~yea~" + System.getProperty("line.separator") 
 				+ "lloo~yea~o~yea~o~yea~ll~yea~ol~yea~olooll~yea~o~yea~oo" + System.getProperty("line.separator")
 				+ "ooool~yea~o~yea~o~yea~ll~yea~o~yea~l~yea~o~yea~", result);
-	}
-	
-	@Test
-	public void testReplaceAllSubStringsInFileRepeatedSymbols() {
-		String args = "sed s/`*#/-@!!`!!/g test3.txt";
-		input = "#*#*#*#*#*#*#**#*#*#*#*#****#**#*#*#**#*#*#";
-		String result = sedApplication.replaceAllSubstringsInFile(args);
-		assertEquals("`#*#*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#" + System.getProperty("line.separator") 
-				+ "`#*#*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#" + System.getProperty("line.separator")  
-				+ "`#*#*#*#*#-@!!`!!*#`**#*#*#*`#-@!!`!!*`**`*`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#", result);
-	}
-	
-	@Test
-	public void testReplaceSubstringWithInvalidRule() {
-		String args = "sed s/\b/\\/LALA/g";
-		input = "\b/\\\b/\\\b/\\\b/\\\b/\\";
-		String result = sedApplication.replaceSubstringWithInvalidRule(args);
-		assertEquals("\b/\\\b/\\\b/\\\b/\\\b/\\", result);
-	}
-	
-	@Test
-	public void testReplaceSubstringWithInvalidReplacement() {
-		String args = "sed s/t/he/to-her/g";
-		input = "the quick brown fox jumps over the lazy dog";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
-		assertEquals("the quick brown fox jumps over the lazy dog", result);
-	}
-	
-	@Test
-	public void testReplaceSubstringWithInvalidRegex() {
-		String args = "sed s/the/to/her/g";
-		input = "the quick brown fox jumps over the lazy dog";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
-		assertEquals("the quick brown fox jumps over the lazy dog", result);
 	}
 	
 	@After
