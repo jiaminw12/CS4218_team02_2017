@@ -25,8 +25,6 @@ public class WcApplicationTest {
 	String wordString = "-w";
 	String lineString = "-l";
 	String command;
-	String tabString = "\t";
-	String nextLineString = "\n";
 
 	@BeforeClass
 	public static void setUpOnce() throws WcException {
@@ -42,7 +40,7 @@ public class WcApplicationTest {
 	public void testWcAppWithNullArgument() throws WcException {
 		wcApp.run(null, null, System.out);
 	}
-	
+
 	@Test(expected = WcException.class)
 	public void testWcAppWithEmptyArgsWithEmptyInput() throws WcException {
 		String[] args = {};
@@ -66,7 +64,7 @@ public class WcApplicationTest {
 		String[] args = { "wc", "-l", "cybody40" };
 		wcApp.run(args, System.in, System.out);
 	}
-	
+
 	@Test(expected = WcException.class)
 	public void testIllegalFiles() throws WcException {
 		String[] args = { "wc", "-l", "cybody40.txt", "invalidFileName#@#$$%" };
@@ -76,130 +74,94 @@ public class WcApplicationTest {
 	@Test
 	public void testPrintCharacterCountInFile() throws WcException {
 		// wc -m cybody40.txt
-		String[] args = { "wc", "-m", "cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printCharacterCountInFile("wc -m cybody40.txt");
-		assertEquals("304" + tabString, expectedResult);
+		assertEquals("304", expectedResult);
 	}
 
 	@Test
 	public void testPrintWordCountInFile() throws WcException {
 		// wc -w cybody40.txt
-		String[] args = { "wc", "-w", "cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printWordCountInFile("wc -w cybody40.txt");
-		assertEquals("54" + tabString, expectedResult);
+		assertEquals("54", expectedResult);
 	}
 
 	@Test
 	public void testPrintLineCountInFile() throws WcException {
 		// wc -l cybody40.txt
-		String[] args = { "wc", "-l", "cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printNewlineCountInFile("wc -l cybody40.txt");
-		assertEquals("4" + tabString, expectedResult);
+		assertEquals("4", expectedResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInFile() throws WcException {
 		// wc -m -w -l cybody40.txt
-		String[] args = { "wc", "-m", "-w", "-l", "cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cybody40.txt");
-		assertEquals("304" + tabString + "54" + tabString + "4" + tabString,
-				expectedResult);
+		assertEquals("304\t54\t4", expectedResult);
 	}
-	
-	@Test
-	public void testPrintAllCountsInFileAllOptionsTogether() throws WcException {
-		// wc -m -w -l cybody40.txt
-		String[] args = { "wc", "-lmw", "cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
 
+	@Test
+	public void testPrintAllCountsInFileAllOptionsTogether()
+			throws WcException {
+		// wc -m -w -l cybody40.txt
 		String expectedResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cybody40.txt");
-		assertEquals("304" + tabString + "54" + tabString + "4" + tabString,
-				expectedResult);
+		assertEquals("304\t54\t4", expectedResult);
 	}
 
 	@Test
 	public void testPrintAllCharactersInTwoFiles() throws WcException {
 		// wc -m cxintro02.txt cybody40.txt
-		String[] args = { "wc", "-m", "cxintro02.txt", "cybody40.txt", };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printAllCountsInFile("wc -m cxintro02.txt cybody40.txt");
-		assertEquals("47" + tabString + "304" + tabString + "351" + tabString,
-				expectedResult);
+		assertEquals("47\t" + System.lineSeparator() + "304\t"
+				+ System.lineSeparator() + "351", expectedResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInTwoFiles() throws WcException {
 		// wc -m -w -l cxintro02.txt cybody40.txt
-		String[] args = { "wc", "-m", "-w", "-l", "cxintro02.txt",
-				"cybody40.txt" };
-		wcApp.run(args, System.in, System.out);
-
 		String expectedResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cxintro02.txt cybody40.txt");
 		assertEquals(
-				"47" + tabString + "8" + tabString + "1" + tabString + "304"
-						+ tabString + "54" + tabString + "4" + tabString + "351"
-						+ tabString + "62" + tabString + "5" + tabString,
+				"47\t8\t1\t" + System.lineSeparator() + "304\t54\t4\t"
+						+ System.lineSeparator() + "351\t62\t5",
 				expectedResult);
 	}
-
+	
 	@Test
 	public void testPrintCharacterCountInStdin() throws WcException {
 		// wc -m
-		String[] args = { "wc", "-m" };
-		InputStream in = new ByteArrayInputStream("a\nb\nc\n".getBytes());
-		wcApp.run(args, in, System.out);
-
+		wcApp.setInputStream("a\nb\nc\n");
 		String expectedResult = wcApp.printCharacterCountInStdin("wc -m");
-		assertEquals("3" + tabString, expectedResult);
+		assertEquals("3", expectedResult);
 	}
-
+	
 	@Test
 	public void testPrintWordCountInStdin() throws WcException {
 		// wc -w
-		String[] args = { "wc", "-w" };
-		InputStream in = new ByteArrayInputStream("a\nb\nc\n".getBytes());
-		wcApp.run(args, in, System.out);
-
+		wcApp.setInputStream("a\nb\nc\n");
 		String expectedResult = wcApp.printWordCountInStdin("wc -w");
-		assertEquals("3" + tabString, expectedResult);
+		assertEquals("3", expectedResult);
 	}
 
 	@Test
 	public void testPrintNewlineCountInStdin() throws WcException {
 		// wc -l
-		String[] args = { "wc", "-l" };
-		InputStream in = new ByteArrayInputStream("a\nb\nc\n".getBytes());
-		wcApp.run(args, in, System.out);
-
+		wcApp.setInputStream("a\nb\nc\n");
 		String expectedResult = wcApp.printNewlineCountInStdin("wc -l");
-		assertEquals("3" + tabString, expectedResult);
+		assertEquals("3", expectedResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInStdin() throws WcException {
 		// wc -m -w -l
-		String[] args = { "wc", "-m", "-w", "-l" };
-		InputStream in = new ByteArrayInputStream("a\nb\nc\n".getBytes());
-		wcApp.run(args, in, System.out);
-
-		String expectedResult = wcApp.printNewlineCountInFile("wc -m -w -l");
-		assertEquals("3" + tabString + "3" + tabString + "3" + tabString,
+		wcApp.setInputStream("a\nb\nc\n");
+		String expectedResult = wcApp.printAllCountsInStdin("wc -m -w -l");
+		assertEquals("3\t3\t3",
 				expectedResult);
 	}
 

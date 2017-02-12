@@ -2,6 +2,8 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -44,21 +46,14 @@ public class WcApplication implements Application, Wc {
 	private boolean lineFlag = false;
 	private boolean wordFlag = false;
 	private boolean charFlag = false;
-	private boolean totalLineCountFlag = false;
-	private boolean totalWordCountFlag = false;
-	private boolean totalCharCountFlag = false;
+	private boolean totalLineFlag = false;
+	private boolean totalWordFlag = false;
+	private boolean totalCharFlag = false;
 	private boolean fileFlag = false;
 	private ArrayList<String> fileNameList = new ArrayList<String>();
-	private String nextLineString = "\n";
 	private String tabString = "\t";
 
-	String tempFileOutput = "temp-file-output";
-	String tmpExt = ".txt";
-
-	File tempInput = null;
-	File tempOutput = null;
-	BufferedWriter writer = null;
-	OutputStream fileOutStream = null;
+	ByteArrayInputStream in = null;
 
 	/**
 	 * Runs the wc application with the specified arguments.
@@ -81,9 +76,11 @@ public class WcApplication implements Application, Wc {
 			throws WcException {
 
 		if (args == null || args.length == 0) {
-			if (stdin == null || stdout == null) {
-				throw new WcException("Null Pointer Exception");
-			}
+			throw new WcException("Null Pointer Exception");
+		}
+		
+		if (stdin == null || stdout == null) {
+			throw new WcException("Null Pointer Exception");
 		}
 
 		for (int i = 1; i < args.length; i++) {
@@ -92,18 +89,18 @@ public class WcApplication implements Application, Wc {
 				wordFlag = true;
 				lineFlag = true;
 				
-				totalCharCountFlag = true;
-				totalWordCountFlag = true;
-				totalLineCountFlag = true;
+				totalCharFlag = true;
+				totalWordFlag = true;
+				totalLineFlag = true;
 			} else if (args[i].equals("-m")) { // char counts
 				charFlag = true;
-				totalCharCountFlag = true;
+				totalCharFlag = true;
 			} else if (args[i].equals("-w")) { // word counts
 				wordFlag = true;
-				totalWordCountFlag = true;
+				totalWordFlag = true;
 			} else if (args[i].equals("-l")) { // newline counts
 				lineFlag = true;
-				totalLineCountFlag = true;
+				totalLineFlag = true;
 			} else {
 				if (args[i].charAt(0) == '-') {
 					throw new WcException(args[i] + " is a illegal option");
@@ -121,13 +118,6 @@ public class WcApplication implements Application, Wc {
 							args[i] + " is not a directory or a file");
 				}
 			}
-		}
-
-		try {
-			tempOutput = File.createTempFile(tempFileOutput, tmpExt);
-			fileOutStream = new FileOutputStream(tempOutput);
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		if (fileFlag) {
@@ -212,12 +202,10 @@ public class WcApplication implements Application, Wc {
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(stdin));
 
-			String line;
-			while ((line = br.readLine()) != null && line.length() != 0) {
-				lineCount++;
-				charCount += line.length();
-				wordCount += line.trim().split("\\s+").length;
-			}
+			String line = br.readLine();
+			lineCount++;
+			charCount += line.length();
+			wordCount += line.trim().split("\\s+").length;
 
 			printResult("", stdout);
 			lineCount = 0;
@@ -250,8 +238,6 @@ public class WcApplication implements Application, Wc {
 			throw new WcException("Null Pointer Exception");
 		}
 
-		writer = new BufferedWriter(new OutputStreamWriter(fileOutStream));
-
 		if (!(lineFlag || charFlag || wordFlag)) {
 			lineFlag = true;
 			charFlag = true;
@@ -262,29 +248,19 @@ public class WcApplication implements Application, Wc {
 			if (charFlag) {
 				stdout.write(String.valueOf(charCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(charCount) + tabString);
 			}
 
 			if (wordFlag) {
 				stdout.write(String.valueOf(wordCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(wordCount) + tabString);
 			}
 
 			if (lineFlag) {
 				stdout.write(String.valueOf(lineCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(lineCount) + tabString);
 			}
 
-			//stdout.write(fileName.getBytes());
-			stdout.write(String.format("%n").getBytes());
-
-			writer.flush();
-			fileOutStream.flush();
+			stdout.write(System.lineSeparator().getBytes());
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -306,41 +282,29 @@ public class WcApplication implements Application, Wc {
 			throw new WcException("Null Pointer Exception");
 		}
 
-		writer = new BufferedWriter(new OutputStreamWriter(fileOutStream));
-
-		if (!(totalLineCountFlag || totalCharCountFlag || totalWordCountFlag)) {
-			totalLineCountFlag = true;
-			totalCharCountFlag = true;
-			totalWordCountFlag = true;
+		if (!(totalLineFlag || totalCharFlag || totalWordFlag)) {
+			totalLineFlag = true;
+			totalCharFlag = true;
+			totalWordFlag = true;
 		}
 
 		try {
-			if (totalCharCountFlag) {
+			if (totalCharFlag) {
 				stdout.write(String.valueOf(totalCharCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(totalCharCount) + tabString);
 			}
 
-			if (totalWordCountFlag) {
+			if (totalWordFlag) {
 				stdout.write(String.valueOf(totalWordCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(totalWordCount) + tabString);
 			}
 
-			if (totalLineCountFlag) {
+			if (totalLineFlag) {
 				stdout.write(String.valueOf(totalLineCount).getBytes());
 				stdout.write(tabString.getBytes());
-
-				writer.write(String.valueOf(totalLineCount) + tabString);
 			}
 
-			// stdout.write("total".getBytes());
-			stdout.write(String.format("%n").getBytes());
-
-			writer.flush();
-			fileOutStream.flush();
+			stdout.write(System.lineSeparator().getBytes());
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -360,9 +324,9 @@ public class WcApplication implements Application, Wc {
 		lineFlag = false;
 		wordFlag = false;
 		charFlag = false;
-		totalLineCountFlag = false;
-		totalWordCountFlag = false;
-		totalCharCountFlag = false;
+		totalLineFlag = false;
+		totalWordFlag = false;
+		totalCharFlag = false;
 		fileNameList = new ArrayList<String>();
 	}
 
@@ -404,64 +368,83 @@ public class WcApplication implements Application, Wc {
 		}
 		return Environment.currentDirectory + File.separator + filePath;
 	}
-
+	
 	/**
-	 * Read file
+	 * Gets the result from user input
 	 *
-	 * @param fileOutput
-	 *            A string. Use this to read file
+	 * @param args
+	 *            A string. User's command.
+	 * @param readConsole
+	 * 			  A checker. To check whether read from stdin or ignore
 	 */
-	private String readFromFile(File fileOutput) {
-		String result = null;
+	private String printOutputForTest(String args, boolean readConsole){
+		String[] splitArgs = args.split("\\s+");
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ByteArrayInputStream inputStream = null;
+		
+		if (readConsole){
+			inputStream = in;
+		} else {
+			inputStream = new ByteArrayInputStream(new byte[1]);
+		}
+		
 		try {
-			BufferedReader bufferedReader = new BufferedReader(
-					new FileReader(fileOutput));
-			result = bufferedReader.readLine();
-			bufferedReader.close();
-		} catch (IOException e) {
+			run(splitArgs, inputStream, outputStream);
+		} catch (WcException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return new String(outputStream.toByteArray()).trim();
 	}
-
+	
+	/**
+	 * Set input stream
+	 *
+	 * @param args
+	 *            A string. User input.
+	 *            
+	 */
+	public void setInputStream(String args){
+		in = new ByteArrayInputStream(args.getBytes());
+	}
+	
 	@Override
 	public String printCharacterCountInFile(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, false);
 	}
 
 	@Override
 	public String printWordCountInFile(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, false);
 	}
 
 	@Override
 	public String printNewlineCountInFile(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, false);
 	}
 
 	@Override
 	public String printAllCountsInFile(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, false);
 	}
 
 	@Override
 	public String printCharacterCountInStdin(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, true);
 	}
 
 	@Override
 	public String printWordCountInStdin(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, true);
 	}
 
 	@Override
 	public String printNewlineCountInStdin(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, true);
 	}
 
 	@Override
 	public String printAllCountsInStdin(String args) {
-		return readFromFile(tempOutput);
+		return printOutputForTest(args, true);
 	}
 
 }
