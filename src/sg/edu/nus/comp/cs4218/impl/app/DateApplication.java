@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Calendar;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.app.Date;
@@ -20,7 +19,7 @@ import sg.edu.nus.comp.cs4218.exception.DateException;
  */
 public class DateApplication implements Application, Date {
 
-	private Calendar now;
+	private java.util.Date currentDate;
 
 	/**
 	 * Runs the cat application with the specified arguments.
@@ -49,33 +48,16 @@ public class DateApplication implements Application, Date {
 		if (stdout == null){
 			throw new DateException("Null Pointer Exception");
 		}
-
+		
+		currentDate = new java.util.Date();
+		
 		try {
-			setCurrentDate(Calendar.getInstance());
-			stdout.write(getCurrentDate().getBytes());
+			stdout.write(currentDate.toString().getBytes());
 			stdout.write(System.lineSeparator().getBytes());
 		} catch (IOException e) {
 			throw new DateException("IOException Caught");
 		}
 	}
-	
-	/**
-	 * Set current date
-	 *
-	 * @param calendar
-	 *            Use this to set calendar object
-	 */
-	public void setCurrentDate(Calendar calendar){
-		now = calendar;
-	}
-
-	/**
-	 * Get the current date in [week day] [month] [day] [hh:mm:ss] [time zone] [year]
-	 */
-	public String getCurrentDate() {
-		return now.getTime().toString();
-	}
-	
 
 	@Override
 	public String printCurrentDate(String args) {

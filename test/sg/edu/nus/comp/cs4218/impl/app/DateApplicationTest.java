@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Calendar;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,8 +39,8 @@ public class DateApplicationTest {
 	public void testPrintDate() throws DateException {
 		String expectedResult = dateApplication.printCurrentDate("date");
 		
-		Calendar now = Calendar.getInstance();
-		String actualResult = now.getTime().toString();
+		java.util.Date now = new java.util.Date();
+		String actualResult = now.toString();
 		assertEquals(expectedResult, actualResult);
 	}
 
