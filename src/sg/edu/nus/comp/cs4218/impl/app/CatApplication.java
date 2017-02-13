@@ -59,7 +59,7 @@ public class CatApplication implements Application {
 			}
 		} else {
 
-			int numOfFiles = args.length;
+			int numOfFiles = args.length ;
 
 			if (numOfFiles > 0) {
 				Path filePath;
@@ -67,7 +67,7 @@ public class CatApplication implements Application {
 				Path currentDir = Paths.get(Environment.currentDirectory);
 				boolean isFileReadable = false;
 
-				for (int i = 0; i < numOfFiles; i++) {
+				for (int i = 1; i < numOfFiles; i++) {
 					filePath = currentDir.resolve(args[i]);
 					isFileReadable = checkIfFileIsReadable(filePath);
 					if (isFileReadable) {
@@ -77,17 +77,20 @@ public class CatApplication implements Application {
 
 				// file could be read. perform cat command
 				if (filePathArray.length != 0) {
-					for (int j = 0; j < filePathArray.length - 1; j++) {
+					String testStr = "";
+					for (int j = 1; j < filePathArray.length; j++) {
 						try {
+							
 							byte[] byteFileArray = Files
 									.readAllBytes(filePathArray[j]);
+							String byteString = new String(byteFileArray, "UTF-8");
+							testStr = testStr + byteString;
 							stdout.write(byteFileArray);
 						} catch (IOException e) {
 							throw new CatException(
 									"Could not write to output stream");
 						}
 					}
-
 				}
 			}
 		}
