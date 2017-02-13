@@ -17,7 +17,7 @@ import sg.edu.nus.comp.cs4218.exception.WcException;
 public class WcApplicationTest {
 
 	static WcApplication wcApp;
-	
+
 	@BeforeClass
 	public static void setUpOnce() throws WcException {
 		// one-time initialization code
@@ -123,38 +123,61 @@ public class WcApplicationTest {
 						+ System.lineSeparator() + "351\t62\t5",
 				expectedResult);
 	}
-	
+
+	@Test
+	public void testPrintTwoOptionsTogether() throws WcException {
+		// wc -mw cxintro02.txt
+		String expectedResult = wcApp
+				.printAllCountsInFile("wc -mw cxintro02.txt");
+		assertEquals("47\t8", expectedResult);
+	}
+
+	@Test
+	public void testPrintAllOptionsTogether() throws WcException {
+		// wc -lmw cxintro02.txt
+		String expectedResult = wcApp
+				.printAllCountsInFile("wc -lmw cxintro02.txt");
+		assertEquals("47\t8\t1", expectedResult);
+	}
+
+	@Test
+	public void testPrintAllOptionsTogetherInReverseOrder() throws WcException {
+		// wc -wml cxintro02.txt
+		String expectedResult = wcApp
+				.printAllCountsInFile("wc -wml cxintro02.txt");
+		assertEquals("47\t8\t1", expectedResult);
+	}
+
 	@Test
 	public void testPrintCharacterCountInStdin() throws WcException {
 		// wc -m
 		wcApp.setInputStream("a\nb\nc\n");
 		String expectedResult = wcApp.printCharacterCountInStdin("wc -m");
-		assertEquals("3", expectedResult);
+		assertEquals("1", expectedResult);
 	}
-	
+
 	@Test
 	public void testPrintWordCountInStdin() throws WcException {
 		// wc -w
-		wcApp.setInputStream("a\nb\nc\n");
+		wcApp.setInputStream("a\n");
 		String expectedResult = wcApp.printWordCountInStdin("wc -w");
-		assertEquals("3", expectedResult);
+		assertEquals("1", expectedResult);
 	}
 
 	@Test
 	public void testPrintNewlineCountInStdin() throws WcException {
 		// wc -l
-		wcApp.setInputStream("a\nb\nc\n");
+		wcApp.setInputStream("a\n");
 		String expectedResult = wcApp.printNewlineCountInStdin("wc -l");
-		assertEquals("3", expectedResult);
+		assertEquals("1", expectedResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInStdin() throws WcException {
 		// wc -m -w -l
-		wcApp.setInputStream("a\nb\nc\n");
+		wcApp.setInputStream("a\n");
 		String expectedResult = wcApp.printAllCountsInStdin("wc -m -w -l");
-		assertEquals("3\t3\t3",
-				expectedResult);
+		assertEquals("1\t1\t1", expectedResult);
 	}
 
 	@After

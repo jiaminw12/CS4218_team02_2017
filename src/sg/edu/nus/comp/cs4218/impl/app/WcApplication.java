@@ -84,28 +84,28 @@ public class WcApplication implements Application, Wc {
 		}
 
 		for (int i = 1; i < args.length; i++) {
-			if (args[i].equals("-lmw")) { // character counts
-				charFlag = true;
-				wordFlag = true;
-				lineFlag = true;
+			if (args[i].charAt(0) == '-') {
 				
-				totalCharFlag = true;
-				totalWordFlag = true;
-				totalLineFlag = true;
-			} else if (args[i].equals("-m")) { // char counts
-				charFlag = true;
-				totalCharFlag = true;
-			} else if (args[i].equals("-w")) { // word counts
-				wordFlag = true;
-				totalWordFlag = true;
-			} else if (args[i].equals("-l")) { // newline counts
-				lineFlag = true;
-				totalLineFlag = true;
-			} else {
-				if (args[i].charAt(0) == '-') {
-					throw new WcException(args[i] + " is a illegal option");
+				if (args[i].length() > 4 || args[i].length() < 2){
+					throw new WcException("Illegal length");
 				}
-
+				
+				String[] splitOptions = args[i].trim().split("");
+				for (int j=1; j < splitOptions.length; j++){
+					if (splitOptions[j].equals("m")) { // char counts
+						charFlag = true;
+						totalCharFlag = true;
+					} else if (splitOptions[j].equals("w")) { // word counts
+						wordFlag = true;
+						totalWordFlag = true;
+					} else if (splitOptions[j].equals("l")) { // newline counts
+						lineFlag = true;
+						totalLineFlag = true;
+					} else {
+						throw new WcException(args[j] + " is a illegal option");
+					}
+				}
+			} else {
 				// contain file extension
 				File file = new File(args[i]);
 				if (checkFileIsDirectory(file)) {
