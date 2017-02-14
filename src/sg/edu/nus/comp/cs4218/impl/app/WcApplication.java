@@ -82,6 +82,10 @@ public class WcApplication implements Application, Wc {
 		if (stdin == null || stdout == null) {
 			throw new WcException("Null Pointer Exception");
 		}
+		
+		if (args.length == 1){
+			throw new WcException("Input stream cannot be null");
+		}
 
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].charAt(0) == '-') {

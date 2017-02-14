@@ -2,9 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -37,6 +35,12 @@ public class WcApplicationTest {
 	public void testWcAppWithEmptyArgsWithEmptyInput() throws WcException {
 		String[] args = {};
 		wcApp.run(args, null, System.out);
+	}
+	
+	@Test(expected = WcException.class)
+	public void testWcAppWithOneItemInArgs() throws WcException {
+		String[] args = {"wc"};
+		wcApp.run(args, System.in, System.out);
 	}
 
 	@Test(expected = WcException.class)
