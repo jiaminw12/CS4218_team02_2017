@@ -23,6 +23,7 @@ import java.util.List;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CatException;
+import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
 
 
@@ -65,13 +66,6 @@ public class CatApplicationTest {
 		}
 	}
 	
-	/*
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
-	*/
-	
 	@Test(expected = CatException.class)
 	public void testCatNullArgs() throws CatException {
 		String[] args = null;
@@ -90,12 +84,69 @@ public class CatApplicationTest {
 	
 	@Test(expected = CatException.class)
 	public void testExtraArgs() throws CatException {
-		String[] args = new String[] { "cat", "s/hi/bye/", "test1.txt", "test2.txt" };
+		String[] args = new String[] { "cat", "s/hi/bye/", "cxintro02.txt","cybody40.txt" };
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		stdout = System.out;
 		catApplication.run(args, stdin, stdout);
 	}
+	
+	@Test(expected = CatException.class)
+	public void testEmptyArgs() throws CatException {
+		String[] args = new String[] {};
+		stdin = null;
+		stdout = null;
+		catApplication.run(args, stdin, stdout);
+	}
+	
+	@Test
+	public void testProperArgs() throws CatException {
+		String[] args = new String[] {"cat","cxintro02.txt","cybody40.txt"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());;
+		stdout = System.out;
+		catApplication.run(args, stdin, stdout);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testNoStdout() throws CatException {
+		String[] args = new String[] {"cat","cxintro02.txt","cybody40.txt"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		catApplication.run(args, stdin, stdout);
+	} 
+	
+	@Test
+	public void testOnlyArgsNull() throws CatException {
+		String[] args = null;
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = System.out;
+		catApplication.run(args, stdin, stdout);
+	} 
+	
+	//to test for IOexception handling - need modification
+	@Test(expected = IOException.class)
+	public void testOnlyArgsIOException() throws CatException, IOException {
+		String[] args = null;
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = System.out;
+		catApplication.run(args, stdin, stdout);
+		throw new IOException("Test IOException");
+	}
 
+	
+	@Test(expected = CatException.class)
+	public void testCouldNoteWriteToOutputCatException() throws CatException, IOException {
+		String[] args = new String[] {"cat","sweet.txt","sweet.txt"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = System.out;
+		catApplication.run(args, stdin, stdout);
+	}
+	
+	@Test(expected = CatException.class)
+	public void testDirectoryCatException() throws CatException, IOException {
+		String[] args = new String[] {"cat","/Users/varunica/Documents","/Users/varunica/Desktop"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = System.out;
+		catApplication.run(args, stdin, stdout);
+	}
 	
 	@After
 	public void tearDown() {
