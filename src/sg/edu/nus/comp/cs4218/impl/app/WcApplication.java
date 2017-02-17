@@ -204,7 +204,7 @@ public class WcApplication implements Application, Wc {
 
 		try {
 			BufferedReader br = new BufferedReader(
-					new InputStreamReader(stdin));
+					new InputStreamReader(stdin, "UTF-8"));
 
 			String line = br.readLine();
 			lineCount++;
@@ -219,7 +219,6 @@ public class WcApplication implements Application, Wc {
 			totalWordCount += wordCount;
 			totalCharCount += charCount;
 		} catch (Exception exIO) {
-			exIO.printStackTrace();
 			throw new WcException("Null Pointer Exception");
 		}
 	}

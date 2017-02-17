@@ -9,7 +9,8 @@ import sg.edu.nus.comp.cs4218.app.Cal;
 import sg.edu.nus.comp.cs4218.exception.CalException;
 
 /**
- * The cal command prints the calendar of the current month.
+ * The cal command prints the calendar of the current month. If neither month nor year are specified, print calendar for the current
+ * month.
  * 
  * <p>
  * <b>Command format:</b> <code>cal [-m][[month] year]</code>
@@ -24,7 +25,6 @@ import sg.edu.nus.comp.cs4218.exception.CalException;
  * <dd>If only year is specified, print the calendar for each month in the
  * specified year in a grid 3 wide and 4 down.</dd>
  * </dl>
- * <dd>If neither month nor year are specified, print calendar for the current month.</dd>
  * </p>
  */
 public class CalApplication implements Application, Cal {

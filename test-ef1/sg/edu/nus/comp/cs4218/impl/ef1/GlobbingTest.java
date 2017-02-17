@@ -1,9 +1,11 @@
 package sg.edu.nus.comp.cs4218.impl.ef1;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.*;
 
@@ -14,18 +16,43 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 public class GlobbingTest {
 
 	private static ShellImpl shell;
-	private static ByteArrayOutputStream stdout;
-	String[] args;
-	private String TEST_FOLDER_NAME = "test-ef1";
-	
+	private static OutputStream stdout;
+	private static String TEST_FOLDER_NAME = "test_globbing";
+	private static final String[] FILE_NAMES = { "testGlobe.txt",
+			"testGlobe.py", "testGlobe.cpp", "testGlobe.html", "testGlobe.css",
+			"testGlobe.js", "testGlobe.xml" };
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		stdout = System.out;
 		
+		new File(TEST_FOLDER_NAME).mkdir();
+		for (int i = 0; i < FILE_NAMES.length; i++) {
+			Files.write(Paths.get(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]), "Test".getBytes());
+		}
+		
+		new File(TEST_FOLDER_NAME+"/testSubSubDir").mkdir();
+		Files.write(Paths.get(TEST_FOLDER_NAME +"/testSubSubDir/testGlobe.txt"), "Test".getBytes());
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-	
+		
+		File file = new File(TEST_FOLDER_NAME +"/testSubSubDir/testGlobe.txt");
+		file.setWritable(true);
+		file.delete();
+		
+		file = new File(TEST_FOLDER_NAME+"/testSubSubDir");
+		file.delete();
+		
+		for (int i = 0; i < FILE_NAMES.length; i++) {
+			file = new File(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]);
+			file.setWritable(true);
+			file.delete();
+		}
+
+		file = new File(TEST_FOLDER_NAME);
+		file.delete();
 	}
 
 	@Before
@@ -35,155 +62,72 @@ public class GlobbingTest {
 
 	@After
 	public void tearDown() throws Exception {
-		
-	}
-	
-	@Test
-	public void testInvalidGlob() {
-		String readLine = "cat *";
-		try {
-			shell.parseAndEvaluate(readLine, stdout);
-		} catch (Exception e) {
-			String exceptionMsg = "shell: Invalid globbing scenario";
-			assertEquals(exceptionMsg, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testInvalidGlob2() {
-		String readLine = "cat /*";
-		try {
-			shell.parseAndEvaluate(readLine, stdout);
-			//fail(MISSING_EXP);
-		} catch (Exception e) {
-			String exceptionMsg = "shell: Invalid globbing scenario";
-			assertEquals(exceptionMsg, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testInvalidGlob3() {
-		String readLine = "cat " + TEST_FOLDER_NAME + "/*/invalid";
-		try {
-			shell.parseAndEvaluate(readLine, stdout);
-			//fail(MISSING_EXP);
-		} catch (Exception e) {
-			String exceptionMsg = "shell: Invalid globbing scenario";
-			assertEquals(exceptionMsg, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testInvalidPath() {
-		String readLine = "cat ///*";
-		try {
-			shell.parseAndEvaluate(readLine, stdout);
-			//fail(MISSING_EXP);
-		} catch (Exception e) {
-			String exceptionMsg = "shell: Invalid globbing scenario";
-			assertEquals(exceptionMsg, e.getMessage());
-		}
-	}
-	
-	@Test
-	public void testGlobNoPaths() {
-		String readLine = "cat srctest/*";
-		try {
-			shell.globWithException(readLine);
-			//fail(MISSING_EXP);
-		} catch (Exception e) {
-			String exceptionMsg = "cat: No such file exists";
-			assertEquals(exceptionMsg, e.getMessage());
-		}
-	}
 
-	@Test
-	public void testGlobOneFile() {
-		String readLine = "cat " + TEST_FOLDER_NAME + "/SingleFileFolder/*";
-		try {
-			shell.globOneFile(readLine);
-		} catch (Exception e) {
-			//fail(VALID_CMD_NO_EXP);
-		}
-	}
-
-	@Test
-	public void testGlobFilesDirectories() {
-		String readLine = "cat " + TEST_FOLDER_NAME + "/MultiFileFolder/*";
-		try {
-			shell.globFilesDirectories(readLine);
-		} catch (Exception e) {
-			//fail(VALID_CMD_NO_EXP);
-		}
-	}
-
-	@Test
-	public void testGlobMultiLevel() {
-		String readLine = "cat " + TEST_FOLDER_NAME + "/*";
-		try {
-			shell.parseAndEvaluate(readLine, stdout);
-		} catch (Exception e) {
-			//fail(VALID_CMD_NO_EXP);
-		}
 	}
 	
-	@Test
-	public void displayTheContentOfFilesInFolder()
+	@Test(expected = ShellException.class)
+	public void testInvalidPath()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat articles/*";
-		stdout = new ByteArrayOutputStream();
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*/invalid";
 		shell.parseAndEvaluate(cmdLine, stdout);
-
-		String expected = "no*matches" + System.lineSeparator();
-		Assert.assertEquals(expected, stdout.toString());
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testiNVALIDsLASH()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "//*";
+		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
 	@Test
-	public void returnOriginalArgWhenGlobbingHasNoFileMatch()
+	public void testGlobe()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*";
+		shell.parseAndEvaluate(cmdLine, stdout);
+		assertEquals("Test Test Test Test Test Test Test Test", stdout.toString());
+	}
+
+	@Test
+	public void testGlobMultiLevel() throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "/testSubSubDir/*";
+		shell.parseAndEvaluate(cmdLine, stdout);
+		assertEquals("Test", stdout.toString());
+	}
+
+	@Test
+	public void testArgWhenEchoHasGlobbing()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo no*matches";
-		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
-
 		String expected = "no*matches" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
 	@Test
-	public void returnOriginalArgWhenFileNameIsBetweenDirectories()
+	public void testArgWhenEchoHasGlobbingMultipleLevels()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo oyster1337/*/mussel7715";
-		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
-
 		String expected = "oyster1337/*/mussel7715" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
 	@Test
-	public void returnExpandedArgsWhenGlobbingHasMatches()
-			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo *.txt13*";
-		stdout = new ByteArrayOutputStream();
-		shell.parseAndEvaluate(cmdLine, stdout);
-
-		String expected = "5callop.txt133 5callop.txt139"
-				+ System.lineSeparator();
-
-		Assert.assertEquals(expected, stdout.toString());
-	}
-
-	@Test
-	public void returnBothFilesAndDirectoriesAlphabeticallyWhenMatched()
+	public void testArgWhenEchoOnlyHasGlobbing()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo *";
-
-		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine, stdout);
-
-		String expected = "5callop.txt133 5callop.txt139 clam1533 oyster1337 sca110p.txt339"
-				+ System.lineSeparator();
-
+		String expected = "*" + System.lineSeparator();
+		Assert.assertEquals(expected, stdout.toString());
+	}
+	
+	@Test
+	public void testArgWhenWCGlobbing()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "wc -m *.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+		String expected = "47\t" + System.lineSeparator() + "304\t"
+				+ System.lineSeparator() + "351";
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
