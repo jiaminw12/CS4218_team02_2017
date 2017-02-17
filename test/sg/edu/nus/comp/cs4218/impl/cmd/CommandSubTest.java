@@ -28,6 +28,15 @@ public class CommandSubTest {
 		shellImpl = new ShellImpl();
 		outputStream = new ByteArrayOutputStream();
 	}
+	
+	@Test
+	public void testEmptyCallCommand() throws ShellException,
+		AbstractApplicationException {
+			CallCommand cmd = new CallCommand("");
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			cmd.evaluate(null, out);
+			assertEquals(out.toString(), "");
+	}
 
 	@Test(expected = ShellException.class)
 	public void testIllegalNumOfBackQuoteAtBack()
