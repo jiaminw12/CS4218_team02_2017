@@ -22,19 +22,21 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
 
 public class SedApplicationTest {
 	
-	private static final String TEXT = "The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ the(***&& lazy @@dog#*#*#))(*&^^";
+	private static final String TEXT1 = "The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ the(***&& lazy @@dog#*#*#))(*&^^";
+	private static final String TEXT2 = "lololololololololololololloololo";
+	private static final String TEXT3 = "lol ololo olol olo lol olol olol olo lolloololo olol olo";;
 	private static final String[] FILE_NAMES = { "test1.txt", "test2.txt", "test3.txt" };
-	private static final List<String> TEXT1 = Arrays.asList(
+	private static final List<String> TEXTLIST1 = Arrays.asList(
 			"The quick$%^^%% brown fox jumps over the lazy dog", 
 			"Quick brown fox the jumps over the lazy dog",  
 			"Quick brown fox jumps over the lazy dog))(~(!@@", 
 			"@((#*#&&@@(#Quick brown fox jumps over lazy dog The",
 			"thE Quick brown fox THE jumps over lazy dog the");
-	private static final List<String> TEXT2 = Arrays.asList(
+	private static final List<String> TEXTLIST2 = Arrays.asList(
 			"lolollllolololllololol", 
 			"lloolololololollllolollololoolllolololoo",
 			"oooollololololollllolololllololol");
-	private static final List<String> TEXT3 = Arrays.asList(
+	private static final List<String> TEXTLIST3 = Arrays.asList(
 			"`#*#*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#", 
 			"`#*#*#*#*#*#*#`**#*#*#*`#-@!!`!!*`***#*#*`#-@!!`!!*`***`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#",  
 			"`#*#*#*#*#-@!!`!!*#`**#*#*#*`#-@!!`!!*`**`*`#*-@!!`!!*#-@!!`!!*-@!!`!!-@!!`!!*#");
@@ -50,13 +52,13 @@ public class SedApplicationTest {
 		
 		try {
 			Path file1 = Paths.get("test1.txt");
-			Files.write(file1, TEXT1, Charset.forName("UTF-8"));
+			Files.write(file1, TEXTLIST1, Charset.forName("UTF-8"));
 			
 			Path file2 = Paths.get("test2.txt");
-			Files.write(file2, TEXT2, Charset.forName("UTF-8"));
+			Files.write(file2, TEXTLIST2, Charset.forName("UTF-8"));
 			
 			Path file3 = Paths.get("test3.txt");
-			Files.write(file3, TEXT3, Charset.forName("UTF-8"));
+			Files.write(file3, TEXTLIST3, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,7 +75,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testSedInsufficientArgs() throws SedException {
 		String[] args = new String[] { "sed" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -81,7 +83,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testExtraArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/", "test1.txt", "test2.txt" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -89,7 +91,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleExtraSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi//bye/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -97,7 +99,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleExtraSeparators() throws SedException {
 		String[] args = new String[] { "sed", "s/hi///g" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -105,7 +107,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleExtraSpace() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/ /bye/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -113,7 +115,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleInsufficientArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/g/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -121,7 +123,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleExtraArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/test/bye/g" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -129,7 +131,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleMissingSeparatorBehind() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -137,7 +139,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleS() throws SedException {
 		String[] args = new String[] { "sed", "g/hi/bye/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -145,7 +147,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleG() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/s" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -153,7 +155,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleLongS() throws SedException {
 		String[] args = new String[] { "sed", "sss/hi/bye/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -161,7 +163,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleLongG() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/ggg" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -169,7 +171,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleMissingSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -177,7 +179,7 @@ public class SedApplicationTest {
 	@Test(expected = SedException.class)
 	public void testInvalidReplacementRuleRedundantSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/g/" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
@@ -269,7 +271,8 @@ public class SedApplicationTest {
 	@Test
 	public void testReplaceSubstringWithInvalidRegex() {
 		String args = "sed s/lol***/the/g";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
 		assertEquals("sed: Invalid Regex", result);
 	}
 	
@@ -283,39 +286,38 @@ public class SedApplicationTest {
 	@Test
 	public void testReplaceFirstSubStringFromStdin() {
 		String args = "sed s/the/to-her/";
-		input = TEXT;
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		String result = sedApplication.replaceFirstSubStringFromStdin(args, stdin);
 		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
 	}
 	
 	@Test
 	public void testReplaceFirstSubStringFromStdinRepeatedWords() {
 		String args = "sed s/lol/yea/";
-		input = "lololololololololololololloololo";
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT2.getBytes());
+		String result = sedApplication.replaceFirstSubStringFromStdin(args, stdin);
 		assertEquals("yeaolololololololololololloololo", result);
 	}
 	
 	@Test
 	public void testReplaceAllSubStringInStdin() {
 		String args = "sed s/the/to-her/g";
-		input = TEXT;
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
 		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
 	}
 	
 	@Test
 	public void testReplaceAllSubStringInStdinRepeatedWords() {
 		String args = "sed s/lol/~yea~/";
-		input = "lololololololololololololloololo";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT2.getBytes());
+		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
 		assertEquals("~yea~o~yea~o~yea~o~yea~o~yea~o~yea~olloo~yea~o", result);
 	}
 	
 	@Test
 	public void testReplaceFirstSubStringInFile() {
 		String args = "sed s/the/to-her/ test1.txt";
-		input = TEXT;
 		String result = sedApplication.replaceFirstSubStringInFile(args);
 		assertEquals("The quick$%^^%% brown fox jumps over to-her lazy dog" + System.getProperty("line.separator") 
 				+ "Quick brown fox to-her jumps over the lazy dog" + System.getProperty("line.separator") 
@@ -336,7 +338,6 @@ public class SedApplicationTest {
 	@Test
 	public void testReplaceAllSubStringsInFile() {
 		String args = "sed s/the/to-her/g test1.txt";
-		input = TEXT;
 		String result = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("The quick$%^^%% brown fox jumps over to-her lazy dog" + System.getProperty("line.separator")  
 				+ "Quick brown fox to-her jumps over to-her lazy dog" + System.getProperty("line.separator")   
@@ -359,39 +360,38 @@ public class SedApplicationTest {
 	@Test
 	public void testReplaceFirstSubStringFromStdinWithSpace() {
 		String args = "sed s/the/'to her'/";
-		input = TEXT;
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		String result = sedApplication.replaceFirstSubStringFromStdin(args, stdin);
 		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to her(***&& lazy @@dog#*#*#))(*&^^", result);
 	}
 	
 	@Test
 	public void testReplaceFirstSubStringFromStdinRepeatedWordsWithSpace() {
 		String args = "sed s/lol/\"yea yea\"/";
-		input = "lololololololololololololloololo";
-		String result = sedApplication.replaceFirstSubStringFromStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT2.getBytes());
+		String result = sedApplication.replaceFirstSubStringFromStdin(args, stdin);
 		assertEquals("yea yeaolololololololololololloololo", result);
 	}
 	
 	@Test
 	public void testReplaceAllSubStringInStdinWithSpace() {
 		String args = "sed s/the/'to-her'/g";
-		input = TEXT;
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
 		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
 	}
 	
 	@Test
 	public void testReplaceAllSubStringInStdinRepeatedWordsWithSpace() {
 		String args = "sed s/\"olol olo\"/'~yea man~'/";
-		input = "lol ololo olol olo lol olol olol olo lolloololo olol olo";
-		String result = sedApplication.replaceAllSubstringsInStdin(args);
+		InputStream stdin = new ByteArrayInputStream(TEXT3.getBytes());
+		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
 		assertEquals("lol ololo ~yea man~ lol ~yea man~l olo lolloololo ~yea man~", result);
 	}
 	
 	@Test
 	public void testReplaceFirstSubStringInFileWithSpace() {
 		String args = "sed s/the/'to her'/ test1.txt";
-		input = TEXT;
 		String result = sedApplication.replaceFirstSubStringInFile(args);
 		assertEquals("The quick$%^^%% brown fox jumps over to her lazy dog" + System.getProperty("line.separator") 
 				+ "Quick brown fox to her jumps over the lazy dog" + System.getProperty("line.separator") 
@@ -412,7 +412,6 @@ public class SedApplicationTest {
 	@Test
 	public void testReplaceAllSubStringsInFileWithSpace() {
 		String args = "sed s/the/'to her'/g test1.txt";
-		input = TEXT;
 		String result = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("The quick$%^^%% brown fox jumps over to her lazy dog" + System.getProperty("line.separator")  
 				+ "Quick brown fox to her jumps over to her lazy dog" + System.getProperty("line.separator")   

@@ -47,8 +47,6 @@ public class SedApplication implements Application, Sed {
 	private static final int REPLACE_FIRST_SUBSTRING = 3;
 	private static final int REPLACE_ALL_SUBSTRING = 4;
 
-	private InputStream stdin;
-
 	/**
 	 * Runs the sed application with the specified arguments.
 	 * 
@@ -86,12 +84,11 @@ public class SedApplication implements Application, Sed {
 
 				if(args.length == 2) {
 					// Input type stdin
-					this.stdin = stdin;
 
 					if(replacementType == REPLACE_FIRST_SUBSTRING) {
-						text = replaceFirstSubStringFromStdin(text);
+						text = replaceFirstSubStringFromStdin(text, stdin);
 					} else if(replacementType == REPLACE_ALL_SUBSTRING) { 
-						text = replaceAllSubstringsInStdin(text);
+						text = replaceAllSubstringsInStdin(text, stdin);
 					} 
 
 					byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
@@ -381,8 +378,8 @@ public class SedApplication implements Application, Sed {
 
 	@Override
 	public String replaceFirstSubStringInFile(String args) {
-
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);
+		
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	
 		String text = new String();
 
 		try {
@@ -412,15 +409,10 @@ public class SedApplication implements Application, Sed {
 	}
 
 	@Override
-	public String replaceFirstSubStringFromStdin(String args) {
+	public String replaceFirstSubStringFromStdin(String args, InputStream stdin) {
 		
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
 		String text = new String();
-
-		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedApplicationTest.input.getBytes());
-		}
-
 		try {
 			text = readFromStdin(splitArgs, stdin);
 			text = replaceFirstSubString(text, splitArgs);
@@ -432,14 +424,10 @@ public class SedApplication implements Application, Sed {
 	}
 
 	@Override
-	public String replaceAllSubstringsInStdin(String args) {
+	public String replaceAllSubstringsInStdin(String args, InputStream stdin) {
 		
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
 		String text = new String();
-
-		if(stdin == null) {
-			stdin = new ByteArrayInputStream(SedApplicationTest.input.getBytes());
-		}
 
 		try {
 			text = readFromStdin(splitArgs, stdin);

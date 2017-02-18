@@ -1,5 +1,7 @@
 package sg.edu.nus.comp.cs4218.app;
 
+import java.io.InputStream;
+
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 
@@ -24,14 +26,14 @@ public interface Sed extends Application {
 	 * Stdin
 	 * @param args String containing command and arguments
 	 */
-	public String replaceFirstSubStringFromStdin(String args);
+	public String replaceFirstSubStringFromStdin(String args, InputStream stdin);
 
 	/**
 	 * Returns string containing lines with all matched substring replaced in
 	 * Stdin
 	 * @param args String containing command and arguments
 	 */
-	public String replaceAllSubstringsInStdin(String args);
+	public String replaceAllSubstringsInStdin(String args, InputStream stdin);
 	
 	/**
 	 * Returns string containing lines when invalid replacement rule is
