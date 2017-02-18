@@ -185,8 +185,6 @@ public class SedApplication implements Application, Sed {
 				} catch (IOException e) {
 					throw new SedException("Could not write to output stream");
 				}
-			} else {
-				throw new SedException("File Could Not Be Read");
 			} 
 		}
 

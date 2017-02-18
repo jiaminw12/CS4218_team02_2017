@@ -402,8 +402,8 @@ public class ShellImpl implements Shell {
 
 	@Override
 	public String pipeTwoCommands(String args) {
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split("|");	//TODO Change this split method
-		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split("\\|");	//TODO Change this split method
+		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
 		
 		if (splitArgs.length == 2) {
@@ -413,14 +413,12 @@ public class ShellImpl implements Shell {
 			try {
 				parseAndEvaluate(firstCommand + "|" + secondCommand, stdout);
 			} catch (ShellException | AbstractApplicationException e) {
-				return result;
+				return e.getMessage();
 			}
 			
-			try {
-				result = stdout.toString("UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				return result;
-			}
+			ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+			byte[] byteArray = outByte.toByteArray();
+			result = new String(byteArray);
 		} 
 		
 		// Testing purpose: Returns empty if pipe command is not split into 2
@@ -429,7 +427,7 @@ public class ShellImpl implements Shell {
 
 	@Override
 	public String pipeMultipleCommands(String args) {
-		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
 		
 		try {
@@ -438,18 +436,16 @@ public class ShellImpl implements Shell {
 			return result;
 		}
 		
-		try {
-			result = stdout.toString("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return result;
-		}
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
 		
 		return result;
 	}
 
 	@Override
 	public String pipeWithException(String args) {	
-		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
 		
 		try {
@@ -458,11 +454,9 @@ public class ShellImpl implements Shell {
 			return e.getMessage();
 		}
 		
-		try {
-			result = stdout.toString("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return e.getMessage();
-		}
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
 		
 		return result;
 	}

@@ -185,6 +185,119 @@ public class SedApplicationTest {
 	}
 	
 	@Test
+	public void testReplaceFirstSubStringFromStdinFromRun() {
+		String[] args = { "sed", "s/the/to-her/" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringFromStdinRepeatedWordsFromRun() {
+		String[] args = { "sed", "s/lol/yea/" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceAllSubStringInStdinFromRun() {
+		String[] args = { "sed", "s/the/to-her/g" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceAllSubStringInStdinRepeatedWordsFromRun() {
+		String[] args = { "sed", "s/lol/~yea~/" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringInFileFromRun() {
+		String[] args = { "sed", "s/the/to-her/", "test1.txt" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceFirstSubStringInFileRepeatedWordsFromRun() {
+		String[] args = { "sed", "s/lol/yea!/", "test2.txt" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceAllSubStringsInFileFromRun() {
+		String[] args = { "sed", "s/the/to-her/g", "test1.txt" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testReplaceAllSubStringsInFileRepeatedWordsFromRun() {
+		String[] args = { "sed", "s/lol/~yea~/g", "test2.txt" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		
+		try {
+			sedApplication.run(args, stdin, stdout);
+		} catch (SedException e) {
+			fail("Should not fail: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInvalidFileName() throws SedException {
+		String args = "sed s/hi/bye/g hello.txt" ;
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		String result = sedApplication.replaceFirstSubStringInFile(args);
+		assertEquals("sed: Could not read file", result);
+	}
+	
+	@Test
 	public void testReplaceSubstringWithInvalidRuleExtraSeparator() throws SedException {
 		String args = "sed s/hi//bye/";
 		String result = sedApplication.replaceSubstringWithInvalidRule(args);
@@ -354,8 +467,6 @@ public class SedApplicationTest {
 				+ "lloo~yea~o~yea~o~yea~ll~yea~ol~yea~olooll~yea~o~yea~oo" + System.getProperty("line.separator")
 				+ "ooool~yea~o~yea~o~yea~ll~yea~o~yea~l~yea~o~yea~", result);
 	}
-	
-	//===
 	
 	@Test
 	public void testReplaceFirstSubStringFromStdinWithSpace() {
