@@ -24,7 +24,7 @@ public class SedApplicationTest {
 	
 	private static final String TEXT1 = "The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ the(***&& lazy @@dog#*#*#))(*&^^";
 	private static final String TEXT2 = "lololololololololololololloololo";
-	private static final String TEXT3 = "lol ololo olol olo lol olol olol olo lolloololo olol olo";;
+	private static final String TEXT3 = "lol ololo olol olo lol olol olol olo lolloololo olol olo";
 	private static final String[] FILE_NAMES = { "test1.txt", "test2.txt", "test3.txt" };
 	private static final List<String> TEXTLIST1 = Arrays.asList(
 			"The quick$%^^%% brown fox jumps over the lazy dog", 

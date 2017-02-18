@@ -1,11 +1,17 @@
 package sg.edu.nus.comp.cs4218.impl.cmd;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.IOUtils;
 
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
@@ -22,11 +28,11 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
  */
 
 public class PipeCommand implements Command {
+	
+	private String cmdline;
 
 	public PipeCommand(String cmdline) {
-	}
-
-	public PipeCommand() {
+		this.cmdline = cmdline;
 	}
 
 	/**
@@ -47,6 +53,36 @@ public class PipeCommand implements Command {
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		
+		if(!cmdline.contains("|")) {
+			String[] words = cmdline.replaceAll("\\s{2,}", " ").trim().split(" "); //TODO Change this split method
+			ShellImpl.runApp(words[0], words, stdin, stdout);
+		} else {
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			String[] args = cmdline.trim().split("\\|");	//TODO: Update this split method
+			
+			for (int i = 0; i < args.length; i++) {
+				String[] words = args[i].trim().split(" "); 	//TODO: Update this split method
+				String result = new String();
+				
+				if(i > 0) {
+					result = new BufferedReader(new InputStreamReader(stdin)).lines()
+							   .parallel().collect(Collectors.joining("\n")) + "\n";
+				}
+				
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
+				ShellImpl.runApp(words[0], words, inputStream, outputStream);
+				
+				if(i != args.length - 1) {
+					stdin = ShellImpl.outputStreamToInputStream(outputStream);
+					outputStream = new ByteArrayOutputStream();
+				} else {
+					// Final command
+					ShellImpl.closeOutputStream(outputStream);
+				} 
+			}
+
+			ShellImpl.writeToStdout(outputStream, stdout);
+		}
 	}
 
 	/**

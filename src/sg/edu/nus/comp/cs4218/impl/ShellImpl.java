@@ -17,6 +17,7 @@ import sg.edu.nus.comp.cs4218.impl.app.PwdApplication;
 import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
 import sg.edu.nus.comp.cs4218.impl.app.TailApplication;
 import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 import sg.edu.nus.comp.cs4218.impl.app.DateApplication;
 
 /**
@@ -40,6 +41,8 @@ public class ShellImpl implements Shell {
 			+ "as output redirection file.";
 	public static final String EXP_STDOUT = "Error writing to stdout.";
 	public static final String EXP_NOT_SUPPORTED = " not supported yet";
+	
+	public static InputStream stdin;
 
 	/**
 	 * Searches for and processes the commands enclosed by back quotes for
@@ -199,6 +202,7 @@ public class ShellImpl implements Shell {
 	public static void runApp(String app, String[] argsArray,
 			InputStream inputStream, OutputStream outputStream)
 			throws AbstractApplicationException, ShellException {
+		
 		Application absApp = null;
 		if (("cat").equals(app)) {// cat [FILE]...
 			absApp = new CatApplication();
@@ -221,6 +225,7 @@ public class ShellImpl implements Shell {
 		} else { // invalid command
 			throw new ShellException(app + ": " + EXP_INVALID_APP);
 		}
+		
 		absApp.run(argsArray, inputStream, outputStream);
 	}
 
@@ -390,26 +395,76 @@ public class ShellImpl implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		String[] words = cmdline.replaceAll("\\s{2,}", " ").trim().split(" ");
-		runApp(words[0], words, System.in, stdout);
+		
+		PipeCommand pipeCommand = new PipeCommand(cmdline);
+		pipeCommand.evaluate(System.in, stdout);
 	}
 
 	@Override
 	public String pipeTwoCommands(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split("|");	//TODO Change this split method
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+		
+		if (splitArgs.length == 2) {
+			String firstCommand = splitArgs[0];
+			String secondCommand = splitArgs[1];
+			
+			try {
+				parseAndEvaluate(firstCommand + "|" + secondCommand, stdout);
+			} catch (ShellException | AbstractApplicationException e) {
+				return result;
+			}
+			
+			try {
+				result = stdout.toString("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				return result;
+			}
+		} 
+		
+		// Testing purpose: Returns empty if pipe command is not split into 2
+		return result;
 	}
 
 	@Override
 	public String pipeMultipleCommands(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+		
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return result;
+		}
+		
+		try {
+			result = stdout.toString("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return result;
+		}
+		
+		return result;
 	}
 
 	@Override
-	public String pipeWithException(String args) {
-		// TODO Auto-generated method stub
-		return null;
+	public String pipeWithException(String args) {	
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+		
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+		
+		try {
+			result = stdout.toString("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return e.getMessage();
+		}
+		
+		return result;
 	}
 
 	@Override
