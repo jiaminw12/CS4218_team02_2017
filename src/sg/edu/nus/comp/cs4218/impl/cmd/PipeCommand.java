@@ -15,11 +15,14 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 /**
- * A Pipe Command is a sub-command consisting of at least one non-keyword and
- * quoted (if any).
+ * A Pipe Command is a left-associative operator that can be used to bind 
+ * a set of call commands into a chain. Each pipe operator binds the output of 
+ * the left part to the input of the right part, then evaluates these parts 
+ * concurrently. If an exception occurred in any of these parts, the execution 
+ * of the other part must be terminated.
  * 
  * <p>
- * <b>Command format:</b> <code>(&lt;non-Keyword&gt; | &lt;quoted&gt;)*</code>
+ * <b>Command format:</b> <code>&lt;call&gt; “|” &lt;call&gt; | &lt;pipe&gt; “|” <call></code>
  * </p>
  */
 
@@ -28,7 +31,7 @@ public class PipeCommand implements Command {
 	private String cmdline;
 
 	public PipeCommand(String cmdline) {
-		this.cmdline = cmdline;
+		this.cmdline = cmdline.trim();
 	}
 
 	/**
@@ -50,10 +53,16 @@ public class PipeCommand implements Command {
 			throws AbstractApplicationException, ShellException {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		String[] args = cmdline.trim().split("\\|");	//TODO: Update this split method
+		String[] args = cmdline.split("\\|");	//TODO: Update this split method
 
+		if(cmdline.length() > 0 && (cmdline.charAt(0) == '|' 
+				|| cmdline.charAt(cmdline.length() - 1) == '|')
+				|| cmdline.contains("||")) {
+			throw new ShellException("Invalid pipe operators");
+		}
+		
 		if(args.length == 1) {
-			String[] words = args[0].trim().split(" "); 
+			String[] words = args[0].trim().split(" ");  	//TODO: Update this split method
 			ShellImpl.runApp(words[0], words, stdin, stdout);
 		} else {
 			for (int i = 0; i < args.length; i++) {

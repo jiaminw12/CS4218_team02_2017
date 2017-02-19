@@ -297,6 +297,14 @@ public class SedApplicationTest {
 		assertEquals("sed: Could not read file", result);
 	}
 	
+	@Test(expected = SedException.class)
+	public void testInvalidFileNameGivenDirectory() throws SedException {
+		String[] args = new String[] { "sed", "s/hi/bye/g/", "folder" };
+		stdin = new ByteArrayInputStream(TEXT1.getBytes());
+		stdout = System.out;
+		sedApplication.run(args, stdin, stdout);
+	}
+	
 	@Test
 	public void testReplaceSubstringWithInvalidRuleExtraSeparator() throws SedException {
 		String args = "sed s/hi//bye/";

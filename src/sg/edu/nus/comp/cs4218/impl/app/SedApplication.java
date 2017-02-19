@@ -360,14 +360,14 @@ public class SedApplication implements Application, Sed {
 		} else if(inputType == TYPE_FILE) {
 			splitArgs[0] = args.substring(0, args.indexOf("s" + separator)).trim();
 			
-			if(args.contains(separator + "g")) {
-				splitArgs[1] = args.substring(args.indexOf("s" + separator), args.indexOf(separator + "g") + 2).trim();
-				splitArgs[2] = args.substring(args.indexOf(separator + "g") + 2, args.length()).trim();
+			if(args.contains(separator + "g ")) {
+				splitArgs[1] = args.substring(args.indexOf("s" + separator), args.indexOf(separator + "g ") + 2).trim();
+				splitArgs[2] = args.substring(args.indexOf(separator + "g ") + 2, args.length()).trim();
 			} else {
 				String reverseString = new StringBuilder(args).reverse().toString();
-				splitArgs[2] = reverseString.substring(0, reverseString.indexOf(separator)).trim();
+				splitArgs[2] = reverseString.substring(0, reverseString.indexOf(" " + separator)).trim();
 				splitArgs[2] = new StringBuilder(splitArgs[2]).reverse().toString();
-				splitArgs[1] = reverseString.substring(reverseString.indexOf(separator), reverseString.indexOf(separator + "s") + 2).trim();
+				splitArgs[1] = reverseString.substring(reverseString.indexOf(" " + separator), reverseString.indexOf(separator + "s") + 2).trim();
 				splitArgs[1] = new StringBuilder(splitArgs[1]).reverse().toString();
 			}
 		}
@@ -378,7 +378,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceFirstSubStringInFile(String args) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
 		String text = new String();
 
 		try {
@@ -394,7 +394,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceAllSubstringsInFile(String args) {
 
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
 		String text = new String();
 
 		try {
@@ -410,7 +410,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceFirstSubStringFromStdin(String args, InputStream stdin) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
 		String text = new String();
 		try {
 			text = readFromStdin(splitArgs, stdin);
@@ -425,7 +425,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceAllSubstringsInStdin(String args, InputStream stdin) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
 		String text = new String();
 
 		try {

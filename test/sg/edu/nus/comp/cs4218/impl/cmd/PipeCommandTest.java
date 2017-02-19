@@ -64,35 +64,35 @@ public class PipeCommandTest {
 	}
 	
 	@Test
-	public void testPipeTwoCommandsNoArgs() throws Exception {
+	public void testPipeTwoCommandsNoArgs() {
 		args = "";
 		result = shellImpl.pipeTwoCommands(args);
 		assertEquals("", result);
 	}
 	
 	@Test
-	public void testPipeTwoCommandsSuccess() throws Exception {
+	public void testPipeTwoCommandsSuccess() {
 		args = "cat test1.txt | sed s/brown/PINK/";
 		result = shellImpl.pipeTwoCommands(args);
 		assertEquals("The quick$%^^%% PINK fox jumps over the lazy dog" + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
-	public void testPipeTwoCommandsExceptionInSecondCommand() throws Exception {
+	public void testPipeTwoCommandsExceptionInSecondCommand() {
 		args = "cat test1.txt | sed s/lol";
 		result = shellImpl.pipeTwoCommands(args);
 		assertEquals("sed: Invalid Replacement Rule: Insufficient arguments", result);
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsNoArgs() throws Exception { 
+	public void testPipeMultipleCommandsNoArgs() { 
 		args = "";
 		result = shellImpl.pipeMultipleCommands(args);
 		assertEquals("", result);
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsSuccess() throws Exception {
+	public void testPipeMultipleCommandsSuccess() {
 		args = "cat test1.txt | head -n 2 | tail -n 1";
 		result = shellImpl.pipeMultipleCommands(args);
 		assertEquals("The quick$%^^%% brown fox jumps over the lazy dog" + System.getProperty("line.separator") 
@@ -101,24 +101,38 @@ public class PipeCommandTest {
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsRepeatSuccess() throws Exception {
+	public void testPipeMultipleCommandsRepeatSuccess() {
 		args = "cat test2.txt | cat test1.txt | sed s/brown/RED/";
 		result = shellImpl.pipeMultipleCommands(args);
 		assertEquals("The quick$%^^%% RED fox jumps over the lazy dog" + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsWithException() throws Exception {
-		args = "cat test1.txt | head -n 2 | tail -n 1";
-		result = shellImpl.pipeMultipleCommands(args);
-		assertEquals("", result);
+	public void testPipeMultipleCommandsWithException() {
+		args = "cat test1.txt | sed s/brown/RED/ | sed s/brown/RED";
+		result = shellImpl.pipeWithException(args);
+		assertEquals("sed: Invalid Replacement Rule: Missing separator at the end", result);
 	}
 	
 	@Test
-	public void testPipeWithException() throws Exception {
-		args = "cat test1.txt | head -n 2 | tail -n 1";
-		result = shellImpl.pipeMultipleCommands(args);
-		assertEquals("", result);
+	public void testPipeInvalidFirstCharSyntax() {
+		args = "| cat test1.txt | sed s/brown/PINK/";
+		result = shellImpl.pipeWithException(args);
+		assertEquals("shell: Invalid pipe operators", result);
+	}
+	
+	@Test
+	public void testPipeInvalidLastCharSyntax() {
+		args = "cat test1.txt | sed s/brown/PINK/ |";
+		result = shellImpl.pipeWithException(args);
+		assertEquals("shell: Invalid pipe operators", result);
+	}
+	
+	@Test
+	public void testPipeInvalidEmptyPipeCommandsSyntax() {
+		args = "cat test1.txt | | sed s/brown/PINK/";
+		result = shellImpl.pipeWithException(args);
+		assertEquals("shell: : Invalid app.", result);
 	}
 	
 	@After
