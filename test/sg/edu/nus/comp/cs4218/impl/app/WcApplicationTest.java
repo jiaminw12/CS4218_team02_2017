@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.junit.After;
@@ -36,10 +37,10 @@ public class WcApplicationTest {
 		String[] args = {};
 		wcApp.run(args, null, System.out);
 	}
-	
+
 	@Test(expected = WcException.class)
 	public void testWcAppWithOneItemInArgs() throws WcException {
-		String[] args = {"wc"};
+		String[] args = { "wc" };
 		wcApp.run(args, System.in, System.out);
 	}
 
@@ -55,133 +56,136 @@ public class WcApplicationTest {
 		wcApp.run(args, System.in, System.out);
 	}
 
-	@Test(expected = WcException.class)
+	@Test
 	public void testIllegalFile() throws WcException {
-		String[] args = { "wc", "-l", "cybody40" };
-		wcApp.run(args, System.in, System.out);
+		String actualResult = wcApp
+				.printNewlineCountInFile("wc -l cybody40");
+		assertEquals("cybody40 is not a file", actualResult);
 	}
 
-	@Test(expected = WcException.class)
+	@Test
 	public void testIllegalFiles() throws WcException {
-		String[] args = { "wc", "-l", "cybody40.txt", "invalidFileName#@#$$%" };
-		wcApp.run(args, System.in, System.out);
+		String actualResult = wcApp.printNewlineCountInFile(
+				"wc -l cybody40.txt invalidFileName#@#$$%");
+		assertEquals(
+				"4\t" + System.lineSeparator()
+						+ "invalidFileName#@#$$% is not a file",
+				actualResult);
 	}
 
 	@Test
 	public void testPrintCharacterCountInFile() throws WcException {
 		// wc -m cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printCharacterCountInFile("wc -m cybody40.txt");
-		assertEquals("304", expectedResult);
+		assertEquals("304", actualResult);
 	}
 
 	@Test
 	public void testPrintWordCountInFile() throws WcException {
 		// wc -w cybody40.txt
-		String expectedResult = wcApp
-				.printWordCountInFile("wc -w cybody40.txt");
-		assertEquals("54", expectedResult);
+		String actualResult = wcApp.printWordCountInFile("wc -w cybody40.txt");
+		assertEquals("54", actualResult);
 	}
 
 	@Test
 	public void testPrintLineCountInFile() throws WcException {
 		// wc -l cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printNewlineCountInFile("wc -l cybody40.txt");
-		assertEquals("4", expectedResult);
+		assertEquals("4", actualResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInFile() throws WcException {
 		// wc -m -w -l cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cybody40.txt");
-		assertEquals("304\t54\t4", expectedResult);
+		assertEquals("304\t54\t4", actualResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInFileAllOptionsTogether()
 			throws WcException {
 		// wc -m -w -l cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cybody40.txt");
-		assertEquals("304\t54\t4", expectedResult);
+		assertEquals("304\t54\t4", actualResult);
 	}
 
 	@Test
 	public void testPrintAllCharactersInTwoFiles() throws WcException {
 		// wc -m cxintro02.txt cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -m cxintro02.txt cybody40.txt");
 		assertEquals("47\t" + System.lineSeparator() + "304\t"
-				+ System.lineSeparator() + "351", expectedResult);
+				+ System.lineSeparator() + "351", actualResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInTwoFiles() throws WcException {
 		// wc -m -w -l cxintro02.txt cybody40.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -m -w -l cxintro02.txt cybody40.txt");
-		assertEquals(
-				"47\t8\t1\t" + System.lineSeparator() + "304\t54\t4\t"
-						+ System.lineSeparator() + "351\t62\t5",
-				expectedResult);
+		assertEquals("47\t8\t1\t" + System.lineSeparator() + "304\t54\t4\t"
+				+ System.lineSeparator() + "351\t62\t5", actualResult);
 	}
 
 	@Test
 	public void testPrintTwoOptionsTogether() throws WcException {
 		// wc -mw cxintro02.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -mw cxintro02.txt");
-		assertEquals("47\t8", expectedResult);
+		assertEquals("47\t8", actualResult);
 	}
 
 	@Test
 	public void testPrintAllOptionsTogether() throws WcException {
 		// wc -lmw cxintro02.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -lmw cxintro02.txt");
-		assertEquals("47\t8\t1", expectedResult);
+		assertEquals("47\t8\t1", actualResult);
 	}
 
 	@Test
 	public void testPrintAllOptionsTogetherInReverseOrder() throws WcException {
 		// wc -wml cxintro02.txt
-		String expectedResult = wcApp
+		String actualResult = wcApp
 				.printAllCountsInFile("wc -wml cxintro02.txt");
-		assertEquals("47\t8\t1", expectedResult);
+		assertEquals("47\t8\t1", actualResult);
 	}
 
 	@Test
 	public void testPrintCharacterCountInStdin() throws WcException {
 		// wc -m
-		wcApp.setInputStream("a\nb\nc\n");
-		String expectedResult = wcApp.printCharacterCountInStdin("wc -m");
-		assertEquals("1", expectedResult);
+		ByteArrayInputStream in = new ByteArrayInputStream(
+				"a\nb\nc\n".getBytes());
+		String actualResult = wcApp.printCharacterCountInStdin("wc -m", in);
+		assertEquals("1", actualResult);
 	}
 
 	@Test
 	public void testPrintWordCountInStdin() throws WcException {
 		// wc -w
-		wcApp.setInputStream("a\n");
-		String expectedResult = wcApp.printWordCountInStdin("wc -w");
-		assertEquals("1", expectedResult);
+		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
+		String actualResult = wcApp.printWordCountInStdin("wc -w", in);
+		assertEquals("1", actualResult);
 	}
 
 	@Test
 	public void testPrintNewlineCountInStdin() throws WcException {
 		// wc -l
-		wcApp.setInputStream("a\n");
-		String expectedResult = wcApp.printNewlineCountInStdin("wc -l");
-		assertEquals("1", expectedResult);
+		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
+		String actualResult = wcApp.printNewlineCountInStdin("wc -l", in);
+		assertEquals("1", actualResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInStdin() throws WcException {
 		// wc -m -w -l
-		wcApp.setInputStream("a\n");
-		String expectedResult = wcApp.printAllCountsInStdin("wc -m -w -l");
-		assertEquals("1\t1\t1", expectedResult);
+		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
+		String actualResult = wcApp.printAllCountsInStdin("wc -m -w -l", in);
+		assertEquals("1\t1\t1", actualResult);
 	}
 
 	@After
