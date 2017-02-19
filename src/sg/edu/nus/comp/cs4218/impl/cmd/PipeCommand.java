@@ -52,27 +52,32 @@ public class PipeCommand implements Command {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		String[] args = cmdline.trim().split("\\|");	//TODO: Update this split method
 
-		for (int i = 0; i < args.length; i++) {
-			String[] words = args[i].trim().split(" "); 	//TODO: Update this split method
-			String result = new String();
+		if(args.length == 1) {
+			String[] words = args[0].trim().split(" "); 
+			ShellImpl.runApp(words[0], words, stdin, stdout);
+		} else {
+			for (int i = 0; i < args.length; i++) {
+				String[] words = args[i].trim().split(" "); 	//TODO: Update this split method
+				String result = new String();
 
-			if(i > 0) {
-				result = new BufferedReader(new InputStreamReader(stdin)).lines()
-						.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+				if(i > 0) {
+					result = new BufferedReader(new InputStreamReader(stdin)).lines()
+							.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+				}
+
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
+				ShellImpl.runApp(words[0], words, inputStream, outputStream);
+
+				if(i != args.length - 1) {
+					stdin = ShellImpl.outputStreamToInputStream(outputStream);
+					outputStream = new ByteArrayOutputStream();
+				} else {
+					// Final command
+					ShellImpl.closeOutputStream(outputStream);
+				} 
 			}
-
-			ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
-			ShellImpl.runApp(words[0], words, inputStream, outputStream);
-
-			if(i != args.length - 1) {
-				stdin = ShellImpl.outputStreamToInputStream(outputStream);
-				outputStream = new ByteArrayOutputStream();
-			} else {
-				// Final command
-				ShellImpl.closeOutputStream(outputStream);
-			} 
 		}
-
+		
 		ShellImpl.writeToStdout(outputStream, stdout);
 	}
 
