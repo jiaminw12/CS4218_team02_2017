@@ -23,7 +23,8 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
  * <b>Command format:</b> <code>head [OPTIONS] [FILE]</code>
  * <dl>
  * <dt>OPTIONS</dt>
- * <dd>“-n 15” means printing 15 lines. Print first 10 lines if not specified.</dd>
+ * <dd>“-n 15” means printing 15 lines. Print first 10 lines if not
+ * specified.</dd>
  * <dt>FILES</dt>
  * <dd>the name of the file. If not specified, use stdin.</dd>
  * </dl>
@@ -32,14 +33,16 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
 public class HeadApplication implements Application {
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws HeadException {
 		// TODO Auto-generated method stub
 		processArguments(args, stdin, stdout);
 	}
 
-	private void processArguments(String[] args, InputStream stdin, OutputStream stdout) throws HeadException {
+	private void processArguments(String[] args, InputStream stdin,
+			OutputStream stdout) throws HeadException {
 		File file;
-//		System.out.println("Started Processing Arguments");
+		// System.out.println("Started Processing Arguments");
 		if (args.length < 2) {
 			throw new HeadException("Insufficient arguments.");
 		} else if (args.length > 4) {
@@ -51,16 +54,16 @@ public class HeadApplication implements Application {
 			}
 		} else if (args.length == 3) {
 			int numberOfLines = 0;
-			if (!args[1].substring(0,1).equals("-")) {
+			if (!args[1].substring(0, 1).equals("-")) {
 				throw new HeadException(args[1] + "is an invalid argument.");
-			} else if (!args[1].substring(1).matches("[0-9]+")){
+			} else if (!args[1].substring(1).matches("[0-9]+")) {
 				throw new HeadException("Invalid number of lines.");
 			} else {
 				file = new File(args[2]);
 				numberOfLines = Integer.parseInt(args[1].substring(1));
 				if (checkValidFile(file)) {
 					printLine(numberOfLines, file, stdin, stdout);
-				}	
+				}
 			}
 		} else if (args.length == 4) {
 			if (!args[1].equals("-n")) {
@@ -76,8 +79,8 @@ public class HeadApplication implements Application {
 		}
 	}
 
-	private void printLine(int numberOfLines, File file, InputStream stdin, OutputStream stdout) 
-						throws HeadException {
+	private void printLine(int numberOfLines, File file, InputStream stdin,
+			OutputStream stdout) throws HeadException {
 		// TODO Auto-generated method stub
 		if (stdin == null || stdout == null) {
 			throw new HeadException("Null Pointer Exception");
@@ -89,7 +92,7 @@ public class HeadApplication implements Application {
 				if (line != null) {
 					System.out.println(line);
 				}
-				numberOfLines --;
+				numberOfLines--;
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -99,9 +102,9 @@ public class HeadApplication implements Application {
 
 	public boolean checkValidFile(File file) throws HeadException {
 		String extension = FilenameUtils.getExtension(file.getAbsolutePath());
-//		System.out.println(extension);
+		// System.out.println(extension);
 		Path filePath = file.toPath();
-		
+
 		if (!extension.equals("txt")) {
 			throw new HeadException("Invalid File Extension");
 		}

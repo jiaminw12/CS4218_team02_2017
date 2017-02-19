@@ -32,7 +32,7 @@ import sg.edu.nus.comp.cs4218.exception.TailException;
 public class TailApplication implements Application{
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout) throws TailException {
 		// TODO Auto-generated method stub
 		processArguments(args, stdin, stdout);
 	}
