@@ -239,12 +239,6 @@ public class WcApplication implements Application, Wc {
 			throw new WcException("Null Pointer Exception");
 		}
 
-		if (!(lineFlag || charFlag || wordFlag)) {
-			lineFlag = true;
-			charFlag = true;
-			wordFlag = true;
-		}
-
 		try {
 			if (charFlag) {
 				stdout.write(String.valueOf(charCount).getBytes());
@@ -281,12 +275,6 @@ public class WcApplication implements Application, Wc {
 
 		if (stdout == null) {
 			throw new WcException("Null Pointer Exception");
-		}
-
-		if (!(totalLineFlag || totalCharFlag || totalWordFlag)) {
-			totalLineFlag = true;
-			totalCharFlag = true;
-			totalWordFlag = true;
 		}
 
 		try {

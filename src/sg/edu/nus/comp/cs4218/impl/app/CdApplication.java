@@ -11,8 +11,7 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 
 /**
- * The cat command concatenates the content of given files and prints on the
- * standard output.
+ * The cd command changes the current working directory.
  * 
  * <p>
  * <b>Command format:</b> <code>cd PATH</code>
