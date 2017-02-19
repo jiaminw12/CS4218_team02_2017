@@ -15,19 +15,18 @@ import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
  * standard output.
  * 
  * <p>
- * <b>Command format:</b> <code>date</code>
+ * <b>Command format:</b> <code>cd PATH</code>
  * <dl>
- * <dt>OPTIONS</dt>
- * <dd>“-n 15” means printing 15 lines. Print first 10 lines if not specified.</dd>
- * <dt>FILES</dt>
- * <dd>the name of the file. If not specified, use stdin.</dd>
+ * <dt>PATH</dt>
+ * <dd>relative directory path</dd>
  * </dl>
  * </p>
  */
 public class CdApplication implements Application{
 
 	@Override
-	public void run(String[] args, InputStream stdin, OutputStream stdout) throws AbstractApplicationException {
+	public void run(String[] args, InputStream stdin, OutputStream stdout)
+			throws AbstractApplicationException {
 		try {
 			setDirectory(args);
 		} catch (DirectoryNotFoundException e) {
