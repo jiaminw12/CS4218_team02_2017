@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.exception.HeadException;
+import sg.edu.nus.comp.cs4218.exception.TailException;
 
 public class HeadApplicationTest {
 
@@ -121,6 +122,18 @@ public class HeadApplicationTest {
 						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
 				outContent.toString());
 	}
+	
+	@Test
+	public void testHeadAppWithMultiplesOption() throws HeadException {
+		String[] args = { "head", "-n2", "-n5", "-n", "999", "cybody40.txt" };
+		headApp.run(args, System.in, outContent);
+		assertEquals(
+				"They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
+						+ "They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				outContent.toString());
+	}
 
 	@Test
 	public void testHeadAppWithoutOptionInStdin() throws HeadException {
@@ -146,6 +159,24 @@ public class HeadApplicationTest {
 		headApp.run(args, stdin, outContent);
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood.\n",
+				outContent.toString());
+	}
+	
+	@Test
+	public void testHeadAppWithMultiplesOptionInStdin() throws HeadException {
+		ByteArrayInputStream stdin = new ByteArrayInputStream(
+				("They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
+						+ "They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n")
+								.getBytes());
+		String[] args = { "head", "-n2", "-n5", "-n", "999" };
+		headApp.run(args, stdin, outContent);
+		assertEquals(
+				"They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
+						+ "They may be found on menus in restaurants that serve seafood.\n"
+						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
 				outContent.toString());
 	}
 
