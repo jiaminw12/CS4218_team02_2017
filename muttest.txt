@@ -1,0 +1,1 @@
+Mutation Testing is a type of software testing where we mutate (change) certain statements in the source code and check if the test cases are able to find the errors.

@@ -1,0 +1,1 @@
+Program slicing can be used in debugging to locate source of errors more easily.
