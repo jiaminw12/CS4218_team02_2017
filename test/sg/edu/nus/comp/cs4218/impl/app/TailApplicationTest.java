@@ -154,7 +154,7 @@ public class TailApplicationTest {
 		String[] args = { "tail", "-n", "1" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"They may be found on menus in restaurants that serve seafood.\n",
 				outContent.toString());
 	}
 	
