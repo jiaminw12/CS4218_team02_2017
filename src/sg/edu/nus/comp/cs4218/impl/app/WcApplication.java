@@ -169,7 +169,8 @@ public class WcApplication implements Application, Wc {
 				wordCount += line.trim().split("\\s+").length;
 			}
 			br.close();
-
+			
+			charCount += lineCount;
 			printResult(fileName, stdout);
 			totalLineCount += lineCount;
 			totalWordCount += wordCount;
@@ -206,7 +207,7 @@ public class WcApplication implements Application, Wc {
 
 			String line = br.readLine();
 			lineCount++;
-			charCount += line.length();
+			charCount += line.length() + lineCount;
 			wordCount += line.trim().split("\\s+").length;
 
 			printResult("", stdout);
