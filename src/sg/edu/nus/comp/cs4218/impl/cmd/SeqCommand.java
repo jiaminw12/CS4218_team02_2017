@@ -84,20 +84,25 @@ public class SeqCommand implements Command {
 				|| cmdline.contains(";;")) {
 			throw new ShellException("Invalid sequence operators");
 		}
-
+		
+		System.out.println(args);
+		
+		/*
 		if(args.length == 1) {
 			String[] words = args[0].trim().split(" ");  	
-			/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 		} else {
 			for (int i = 0; i < args.length; i++) {
 				String[] command = args[i].trim().split(" "); 
+				
 				app = command[0];
 				argsArray = command;
-				/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+				ShellImpl.runApp(app, argsArray, inputStream, outputStream);
+				
 			}
 		}
+		*/
 		
-		/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
 		ShellImpl.closeInputStream(inputStream);
 		ShellImpl.closeOutputStream(outputStream);
 		
