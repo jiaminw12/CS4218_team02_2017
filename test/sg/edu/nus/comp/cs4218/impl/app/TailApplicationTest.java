@@ -56,49 +56,49 @@ public class TailApplicationTest {
 	@Test(expected = TailException.class)
 	public void testHeadAppWithNullArgument() throws TailException {
 		String[] args = {};
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalOption() throws TailException {
 		String[] args = { "tail", "-a", "15", "cybody40.txt"};
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWith5Arguments() throws TailException {
 		String[] args = { "tail", "-n", "15", "cybody40.txt", "text2.txt" };
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits() throws TailException {
 		String[] args = { "tail", "-n", "-2", "cybody40.txt"};
-		tailApp.run(args, System.in, System.out);
-	}
-	
-	@Test
-	public void testHeadAppWithIllegalNumOfLinesUseZero() throws TailException {
-		String[] args = { "tail", "-n", "0", "cybody40.txt" };
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseChar() throws TailException {
 		String[] args = { "tail", "-n", "aaa", "cybody40.txt" };
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalFile() throws TailException {
 		String[] args = { "tail", "-n", "15", "text2.txt" };
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWith3Arguments() throws TailException {
 		String[] args = { "tail", "-n", "cybody40.txt" };
-		tailApp.run(args, System.in, System.out);
+		tailApp.run(args, System.in, outContent);
+	}
+		
+	@Test
+	public void testHeadAppWithIllegalNumOfLinesUseZero() throws TailException {
+		String[] args = { "tail", "-n", "0", "cybody40.txt" };
+		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test
@@ -163,7 +163,7 @@ public class TailApplicationTest {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
 				("They may be found on menus in restaurants that serve seafood.\n")
 								.getBytes());
-		String[] args = { "tail", "-n", "2", "-n", "5", "-n", "999" };
+		String[] args = { "tail", "-n2", "-n5", "-n", "999" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood.\n",

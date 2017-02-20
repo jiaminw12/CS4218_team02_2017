@@ -86,6 +86,7 @@ public class CatApplication implements Application {
 							String byteString = new String(byteFileArray, "UTF-8");
 							testStr = testStr + byteString;
 							stdout.write(byteFileArray);
+							stdout.write(System.lineSeparator().getBytes());
 						} catch (IOException e) {
 							throw new CatException(
 									"Could not write to output stream");
