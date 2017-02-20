@@ -94,6 +94,7 @@ public class SeqCommand implements Command {
 				app = command[0];
 				argsArray = command;
 				/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+			}
 		}
 		
 		/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
