@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.Environment;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 
 public class CdApplicationTest {
@@ -108,6 +109,22 @@ public class CdApplicationTest {
 			throws DirectoryNotFoundException {
 		String[] args = { "cd", "test_resources/depth1/depth2/depth3" };
 		cdApp.setDirectory(args);
+		assertEquals(originalPath + "/test_resources/depth1/depth2/depth3", Environment.currentDirectory);
+	}
+	
+	@Test
+	public void testCdAppWithValidDirectoryPathFromRun()
+			throws AbstractApplicationException {
+		String[] args = { "cd", "test_resources" };
+		cdApp.run(args, null, null);
+		assertEquals(originalPath + "/test_resources", Environment.currentDirectory);
+	}
+	
+	@Test
+	public void testCdAppWithValidDirectoryPathInNestedLevelFromRun()
+			throws AbstractApplicationException {
+		String[] args = { "cd", "test_resources/depth1/depth2/depth3" };
+		cdApp.run(args, null, null);
 		assertEquals(originalPath + "/test_resources/depth1/depth2/depth3", Environment.currentDirectory);
 	}
 
