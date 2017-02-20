@@ -62,6 +62,16 @@ public class SeqCommand implements Command {
 		if (error) {
 			throw new ShellException(errorMsg);
 		}
+		
+		argsArray = cmdline.split(";");
+		
+		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
+				|| cmdline.charAt(cmdline.length() - 1) == ';')
+				|| cmdline.contains(";;")) {
+			throw new ShellException("Invalid sequence operators");
+		}
+		
+		System.out.println(argsArray);
 
 		InputStream inputStream;
 		OutputStream outputStream;
@@ -76,16 +86,7 @@ public class SeqCommand implements Command {
 		} else {
 			outputStream = ShellImpl.openOutputRedir(outputStreamS);
 		}
-		
-		String[] args = cmdline.split(";");
-		
-		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
-				|| cmdline.charAt(cmdline.length() - 1) == ';')
-				|| cmdline.contains(";;")) {
-			throw new ShellException("Invalid sequence operators");
-		}
-		
-		System.out.println(args);
+	
 		
 		/*
 		if(args.length == 1) {
@@ -103,9 +104,21 @@ public class SeqCommand implements Command {
 		}
 		*/
 		
-		ShellImpl.closeInputStream(inputStream);
-		ShellImpl.closeOutputStream(outputStream);
+	//	ShellImpl.closeInputStream(inputStream);
+	//	ShellImpl.closeOutputStream(outputStream);
 		
+	}
+	
+	/**
+	 * For testing purposes only
+	 */
+	
+	public int getArgsLength(){
+		return argsArray.length; 
+	}
+	
+	public void setErrorTrue(Boolean setError){
+		error = setError;
 	}
 
 	/**
