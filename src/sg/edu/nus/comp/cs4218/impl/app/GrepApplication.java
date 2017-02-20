@@ -51,7 +51,7 @@ public class GrepApplication implements Application, Grep {
 	}
 
 	@Override
-	public String grepFromStdin(String args) {
+	public String grepFromStdin(String args, InputStream stdin) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -69,7 +69,7 @@ public class GrepApplication implements Application, Grep {
 	}
 
 	@Override
-	public String grepInvalidPatternInStdin(String args) {
+	public String grepInvalidPatternInStdin(String args, InputStream stdin) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.ef1;
 import static org.junit.Assert.*;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,33 +19,38 @@ import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 public class GrepApplicationTest {
 
 	static GrepApplication grepApp;
-	static File testDir = new File("testGrepDir");
+	static File testFolder = new File("testGrepDir");
 
 	@BeforeClass
 	public static void setUpOnce() throws IOException {
-		testDir.mkdir();
-		File testFile = new File(testDir, "1.txt");
+		testFolder.mkdir();
+		File testFile = new File(testFolder, "01.txt");
 		testFile.createNewFile();
 		BufferedWriter writer = new BufferedWriter(new FileWriter(testFile));
-		writer.write("134 678 8900 #@#^&!&((*97543)");
+		writer.write("123");
 		writer.write(System.lineSeparator());
-		writer.write("The quick brown fox jumps over the lazy dog");
+		writer.write("4567");
+		writer.write(System.lineSeparator());
+		writer.write("89001 )(*&^%$#!@*9745543");
+		writer.write(System.lineSeparator());
+		writer.write("Fox nymphs grab quick-jived waltz.");
 		writer.close();
 
-		testFile = new File(testDir, "2.txt");
+		testFile = new File(testFolder, "02.txt");
 		testFile.createNewFile();
 		writer = new BufferedWriter(new FileWriter(testFile));
-		writer.write("The 234quick brown fox 456 jumps over the lazy dog");
+		writer.write(
+				"Li nov 346lingua franca va esser 236plu simplic e regulari quam 457li existent Europan lingues.");
 		writer.write(System.lineSeparator());
 		writer.close();
 	}
 
 	@AfterClass
 	public static void tearDown() {
-		for (File file : testDir.listFiles()) {
+		for (File file : testFolder.listFiles()) {
 			file.delete();
 		}
-		testDir.delete();
+		testFolder.delete();
 	}
 
 	@Before
@@ -53,19 +59,19 @@ public class GrepApplicationTest {
 	}
 
 	@Test(expected = GrepException.class)
-	public void testGrepaPPWithNullArgument() throws GrepException {
+	public void testGrepAppWithNullArgument() throws GrepException {
 		grepApp.run(null, null, System.out);
 	}
 
 	@Test(expected = GrepException.class)
-	public void testGrepaPPWithEmptyArgsWithEmptyInput() throws GrepException {
+	public void testGrepAppWithEmptyArgsWithEmptyInput() throws GrepException {
 		String[] args = {};
 		grepApp.run(args, System.in, System.out);
 	}
 
 	@Test(expected = GrepException.class)
-	public void testGrepaPPWithNullInputOutput() throws GrepException {
-		String[] args = { "cal", "12", "2017" };
+	public void testGrepAppWithNullInputOutput() throws GrepException {
+		String[] args = { "grep", "12" };
 		grepApp.run(args, null, null);
 	}
 
@@ -77,53 +83,47 @@ public class GrepApplicationTest {
 
 	@Test
 	public void testGrepFromStdin() {
-		// grepApp.setInputStream("a\n");
-		String actualResult = grepApp.grepFromStdin("grep [0-9]");
-		String expectedResult = "134" + System.lineSeparator() + "678"
-				+ System.lineSeparator() + "8900" + System.lineSeparator()
-				+ "97543";
+		ByteArrayInputStream in = new ByteArrayInputStream(
+				"134Lorem 678ipsum 8900dolor sit amet, consectetuer adi 97543piscing elit.\n"
+						.getBytes());
+		String actualResult = grepApp.grepFromStdin("grep [0-9]", in);
+		String expectedResult = "134Lorem 678ipsum 8900dolor sit amet, consectetuer adi 97543piscing elit.";
 		assertEquals(expectedResult, actualResult);
 	}
 
 	@Test
 	public void testGrepFromOneFile() {
-		String actualResult = grepApp.grepFromOneFile("grep [0-9] 1.txt");
-		String expectedResult = "134" + System.lineSeparator() + "678"
-				+ System.lineSeparator() + "8900" + System.lineSeparator()
-				+ "97543";
+		String actualResult = grepApp.grepFromOneFile("grep [0-9] 01.txt");
+		String expectedResult = "123" + System.lineSeparator() + "4567"
+				+ System.lineSeparator() + "89001" + System.lineSeparator()
+				+ ")(*&^%$#!@*9745543";
 		assertEquals(expectedResult, actualResult);
 	}
 
 	@Test
 	public void testGrepFromMultipleFiles() {
 		String actualResult = grepApp
-				.grepFromMultipleFiles("grep [0-9] 1.txt 2.txt");
-		String expectedResult = "134" + System.lineSeparator() + "678"
-				+ System.lineSeparator() + "8900" + System.lineSeparator()
-				+ "97543" + System.lineSeparator() + "234"
-				+ System.lineSeparator() + "456";
+				.grepFromMultipleFiles("grep [0-9] 01.txt 02.txt");
+		String expectedResult = "123" + System.lineSeparator() + "4567"
+				+ System.lineSeparator() + "89001" + System.lineSeparator()
+				+ ")(*&^%$#!@*9745543" + System.lineSeparator()
+				+ "Li nov 346lingua franca va esser 236plu simplic e regulari quam 457li existent Europan lingues.";
 		assertEquals(expectedResult, actualResult);
 	}
-	
+
 	@Test
 	public void testGrepInvalidPatternInStdin() {
-		String actualResult = grepApp
-				.grepInvalidPatternInFile("grep [0-9)");
-		String expectedResult = "grep: Invalid pattern";
-		assertEquals(expectedResult, actualResult);
-	}
-	
-	@Test
-	public void testGrepInvalidPatternInFile() {
-		String actualResult = grepApp
-				.grepInvalidPatternInFile("grep [0-9) 2.txt");
+		String actualResult = grepApp.grepInvalidPatternInFile("grep [0-9*)");
 		String expectedResult = "grep: Invalid pattern";
 		assertEquals(expectedResult, actualResult);
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testGrepInvalidPatternInFile() {
+		String actualResult = grepApp
+				.grepInvalidPatternInFile("grep [0-9*) 02.txt");
+		String expectedResult = "grep: Invalid pattern";
+		assertEquals(expectedResult, actualResult);
 	}
 
 }

@@ -17,7 +17,7 @@ public class GlobbingTest {
 
 	private static ShellImpl shell;
 	private static OutputStream stdout;
-	private static String TEST_FOLDER_NAME = "test_globbing";
+	private static String test_folder_name = "test_globbing";
 	private static final String[] FILE_NAMES = { "testGlobe.txt",
 			"testGlobe.py", "testGlobe.cpp", "testGlobe.html", "testGlobe.css",
 			"testGlobe.js", "testGlobe.xml" };
@@ -26,32 +26,32 @@ public class GlobbingTest {
 	public static void setUpBeforeClass() throws Exception {
 		stdout = System.out;
 		
-		new File(TEST_FOLDER_NAME).mkdir();
+		new File(test_folder_name).mkdir();
 		for (int i = 0; i < FILE_NAMES.length; i++) {
-			Files.write(Paths.get(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]), "Test".getBytes());
+			Files.write(Paths.get(test_folder_name + "/" + FILE_NAMES[i]), "Test".getBytes());
 		}
 		
-		new File(TEST_FOLDER_NAME+"/testSubSubDir").mkdir();
-		Files.write(Paths.get(TEST_FOLDER_NAME +"/testSubSubDir/testGlobe.txt"), "Test".getBytes());
+		new File(test_folder_name+"/testSubSubDir").mkdir();
+		Files.write(Paths.get(test_folder_name +"/testSubSubDir/testGlobe.txt"), "Test".getBytes());
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		
-		File file = new File(TEST_FOLDER_NAME +"/testSubSubDir/testGlobe.txt");
+		File file = new File(test_folder_name +"/testSubSubDir/testGlobe.txt");
 		file.setWritable(true);
 		file.delete();
 		
-		file = new File(TEST_FOLDER_NAME+"/testSubSubDir");
+		file = new File(test_folder_name+"/testSubSubDir");
 		file.delete();
 		
 		for (int i = 0; i < FILE_NAMES.length; i++) {
-			file = new File(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]);
+			file = new File(test_folder_name + "/" + FILE_NAMES[i]);
 			file.setWritable(true);
 			file.delete();
 		}
 
-		file = new File(TEST_FOLDER_NAME);
+		file = new File(test_folder_name);
 		file.delete();
 	}
 
@@ -68,28 +68,28 @@ public class GlobbingTest {
 	@Test(expected = ShellException.class)
 	public void testInvalidPath()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*/invalid";
+		String cmdLine = "cat " + test_folder_name + "/*/invalid";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
 	@Test(expected = ShellException.class)
 	public void testInvalidSlash()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + TEST_FOLDER_NAME + "//*";
+		String cmdLine = "cat " + test_folder_name + "//*";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
 	@Test
 	public void testGlobbingWithOneLevel()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*";
+		String cmdLine = "cat " + test_folder_name + "/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		assertEquals("Test Test Test Test Test Test Test Test", stdout.toString());
 	}
 
 	@Test
 	public void testGlobbingMultiLevel() throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + TEST_FOLDER_NAME + "/testSubSubDir/*";
+		String cmdLine = "cat " + test_folder_name + "/testSubSubDir/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		assertEquals("Test", stdout.toString());
 	}

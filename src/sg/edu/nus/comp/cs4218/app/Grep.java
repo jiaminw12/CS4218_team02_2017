@@ -1,5 +1,7 @@
 package sg.edu.nus.comp.cs4218.app;
 
+import java.io.InputStream;
+
 import sg.edu.nus.comp.cs4218.Application;
 
 public interface Grep extends Application {
@@ -9,7 +11,7 @@ public interface Grep extends Application {
 	 * Stdin
 	 * @param args String containing command and arguments
 	 */
-	public String grepFromStdin(String args);
+	public String grepFromStdin(String args, InputStream stdin);
 
 	/**
 	 * Returns string containing lines which match the specified pattern in the
@@ -29,7 +31,7 @@ public interface Grep extends Application {
 	 * Returns string when invalid pattern is specified in grep from Stdin
 	 * @param args String containing command and arguments
 	 */
-	public String grepInvalidPatternInStdin(String args);
+	public String grepInvalidPatternInStdin(String args, InputStream stdin);
 
 	
 	/**
