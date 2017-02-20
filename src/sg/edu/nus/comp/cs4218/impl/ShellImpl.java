@@ -153,31 +153,6 @@ public class ShellImpl implements Shell {
 	}
 	
 	/**
-	 * Searches for and processes the commands separated by semicolons. 
-	 * If no semicolons are found, the argsArray from the
-	 * input is returned unchanged (Returns only one command). If semicolons are found, the command is split into 
-	 * multiple commands and substituted with the output from processing the commands.
-	 * 
-	 * @param argsArray
-	 *            String array of the individual commands.
-	 * 
-	 * @return String array with the semicolons command processed.
-	 * 
-	 * @throws AbstractApplicationException
-	 *             If an exception happens while processing the content with
-	 *             semicolons.
-	 * @throws ShellException
-	 *             If an exception happens while processing the content with
-	 *             semicolons.
-	 */
-	public static String [] processSC(String... argsArray)
-			throws AbstractApplicationException, ShellException {
-		
-		String [] resultArr = new String[argsArray.length];
-		return resultArr;
-	}
-	
-	/**
 	 * Static method to run the application as specified by the application
 	 * command keyword and arguments.
 	 * 
