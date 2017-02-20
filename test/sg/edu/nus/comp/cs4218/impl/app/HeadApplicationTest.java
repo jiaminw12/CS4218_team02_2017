@@ -55,49 +55,49 @@ public class HeadApplicationTest {
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithNullArgument() throws HeadException {
 		String[] args = {};
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalOption() throws HeadException {
 		String[] args = { "head", "-a", "15", "cybody40.txt"};
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWith5Arguments() throws HeadException {
 		String[] args = { "head", "-n", "15", "cybody40.txt", "text2.txt" };
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits() throws HeadException {
 		String[] args = { "head", "-n", "-2", "cybody40.txt"};
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 	
 	@Test
 	public void testHeadAppWithIllegalNumOfLinesUseZero() throws HeadException {
 		String[] args = { "head", "-n", "0", "cybody40.txt" };
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseChar() throws HeadException {
 		String[] args = { "head", "-n", "aaa", "cybody40.txt" };
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 	
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalFile() throws HeadException {
 		String[] args = { "head", "-n", "15", "text2.txt" };
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWith3Arguments() throws HeadException {
 		String[] args = { "head", "-n", "cybody40.txt" };
-		headApp.run(args, System.in, System.out);
+		headApp.run(args, System.in, outContent);
 	}
 
 	@Test
@@ -162,7 +162,7 @@ public class HeadApplicationTest {
 	public void testHeadAppWithMultiplesOptionInStdin() throws HeadException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
 				("They may be found on menus in restaurants that serve seafood.\n").getBytes());
-		String[] args = { "head", "-n", "2", "-n", "5", "-n", "999" };
+		String[] args = { "head", "-n2", "-n5", "-n", "999" };
 		headApp.run(args, stdin, outContent);
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood.\n",
