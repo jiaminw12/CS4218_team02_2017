@@ -14,9 +14,6 @@ import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.TailException;
-import sg.edu.nus.comp.cs4218.exception.TailException;
-import sg.edu.nus.comp.cs4218.exception.TailException;
-import sg.edu.nus.comp.cs4218.exception.SedException;
 
 /**
  * The cat command concatenates the content of given files and prints on the
