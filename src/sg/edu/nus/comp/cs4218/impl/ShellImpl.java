@@ -18,6 +18,7 @@ import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
 import sg.edu.nus.comp.cs4218.impl.app.TailApplication;
 import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
 import sg.edu.nus.comp.cs4218.impl.app.DateApplication;
 
 /**
@@ -371,8 +372,9 @@ public class ShellImpl implements Shell {
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		
-		PipeCommand pipeCommand = new PipeCommand(cmdline);
-		pipeCommand.evaluate(System.in, stdout);
+		SeqCommand seqCommand = new SeqCommand(cmdline);
+		seqCommand.parse();
+		seqCommand.evaluate(System.in, System.out);
 	}
 
 	@Override

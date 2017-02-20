@@ -35,18 +35,16 @@ public class CallCommand implements Command {
 	String cmdline, inputStreamS, outputStreamS;
 	String[] argsArray;
 	Boolean error;
+	Boolean processBq;
 	String errorMsg;
 
 	public CallCommand(String cmdline) {
 		this.cmdline = cmdline.trim();
 		app = inputStreamS = outputStreamS = "";
 		error = false;
+		processBq = true;
 		errorMsg = "";
 		argsArray = new String[0];
-	}
-
-	public CallCommand() {
-		this("");
 	}
 
 	/**
@@ -73,7 +71,9 @@ public class CallCommand implements Command {
 		InputStream inputStream;
 		OutputStream outputStream;
 
-		argsArray = ShellImpl.processBQ(argsArray);
+		if(processBq) {
+			argsArray = ShellImpl.processBQ(argsArray);
+		}
 
 		if (("").equals(inputStreamS)) {// empty
 			inputStream = stdin;
@@ -85,6 +85,7 @@ public class CallCommand implements Command {
 		} else {
 			outputStream = ShellImpl.openOutputRedir(outputStreamS);
 		}
+		
 		ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 		ShellImpl.closeInputStream(inputStream);
 		ShellImpl.closeOutputStream(outputStream);
@@ -112,7 +113,7 @@ public class CallCommand implements Command {
 			cmdVector.add(""); // reserved for output redir
 			endIdx = extractInputRedir(str, cmdVector, endIdx);
 			endIdx = extractOutputRedir(str, cmdVector, endIdx);
-			// System.out.println(cmdVector.toString());
+//			 System.out.println(cmdVector.toString());
 		} catch (ShellException e) {
 			result = false;
 		}
@@ -145,7 +146,7 @@ public class CallCommand implements Command {
 				errorMsg = ShellImpl.EXP_SAME_REDIR;
 				throw new ShellException(errorMsg);
 			}
-			this.argsArray = Arrays.copyOfRange(cmdTokensArray, 1,
+			this.argsArray = Arrays.copyOfRange(cmdTokensArray, 0,
 					cmdTokensArray.length - 2);
 		} else {
 			this.argsArray = new String[0];
@@ -156,7 +157,7 @@ public class CallCommand implements Command {
 	 * Parses the sub-command's arguments to the call command and splits it into
 	 * its different components, namely the application name and the arguments
 	 * (if any), based on rules: Unquoted: any char except for whitespace
-	 * characters, quotes, newlines, semicolons “;”, “|”, “<” and “>”. Double
+	 * characters, quotes, newlines, semicolons ï¿½;ï¿½, ï¿½|ï¿½, ï¿½<ï¿½ and ï¿½>ï¿½. Double
 	 * quoted: any char except \n, ", ` Single quoted: any char except \n, '
 	 * Back quotes in Double Quote for command substitution: DQ rules for
 	 * outside BQ + `anything but \n` in BQ.
@@ -202,6 +203,10 @@ public class CallCommand implements Command {
 				}
 			}
 			if (smallestPattIdx != -1) { // if a pattern is found
+				if(smallestPattIdx == 6) {
+					processBq = false;
+				}
+				
 				Pattern pattern = Pattern.compile(patterns[smallestPattIdx]);
 				Matcher matcher = pattern.matcher(str.substring(newEndIdx));
 				if (matcher.find()) {
@@ -217,6 +222,7 @@ public class CallCommand implements Command {
 				}
 			}
 		} while (smallestPattIdx != -1);
+		
 		return newEndIdx;
 	}
 

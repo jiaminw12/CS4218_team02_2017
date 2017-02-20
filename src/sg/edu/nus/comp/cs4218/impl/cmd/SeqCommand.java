@@ -2,15 +2,12 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 /**
  * A Sequence Command is a sub-command consisting of at least one non-keyword and
@@ -23,22 +20,14 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 public class SeqCommand implements Command {
 
+	private List<String> argsArray;
 	private String cmdline;
-	String inputStreamS, outputStreamS;
-	String app;
-	String[] argsArray;
-	Boolean error;
-	String errorMsg;
+	private boolean error;
 	
 	public SeqCommand(String cmdline) {
 		this.cmdline = cmdline.trim();
-		app = inputStreamS = outputStreamS = "";
-		error = false;
-		errorMsg = "";
-		argsArray = new String[0];
-	}
-
-	public SeqCommand() {
+		this.error = false;
+		this.argsArray = new ArrayList<String>();
 	}
 
 	/**
@@ -59,60 +48,46 @@ public class SeqCommand implements Command {
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		
-		if (error) {
-			throw new ShellException(errorMsg);
-		}
-		
-		argsArray = cmdline.split(";");
-		
-		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
-				|| cmdline.charAt(cmdline.length() - 1) == ';')
-				|| cmdline.contains(";;")) {
-			throw new ShellException("Invalid sequence operators");
-		}
-
-		InputStream inputStream;
-		OutputStream outputStream;
-		
-		if (("").equals(inputStreamS)) {  // empty
-			inputStream = stdin;
-		} else { // not empty
-			inputStream = ShellImpl.openInputRedir(inputStreamS);
-		}
-		if (("").equals(outputStreamS)) { // empty
-			outputStream = stdout;
-		} else {
-			outputStream = ShellImpl.openOutputRedir(outputStreamS);
-		}
-	
-		
-		/*
-		if(args.length == 1) {
-			String[] words = args[0].trim().split(" ");  	
-			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
-		} else {
-			for (int i = 0; i < args.length; i++) {
-				String[] command = args[i].trim().split(" "); 
-				
-				app = command[0];
-				argsArray = command;
-				ShellImpl.runApp(app, argsArray, inputStream, outputStream);
-				
+		for (int i = 0; i < argsArray.size(); i++) {
+			if(argsArray.get(i).contains("|")) {
+				PipeCommand pipeCommand = new PipeCommand(argsArray.get(i));
+				pipeCommand.evaluate(System.in, stdout);
+			} else {
+				CallCommand callCmd = new CallCommand(argsArray.get(i));
+				callCmd.parse();
+				callCmd.evaluate(stdin, stdout);
 			}
 		}
-		*/
+	}
+	
+	/**
+	 * Parses command to tokenise commands using semicolons into Call Commands,
+	 * if semicolons is not within the backquote
+	 * 
+	 * @throws ShellException
+	 *             If an exception happens while parsing the sub-command and
+	 *             semicolon is the 1st and last index of the cmdline
+	 */
+	public void parse() throws ShellException {
 		
-	//	ShellImpl.closeInputStream(inputStream);
-	//	ShellImpl.closeOutputStream(outputStream);
+		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
+				|| cmdline.charAt(cmdline.length() - 1) == ';')) {
+			error = true;
+			throw new ShellException("Invalid sequence operators");
+		}
 		
+        String[] tokens = cmdline.split(";(?=(?:[^\"\']*\"\'[^\"\']*\"\')*[^\"\']*$)", -1);
+        for(String command : tokens) {
+//        	System.out.println("COMMAND: " + command.trim());
+        	argsArray.add(command.trim());
+        }
 	}
 	
 	/**
 	 * For testing purposes only
 	 */
-	
 	public int getArgsLength(){
-		return argsArray.length; 
+		return argsArray.size(); 
 	}
 	
 	public void setErrorTrue(Boolean setError){

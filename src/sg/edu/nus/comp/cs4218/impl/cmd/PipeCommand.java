@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Command;
@@ -53,7 +52,7 @@ public class PipeCommand implements Command {
 			throws AbstractApplicationException, ShellException {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		String[] args = cmdline.split("\\|");	//TODO: Update this split method
+		String[] args = cmdline.split("\\|");	
 
 		if(cmdline.length() > 0 && (cmdline.charAt(0) == '|' 
 				|| cmdline.charAt(cmdline.length() - 1) == '|')
@@ -62,11 +61,11 @@ public class PipeCommand implements Command {
 		}
 		
 		if(args.length == 1) {
-			String[] words = args[0].trim().split(" ");  	//TODO: Update this split method
-			ShellImpl.runApp(words[0], words, stdin, stdout);
+			CallCommand callCmd = new CallCommand(args[0]);
+			callCmd.parse();
+			callCmd.evaluate(stdin, stdout);
 		} else {
 			for (int i = 0; i < args.length; i++) {
-				String[] words = args[i].trim().split(" "); 	//TODO: Update this split method
 				String result = new String();
 
 				if(i > 0) {
@@ -75,7 +74,9 @@ public class PipeCommand implements Command {
 				}
 
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
-				ShellImpl.runApp(words[0], words, inputStream, outputStream);
+				CallCommand callCmd = new CallCommand(args[i]);
+				callCmd.parse();
+				callCmd.evaluate(inputStream, outputStream);
 
 				if(i != args.length - 1) {
 					stdin = ShellImpl.outputStreamToInputStream(outputStream);
@@ -88,6 +89,7 @@ public class PipeCommand implements Command {
 		}
 		
 		ShellImpl.writeToStdout(outputStream, stdout);
+		ShellImpl.closeOutputStream(outputStream);
 	}
 
 	/**
