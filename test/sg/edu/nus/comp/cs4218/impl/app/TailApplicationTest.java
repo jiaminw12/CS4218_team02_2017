@@ -149,10 +149,7 @@ public class TailApplicationTest {
 	@Test
 	public void testHeadAppWithOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n")
+				("They may be found on menus in restaurants that serve seafood.\n")
 								.getBytes());
 		String[] args = { "tail", "-n", "1" };
 		tailApp.run(args, stdin, outContent);
@@ -164,18 +161,12 @@ public class TailApplicationTest {
 	@Test
 	public void testHeadAppWithMultiplesOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n")
+				("They may be found on menus in restaurants that serve seafood.\n")
 								.getBytes());
-		String[] args = { "tail", "-n2", "-n5", "-n", "999" };
+		String[] args = { "tail", "-n", "2", "-n", "5", "-n", "999" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"They may be found on menus in restaurants that serve seafood.\n",
 				outContent.toString());
 	}
 
