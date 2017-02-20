@@ -44,12 +44,12 @@ public class HeadApplicationTest {
 
 	@Test
 	public void testCheckTxtFile() throws HeadException {
-		assertTrue(headApp.checkValidFile(new File("cybody40.txt")));
+		assertTrue(headApp.checkValidFile(new File("slicing.txt")));
 	}
 
-	@Test(expected = HeadException.class)
+	@Test
 	public void testOtherFileType() throws HeadException {
-		assertFalse(headApp.checkValidFile(new File("cybody40.md")));
+		assertTrue(headApp.checkValidFile(new File("README.md")));
 	}
 
 	@Test(expected = HeadException.class)
@@ -57,37 +57,38 @@ public class HeadApplicationTest {
 		String[] args = {};
 		headApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalOption() throws HeadException {
-		String[] args = { "head", "-a", "15", "cybody40.txt"};
+		String[] args = { "head", "-a", "15", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWith5Arguments() throws HeadException {
-		String[] args = { "head", "-n", "15", "cybody40.txt", "text2.txt" };
+		String[] args = { "head", "-n", "15", "slicing.txt", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = HeadException.class)
-	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits() throws HeadException {
-		String[] args = { "head", "-n", "-2", "cybody40.txt"};
+	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits()
+			throws HeadException {
+		String[] args = { "head", "-n", "-2", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test
 	public void testHeadAppWithIllegalNumOfLinesUseZero() throws HeadException {
-		String[] args = { "head", "-n", "0", "cybody40.txt" };
+		String[] args = { "head", "-n", "0", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseChar() throws HeadException {
-		String[] args = { "head", "-n", "aaa", "cybody40.txt" };
+		String[] args = { "head", "-n", "aaa", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = HeadException.class)
 	public void testHeadAppWithIllegalFile() throws HeadException {
 		String[] args = { "head", "-n", "15", "text2.txt" };
@@ -96,76 +97,77 @@ public class HeadApplicationTest {
 
 	@Test(expected = HeadException.class)
 	public void testHeadAppWith3Arguments() throws HeadException {
-		String[] args = { "head", "-n", "cybody40.txt" };
+		String[] args = { "head", "-n", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 	}
 
 	@Test
 	public void testHeadAppWithoutOption() throws HeadException {
-		String[] args = { "head", "cybody40.txt" };
+		String[] args = { "head", "slicing.txt" };
 		headApp.run(args, System.in, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"Program slicing can be used in debugging to locate source of errors more easily.\n",
 				outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithOption() throws HeadException {
-		String[] args = { "head", "-n", "2", "cybody40.txt" };
+		String[] args = { "head", "-n", "2", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"// Copy paste this Java Template and save it as \"PatientNames.java\"\n"
+						+ "import java.lang.String;\n",
 				outContent.toString());
 	}
-	
+
 	@Test
 	public void testHeadAppWithMultiplesOption() throws HeadException {
-		String[] args = { "head", "-n2", "-n5", "-n", "999", "cybody40.txt" };
+		String[] args = { "head", "-n2", "-n5", "-n", "8", "muttest.txt" };
 		headApp.run(args, System.in, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"// Copy paste this Java Template and save it as \"PatientNames.java\"\n"
+						+ "import java.lang.String;\n"
+						+ "import java.lang.System;\n" 
+						+ "import java.util.*;\n"
+						+ "import java.io.*;\n"
+						+ "import java.util.ArrayList;\n"
+						+ "import java.util.TreeSet;\n" + "\n",
 				outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithoutOptionInStdin() throws HeadException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n")
+				("They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n")
 						.getBytes());
 		String[] args = { "head" };
 		headApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n",
 				outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithOptionInStdin() throws HeadException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n")
-								.getBytes());
+				("They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n")
+						.getBytes());
 		String[] args = { "head", "-n", "1" };
 		headApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n",
 				outContent.toString());
 	}
-	
+
 	@Test
 	public void testHeadAppWithMultiplesOptionInStdin() throws HeadException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n").getBytes());
+				("They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n")
+						.getBytes());
 		String[] args = { "head", "-n2", "-n5", "-n", "999" };
 		headApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. UNDER THE SEA\n",
 				outContent.toString());
 	}
 

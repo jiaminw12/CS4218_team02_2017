@@ -44,25 +44,25 @@ public class SortApplicationTest {
 	
 	@Test(expected = SortException.class)
 	public void testIllegalOption() throws SortException {
-		String[] args = { "sort", "-z", "cybody40.txt" };
+		String[] args = { "sort", "-z", "muttest.txt" };
 		sortApp.run(args, System.in, System.out);
 	}
 	
 	@Test(expected = SortException.class)
 	public void testIllegalFile() throws SortException {
-		String[] args = { "sort", "-n", "cybody40" };
+		String[] args = { "sort", "-n", "muttest" };
 		sortApp.run(args, System.in, System.out);
 	}
 	
 	@Test
 	public void testArgsWithoutOption() throws SortException {
-		String[] args = { "sort", "cybody40.txt" };
+		String[] args = { "sort", "muttest.txt" };
 		sortApp.run(args, System.in, System.out);
 	}
 	
 	@Test
 	public void testArgsWithOption() throws SortException {
-		String[] args = { "sort", "-n", "cybody40.txt" };
+		String[] args = { "sort", "-n", "muttest.txt" };
 		sortApp.run(args, System.in, System.out);
 	}
 	
@@ -92,7 +92,6 @@ public class SortApplicationTest {
 
 	@Test
 	public void testSortSpecialChars() {
-		// NOT SURE!!!
 		String arr = "^% *( $) ! @; \n \t";
 		String expected = "!" + System.lineSeparator() + "$)"
 				+ System.lineSeparator() + "*(" + System.lineSeparator() + "@;"

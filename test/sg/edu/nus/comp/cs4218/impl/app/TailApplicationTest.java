@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.TailException;
 
 public class TailApplicationTest {
@@ -45,12 +44,12 @@ public class TailApplicationTest {
 
 	@Test
 	public void testCheckTxtFile() throws TailException {
-		assertTrue(tailApp.checkValidFile(new File("cybody40.txt")));
+		assertTrue(tailApp.checkValidFile(new File("muttest.txt")));
 	}
 
-	@Test(expected = TailException.class)
+	@Test
 	public void testOtherFileType() throws TailException {
-		assertFalse(tailApp.checkValidFile(new File("cybody40.md")));
+		assertTrue(tailApp.checkValidFile(new File("README.md")));
 	}
 
 	@Test(expected = TailException.class)
@@ -58,115 +57,106 @@ public class TailApplicationTest {
 		String[] args = {};
 		tailApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalOption() throws TailException {
-		String[] args = { "tail", "-a", "15", "cybody40.txt"};
+		String[] args = { "tail", "-a", "15", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWith5Arguments() throws TailException {
-		String[] args = { "tail", "-n", "15", "cybody40.txt", "text2.txt" };
+		String[] args = { "tail", "-n", "15", "muttest.txt", "slicing.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = TailException.class)
-	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits() throws TailException {
-		String[] args = { "tail", "-n", "-2", "cybody40.txt"};
+	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits()
+			throws TailException {
+		String[] args = { "tail", "-n", "-2", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalNumOfLinesUseChar() throws TailException {
-		String[] args = { "tail", "-n", "aaa", "cybody40.txt" };
+		String[] args = { "tail", "-n", "aaa", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
-	
+
 	@Test(expected = TailException.class)
 	public void testHeadAppWithIllegalFile() throws TailException {
-		String[] args = { "tail", "-n", "15", "text2.txt" };
+		String[] args = { "tail", "-n", "15", "muttestS.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
 	public void testHeadAppWith3Arguments() throws TailException {
-		String[] args = { "tail", "-n", "cybody40.txt" };
+		String[] args = { "tail", "-n", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
-		
+
 	@Test
 	public void testHeadAppWithIllegalNumOfLinesUseZero() throws TailException {
-		String[] args = { "tail", "-n", "0", "cybody40.txt" };
+		String[] args = { "tail", "-n", "0", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test
 	public void testHeadAppWithoutOption() throws TailException {
-		String[] args = { "tail", "cybody40.txt" };
+		String[] args = { "tail", "slicing.txt" };
 		tailApp.run(args, System.in, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
+				"Program slicing can be used in debugging to locate source of errors more easily.\n",
 				outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithOption() throws TailException {
-		String[] args = { "tail", "-n", "1", "cybody40.txt" };
+		String[] args = { "tail", "-n", "1", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
-		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
-				outContent.toString());
+		assertEquals("}\n", outContent.toString());
 	}
-	
+
 	@Test
 	public void testHeadAppWithMultiplesOption() throws TailException {
-		String[] args = { "tail", "-n2", "-n5", "-n", "999", "cybody40.txt" };
+		String[] args = { "tail", "-n2", "-n5", "-n", "3", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
-		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n"
-						+ "They may be found on menus in restaurants that serve seafood.\n"
-						+ "Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.\n",
-				outContent.toString());
+		assertEquals("    ps2.run();\n" + "  }\n" + "}\n", outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithoutOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n")
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
 						.getBytes());
 		String[] args = { "tail" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
 				outContent.toString());
 	}
 
 	@Test
 	public void testHeadAppWithOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n")
-								.getBytes());
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
+						.getBytes());
 		String[] args = { "tail", "-n", "1" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
 				outContent.toString());
 	}
-	
+
 	@Test
 	public void testHeadAppWithMultiplesOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood.\n")
-								.getBytes());
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
+						.getBytes());
 		String[] args = { "tail", "-n2", "-n5", "-n", "999" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
 				outContent.toString());
 	}
 

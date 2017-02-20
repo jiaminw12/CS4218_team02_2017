@@ -36,11 +36,11 @@ public class IORedirectionTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		File file = new File("a.txt");
+		File file = new File("test1.txt");
 		file.setWritable(true);
 		file.delete();
 
-		file = new File("b.txt");
+		file = new File("test2.txt");
 		file.setWritable(true);
 		file.delete();
 	}
@@ -48,19 +48,19 @@ public class IORedirectionTest {
 	@Test(expected = ShellException.class)
 	public void testIllegalIORedirectionOneLine()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo TEST > a.txt > b.txt";
+		String cmdLine = "echo TEST > test1.txt > test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
 	@Test(expected = ShellException.class)
 	public void testIllegalIORedirectionMultipleLines() throws Exception {
-		String cmdLine = "echo TEST > a.txt";
+		String cmdLine = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 
-		cmdLine = "echo TEST > b.txt";
+		cmdLine = "echo TEST > test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 
-		cmdLine = "grep TEST < a.txt < b.txt";
+		cmdLine = "grep TEST < test1.txt < test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
@@ -72,30 +72,30 @@ public class IORedirectionTest {
 
 	@Test(expected = ShellException.class)
 	public void testIORedirectionWithIllegalFile() throws Exception {
-		String cmdLine = "grep TEST < nofile.txt";
+		String cmdLine = "grep TEST < noFile.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
 	@Test(expected = ShellException.class)
 	public void testIORedirectionWithIllegalFormat() throws Exception {
-		String cmdLine = "grep TEST < > nofile.txt";
+		String cmdLine = "grep TEST < > noFile.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
 	@Test
 	public void testIORedirectionWithEcho() throws Exception {
-		String cmdLine = "echo TEST > a.txt";
+		String cmdLine = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		String expected = "TEST" + System.lineSeparator();
-		assertEquals(expected, readFile("a.txt"));
+		assertEquals(expected, readFile("test1.txt"));
 	}
 
 	@Test
 	public void testIORedirectionWithEchoGrep() throws Exception {
-		String cmdLine1 = "echo TEST > a.txt";
+		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
-		String cmdLine2 = "grep TEST < a.txt";
+		String cmdLine2 = "grep TEST < test1.txt";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine2, stdout);
 
@@ -105,16 +105,16 @@ public class IORedirectionTest {
 
 	@Test
 	public void testIORedirectionWithLeftAndRight() throws Exception {
-		String cmdLine1 = "echo TEST > a.txt";
+		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
-		String cmdLine2 = "grep TEST < a.txt > b.txt";
+		String cmdLine2 = "grep TEST < test1.txt > test2.txt";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine2, stdout);
 
 		String expected = "TEST" + System.lineSeparator();
 
-		assertEquals(expected, readFile("b.txt"));
+		assertEquals(expected, readFile("test2.txt"));
 	}
 
 }

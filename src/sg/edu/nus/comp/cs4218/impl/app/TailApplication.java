@@ -157,12 +157,14 @@ public class TailApplication implements Application {
 
 			if (numberOfLines >= count) {
 				for (int i = 0; i < count; i++) {
-					System.out.println(linesArray[i]);
+					stdout.write(linesArray[i].getBytes());
+					stdout.write(System.lineSeparator().getBytes());
 				}
 			} else if (numberOfLines < count) {
 				int start = count - numberOfLines;
 				for (int i = start; i < count; i++) {
-					System.out.println(linesArray[i%numberOfLines]);
+					stdout.write(linesArray[i%numberOfLines].getBytes());
+					stdout.write(System.lineSeparator().getBytes());
 				}
 			}
 
