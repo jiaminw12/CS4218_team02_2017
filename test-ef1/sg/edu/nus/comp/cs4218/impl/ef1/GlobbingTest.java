@@ -73,14 +73,14 @@ public class GlobbingTest {
 	}
 	
 	@Test(expected = ShellException.class)
-	public void testiNVALIDsLASH()
+	public void testInvalidSlash()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + TEST_FOLDER_NAME + "//*";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
 	@Test
-	public void testGlobe()
+	public void testGlobbingWithOneLevel()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
@@ -88,7 +88,7 @@ public class GlobbingTest {
 	}
 
 	@Test
-	public void testGlobMultiLevel() throws AbstractApplicationException, ShellException {
+	public void testGlobbingMultiLevel() throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + TEST_FOLDER_NAME + "/testSubSubDir/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		assertEquals("Test", stdout.toString());
@@ -97,18 +97,18 @@ public class GlobbingTest {
 	@Test
 	public void testArgWhenEchoHasGlobbing()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo no*matches";
+		String cmdLine = "echo what*here";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "no*matches" + System.lineSeparator();
+		String expected = "what*here" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
 	@Test
 	public void testArgWhenEchoHasGlobbingMultipleLevels()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo oyster1337/*/mussel7715";
+		String cmdLine = "echo crayfish1886/*/dolphin8976";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "oyster1337/*/mussel7715" + System.lineSeparator();
+		String expected = "crayfish1886/*/dolphin8976" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
@@ -122,7 +122,7 @@ public class GlobbingTest {
 	}
 	
 	@Test
-	public void testArgWhenWCGlobbing()
+	public void testArgWhenWcGlobbing()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "wc -m *.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
