@@ -70,8 +70,6 @@ public class SeqCommand implements Command {
 				|| cmdline.contains(";;")) {
 			throw new ShellException("Invalid sequence operators");
 		}
-		
-		System.out.println(argsArray);
 
 		InputStream inputStream;
 		OutputStream outputStream;

@@ -2,10 +2,8 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import static org.junit.Assert.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.junit.*;
 
@@ -36,6 +34,13 @@ public class CommandSubTest {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			cmd.evaluate(null, out);
 			assertEquals(out.toString(), "");
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testIllegalApplicationName()
+			throws ShellException, AbstractApplicationException {
+		String cmdLine = "echo `echa token1 `";
+		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
 	@Test(expected = ShellException.class)
@@ -73,14 +78,30 @@ public class CommandSubTest {
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
+	// echo 'Travel time Singapore -> Paris is 13h and 15`'
+	// Travel time Singapore -> Paris is 13h and 15`
+	// echo "This is space:`echo " "`."
+	// This is space: .
+	// echo 'This is space:`echo " "`.'
+	// This is space:`echo " "`.
+
+	@Test
+	public void testEchoWithSemicolon() throws Exception {
+		String cmdLine = "echo `echo ABC; echo DEF`";
+		shellImpl.parseAndEvaluate(cmdLine, outputStream);
+		String actualResult = new String(outputStream.toByteArray()).trim();
+		String expectedResult = "ABC DEF" + System.lineSeparator();
+		assertEquals(expectedResult, actualResult);
+	}
+	
 	@Test
 	public void testCommandSub() throws Exception {
 		String cmdLine = "echo `cat cybody40.txt`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca. They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -88,8 +109,8 @@ public class CommandSubTest {
 			throws IOException, AbstractApplicationException, ShellException {
 		String cmdLine = "echo '`cat cxintro20.txt`' ";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("cat cxintro20.txt", expectedResult);
+		String actualResult = new String(outputStream.toByteArray()).trim();
+		assertEquals("cat cxintro20.txt", actualResult);
 	}
 
 	@Test
@@ -97,10 +118,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat " + "\n" + "cxintro02.txt`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -108,8 +129,8 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo \"`echo i'm here`\"";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("i'm here", expectedResult);
+		String actualResult = new String(outputStream.toByteArray()).trim();
+		assertEquals("i'm here", actualResult);
 	}
 
 	@Test
@@ -117,18 +138,18 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `wc -l cxintro02.txt`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("1", expectedResult);
+		String actualResult = new String(outputStream.toByteArray()).trim();
+		assertEquals("1", actualResult);
 	}
-	
+
 	@Test
 	public void testCommandSubWithPipeHeadWithNoOptions() throws Exception {
 		String cmdLine = "echo `cat cybody40.txt | head`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca. They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -136,10 +157,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat cybody40.txt | head -n 1`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"They may be found on menus in restaurants that serve seafood.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -147,10 +168,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat cybody40.txt | tail -n 5`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -158,9 +179,9 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cd test; echo 'Travel time Singapore -> Los Angels is 24h and 15`'`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals("Travel time Singapore -> Los Angels is 24h and 15`",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -168,10 +189,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "wc -l `cd test; cat cxintro02.txt`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -179,10 +200,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat cxintro02.txt` ; echo `cat cxintro02.txt` | echo";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -190,9 +211,9 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat cxintro02.txt` ; echo `wc -l cybody40.txt`";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals("Clams can be found in saltwater and freshwater. 4",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -200,10 +221,10 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `cat cxintro02.txt | tail -n 1` | cat";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
 				"Clams can be found in saltwater and freshwater. Clams can be found in saltwater and freshwater.",
-				expectedResult);
+				actualResult);
 	}
 
 	@Test
@@ -211,9 +232,9 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `echo Showing contents of text1.txt cat text1.txt` ; echo yea";
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String expectedResult = new String(outputStream.toByteArray()).trim();
+		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals("Showing contents of text1.txt cat text1.txt yea",
-				expectedResult);
+				actualResult);
 	}
 
 	@After

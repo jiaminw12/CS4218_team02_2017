@@ -496,15 +496,39 @@ public class ShellImpl implements Shell {
 		return null;
 	}
 
-	@Override
-	public String performCommandSubstitution(String args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String performCommandSubstitutionWithException(String args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String performCommandSubstitution(String args) {
+        OutputStream stdout = new ByteArrayOutputStream();
+        String result = new String();
+        
+        try {
+            parseAndEvaluate(args, stdout);
+        } catch (ShellException | AbstractApplicationException e) {
+            return e.getMessage();
+        }
+        
+        ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+        byte[] byteArray = outByte.toByteArray();
+        result = new String(byteArray);
+        
+        return result;
+    }
+    
+    @Override
+    public String performCommandSubstitutionWithException(String args) {
+        OutputStream stdout = new ByteArrayOutputStream();
+        String result = new String();
+        
+        try {
+            parseAndEvaluate(args, stdout);
+        } catch (ShellException | AbstractApplicationException e) {
+            return e.getMessage();
+        }
+        
+        ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+        byte[] byteArray = outByte.toByteArray();
+        result = new String(byteArray);
+        
+        return result;
+    }
 }
