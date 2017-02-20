@@ -9,8 +9,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
+import sg.edu.nus.comp.cs4218.exception.TailException;
+import sg.edu.nus.comp.cs4218.exception.TailException;
 import sg.edu.nus.comp.cs4218.exception.TailException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 
@@ -85,27 +89,17 @@ public class TailApplication implements Application {
 		}
 
 		String cmdline = getOptionArguments(args);
-		String[] charArray = cmdline.replaceAll("\\s", "").split("");
-		int lines = 0;
-
-		for(int i = 0; i < charArray.length;) {
-			lines = 0;
-
-			if(charArray[i].equals("-") && i + 1 < charArray.length && charArray[i + 1].equals("n")) {
-				i++;
-
-				while(i + 1 < charArray.length && charArray[i + 1].matches("[0-9]+")) {
-					lines++;
-					i++;	
-				}
-
-				i++;
-			} else {
-				throw new TailException("Invalid argument.");
+		String options = new String();
+		
+		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+").matcher(cmdline);
+	    if(matcher.matches()) {
+			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)").matcher(cmdline);
+			while(matcher.find()){
+				options = matcher.group("number");
 			}
-		} 
-
-		String options = cmdline.substring(cmdline.length() - lines);
+	    } else {
+	    	throw new TailException("Invalid arguments");
+	    }
 
 		if(isLastArgumentFile(args)) {
 			return new String[] { args[0], options, args[args.length - 1] };
@@ -120,7 +114,7 @@ public class TailApplication implements Application {
 
 		int length = isLastArgumentFile(args) ? args.length - 2 : args.length - 1;
 		for(int i = 0; i < length; i++) {
-			cmdline += args[i + 1];
+			cmdline += args[i + 1] + " ";
 		}
 
 		return cmdline;
