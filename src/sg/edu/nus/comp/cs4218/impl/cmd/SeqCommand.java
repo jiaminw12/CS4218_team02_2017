@@ -23,7 +23,19 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 public class SeqCommand implements Command {
 
+	private String cmdline;
+	String inputStreamS, outputStreamS;
+	String app;
+	String[] argsArray;
+	Boolean error;
+	String errorMsg;
+	
 	public SeqCommand(String cmdline) {
+		this.cmdline = cmdline.trim();
+		app = inputStreamS = outputStreamS = "";
+		error = false;
+		errorMsg = "";
+		argsArray = new String[0];
 	}
 
 	public SeqCommand() {
@@ -46,6 +58,47 @@ public class SeqCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
+		
+		if (error) {
+			throw new ShellException(errorMsg);
+		}
+
+		InputStream inputStream;
+		OutputStream outputStream;
+		
+		if (("").equals(inputStreamS)) {  // empty
+			inputStream = stdin;
+		} else { // not empty
+			inputStream = ShellImpl.openInputRedir(inputStreamS);
+		}
+		if (("").equals(outputStreamS)) { // empty
+			outputStream = stdout;
+		} else {
+			outputStream = ShellImpl.openOutputRedir(outputStreamS);
+		}
+		
+		String[] args = cmdline.split(";");
+		
+		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
+				|| cmdline.charAt(cmdline.length() - 1) == ';')
+				|| cmdline.contains(";;")) {
+			throw new ShellException("Invalid sequence operators");
+		}
+
+		if(args.length == 1) {
+			String[] words = args[0].trim().split(" ");  	
+			/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+		} else {
+			for (int i = 0; i < args.length; i++) {
+				String[] command = args[i].trim().split(" "); 
+				app = command[0];
+				argsArray = command;
+				/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+		}
+		
+		/*ShellImpl.runApp(app, argsArray, inputStream, outputStream);*/
+		ShellImpl.closeInputStream(inputStream);
+		ShellImpl.closeOutputStream(outputStream);
 		
 	}
 
