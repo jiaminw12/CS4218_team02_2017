@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Command;
@@ -27,10 +29,12 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 public class PipeCommand implements Command {
 
+	private List<String> argsArray;
 	private String cmdline;
 
 	public PipeCommand(String cmdline) {
 		this.cmdline = cmdline.trim();
+		this.argsArray = new ArrayList<String>();
 	}
 
 	/**
@@ -52,20 +56,13 @@ public class PipeCommand implements Command {
 			throws AbstractApplicationException, ShellException {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		String[] args = cmdline.split("\\|");	
 
-		if(cmdline.length() > 0 && (cmdline.charAt(0) == '|' 
-				|| cmdline.charAt(cmdline.length() - 1) == '|')
-				|| cmdline.contains("||")) {
-			throw new ShellException("Invalid pipe operators");
-		}
-		
-		if(args.length == 1) {
-			CallCommand callCmd = new CallCommand(args[0]);
+		if(argsArray.size() == 1) {
+			CallCommand callCmd = new CallCommand(argsArray.get(0));
 			callCmd.parse();
 			callCmd.evaluate(stdin, stdout);
 		} else {
-			for (int i = 0; i < args.length; i++) {
+			for (int i = 0; i < argsArray.size(); i++) {
 				String result = new String();
 
 				if(i > 0) {
@@ -74,11 +71,11 @@ public class PipeCommand implements Command {
 				}
 
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
-				CallCommand callCmd = new CallCommand(args[i]);
+				CallCommand callCmd = new CallCommand(argsArray.get(i));
 				callCmd.parse();
 				callCmd.evaluate(inputStream, outputStream);
 
-				if(i != args.length - 1) {
+				if(i != argsArray.size() - 1) {
 					stdin = ShellImpl.outputStreamToInputStream(outputStream);
 					outputStream = new ByteArrayOutputStream();
 				} else {
@@ -87,9 +84,41 @@ public class PipeCommand implements Command {
 				} 
 			}
 		}
-		
+
 		ShellImpl.writeToStdout(outputStream, stdout);
 		ShellImpl.closeOutputStream(outputStream);
+	}
+
+	/**
+	 * Parses command to tokenise commands using semicolons into Call Commands,
+	 * if semicolons is not within the backquote
+	 * 
+	 * @throws ShellException
+	 *             If an exception happens while parsing the sub-command and
+	 *             semicolon is the 1st and last index of the cmdline
+	 */
+	public void parse() throws ShellException {
+
+		int countSQ = 0;
+		int countDQ = 0;
+		int index = 0;
+
+		if(cmdline.length() > 0 && (cmdline.charAt(0) == '|' 
+				|| cmdline.charAt(cmdline.length() - 1) == '|')) {
+			throw new ShellException("Invalid pipe operators");
+		}
+
+		cmdline = cmdline + "|";
+		for (int i = 0 ; i < cmdline.length(); i++) {
+			if (cmdline.charAt(i) == '"'){
+				countDQ += 1;
+			} else if (cmdline.charAt(i) =='\'') {
+				countSQ += 1;
+			} else if (cmdline.charAt(i) == '|' && countDQ % 2 == 0 && countSQ %2 == 0) {
+				argsArray.add(cmdline.substring(index, i));
+				index = i+1;
+			}
+		}
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class SeqCommand implements Command {
 	private List<String> argsArray;
 	private String cmdline;
 	private boolean error;
-	
+
 	public SeqCommand(String cmdline) {
 		this.cmdline = cmdline.trim();
 		this.error = false;
@@ -47,19 +47,21 @@ public class SeqCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		
+
 		for (int i = 0; i < argsArray.size(); i++) {
 			if(argsArray.get(i).contains("|")) {
 				PipeCommand pipeCommand = new PipeCommand(argsArray.get(i));
+				pipeCommand.parse();
 				pipeCommand.evaluate(System.in, stdout);
 			} else {
+				//				System.out.println("CALL: " + argsArray.get(i));
 				CallCommand callCmd = new CallCommand(argsArray.get(i));
 				callCmd.parse();
 				callCmd.evaluate(stdin, stdout);
 			}
 		}
 	}
-	
+
 	/**
 	 * Parses command to tokenise commands using semicolons into Call Commands,
 	 * if semicolons is not within the backquote
@@ -69,27 +71,37 @@ public class SeqCommand implements Command {
 	 *             semicolon is the 1st and last index of the cmdline
 	 */
 	public void parse() throws ShellException {
-		
+
+		int countSQ = 0;
+		int countDQ = 0;
+		int index = 0;
+
 		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
 				|| cmdline.charAt(cmdline.length() - 1) == ';')) {
 			error = true;
 			throw new ShellException("Invalid sequence operators");
 		}
-		
-        String[] tokens = cmdline.split(";(?=(?:[^\"\']*\"\'[^\"\']*\"\')*[^\"\']*$)", -1);
-        for(String command : tokens) {
-//        	System.out.println("COMMAND: " + command.trim());
-        	argsArray.add(command.trim());
-        }
+
+		cmdline = cmdline + ";";
+		for (int i = 0 ; i < cmdline.length(); i++) {
+			if (cmdline.charAt(i) == '"'){
+				countDQ += 1;
+			} else if (cmdline.charAt(i) =='\'') {
+				countSQ += 1;
+			} else if (cmdline.charAt(i) == ';' && countDQ % 2 == 0 && countSQ %2 == 0) {
+				argsArray.add(cmdline.substring(index, i));
+				index = i+1;
+			}
+		}
 	}
-	
+
 	/**
 	 * For testing purposes only
 	 */
 	public int getArgsLength(){
 		return argsArray.size(); 
 	}
-	
+
 	public void setErrorTrue(Boolean setError){
 		error = setError;
 	}
