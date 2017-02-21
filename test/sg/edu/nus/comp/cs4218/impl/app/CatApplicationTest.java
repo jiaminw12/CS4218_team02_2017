@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,7 +75,7 @@ public class CatApplicationTest {
 		catApplication.run(args, stdin, stdout);
 	}
 	
-	@Test
+	@Test(expected = CatException.class)
 	public void testCatInsufficientArgs() throws CatException {
 		String[] args = new String[] { "cat" };
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
@@ -102,7 +103,7 @@ public class CatApplicationTest {
 	public void testProperArgs() throws CatException {
 		String[] args = new String[] {"cat","muttest.txt","slicing.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());;
-		stdout = System.out;
+		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
 	}
 	
@@ -117,7 +118,7 @@ public class CatApplicationTest {
 	public void testOnlyArgsNull() throws CatException {
 		String[] args = null;
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
-		stdout = System.out;
+		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
 	} 
 	
@@ -125,7 +126,7 @@ public class CatApplicationTest {
 	public void testOnlyArgsIOException() throws CatException {
 		String[] args = null;
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
-		stdout = System.out;
+		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
 	}
 
@@ -134,7 +135,7 @@ public class CatApplicationTest {
 	public void testCouldNoteWriteToOutputCatException() throws CatException, IOException {
 		String[] args = new String[] {"cat","sweet.txt","sweet.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
-		stdout = System.out;
+		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
 	}
 	
@@ -142,7 +143,7 @@ public class CatApplicationTest {
 	public void testDirectoryCatException() throws CatException, IOException {
 		String[] args = new String[] {"cat","/Users/varunica/Documents","/Users/varunica/Desktop"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
-		stdout = System.out;
+		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
 	}
 	
