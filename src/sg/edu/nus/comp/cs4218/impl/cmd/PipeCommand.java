@@ -31,6 +31,7 @@ public class PipeCommand implements Command {
 
 	private List<String> argsArray;
 	private String cmdline;
+	public static boolean isPipe;
 
 	public PipeCommand(String cmdline) {
 		this.cmdline = cmdline.trim();
@@ -58,9 +59,11 @@ public class PipeCommand implements Command {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 		if(argsArray.size() == 1) {
+			isPipe = true;
 			CallCommand callCmd = new CallCommand(argsArray.get(0));
 			callCmd.parse();
 			callCmd.evaluate(stdin, stdout);
+			isPipe = false;
 		} else {
 			for (int i = 0; i < argsArray.size(); i++) {
 				String result = new String();
@@ -70,10 +73,12 @@ public class PipeCommand implements Command {
 							.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
 				}
 
+				isPipe = true;
 				ByteArrayInputStream inputStream = new ByteArrayInputStream(result.getBytes());
 				CallCommand callCmd = new CallCommand(argsArray.get(i));
 				callCmd.parse();
 				callCmd.evaluate(inputStream, outputStream);
+				isPipe = false;
 
 				if(i != argsArray.size() - 1) {
 					stdin = ShellImpl.outputStreamToInputStream(outputStream);

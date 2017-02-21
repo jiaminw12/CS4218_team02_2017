@@ -11,9 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /**
  * The cat command concatenates the content of given files and prints on the
@@ -59,9 +61,11 @@ public class HeadApplication implements Application {
 					if(isFileValid(file)) {
 						printLine(10, file, stdin, stdout);
 					} else {
-						String input = readFromStdin(args, stdin);
-						if(Integer.parseInt(args[1]) > 0) {
-							stdout.write(input.getBytes());
+						String[] input = readFromStdin(args, stdin).split("\n");
+						int numOfLines = (Integer.parseInt(args[1]) < input.length) ? Integer.parseInt(args[1]) : input.length;
+						
+						for(int i = 0; i < numOfLines; i++) {
+							stdout.write(input[i].getBytes());
 							stdout.write(System.lineSeparator().getBytes());
 						}
 					}
@@ -197,15 +201,20 @@ public class HeadApplication implements Application {
 	 */
 	private String readFromStdin(String[] args, InputStream stdin) throws HeadException {
 
-		String input = null;
-
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-			input = bufferedReader.readLine();
-		} catch (IOException e) {
-			throw new HeadException("Cannot Read From Stdin");
-		} 
-
+		String input = new String();
+		
+		if(PipeCommand.isPipe) {
+			input = new BufferedReader(new InputStreamReader(stdin)).lines()
+					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+		} else {
+			try {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				input = bufferedReader.readLine();
+			} catch (IOException e) {
+				throw new HeadException("Cannot Read From Stdin");
+			} 
+		}
+		
 		// try to replace substrings
 		if(input == null || input.isEmpty()) {
 			throw new HeadException("Invalid Input");

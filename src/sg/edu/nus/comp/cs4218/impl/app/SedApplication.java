@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.Sed;
+import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /**
  * The sed command copies input file (or input stream) to stdout performing string
@@ -126,26 +128,28 @@ public class SedApplication implements Application, Sed {
 	 * @throws SedException
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
-	String readFromStdin(String[] args, InputStream stdin) throws SedException {
+	private String readFromStdin(String[] args, InputStream stdin) throws SedException {
 
-		String text = null;
-		String input = null;
-
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-			input = bufferedReader.readLine();
-		} catch (IOException e) {
-			throw new SedException("Cannot Read From Stdin");
+		String input = new String();
+		
+		if(PipeCommand.isPipe) {
+			input = new BufferedReader(new InputStreamReader(stdin)).lines()
+					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+		} else {
+			try {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				input = bufferedReader.readLine();
+			} catch (IOException e) {
+				throw new SedException("Cannot Read From Stdin");
+			} 
+		}
+		
+		// try to replace substrings
+		if(input == null || input.isEmpty()) {
+			throw new SedException("Invalid Input");
 		} 
 
-		// try to replace substrings
-		if(input != null && !input.isEmpty()) {
-			text = input;
-		} else {
-			throw new SedException("Invalid Input");
-		}
-
-		return text;
+		return input;
 	}
 
 	/**

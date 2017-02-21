@@ -10,11 +10,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.app.Wc;
 import sg.edu.nus.comp.cs4218.exception.WcException;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /**
  * The wc command prints the number of bytes, words, and lines in given files
@@ -202,13 +204,22 @@ public class WcApplication implements Application, Wc {
 		}
 
 		try {
-			BufferedReader br = new BufferedReader(
-					new InputStreamReader(stdin, "UTF-8"));
-
-			String line = br.readLine();
+			String input = new String();
+			if(PipeCommand.isPipe) {
+				input = new BufferedReader(new InputStreamReader(stdin)).lines()
+						.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+			} else {
+				try {
+					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+					input = bufferedReader.readLine();
+				} catch (IOException e) {
+					throw new WcException("Cannot Read From Stdin");
+				} 
+			}
+			
 			lineCount++;
-			charCount += line.length() + lineCount;
-			wordCount += line.trim().split("\\s+").length;
+			charCount += input.length() + lineCount;
+			wordCount += input.trim().split("\\s+").length;
 
 			printResult("", stdout);
 			lineCount = 0;

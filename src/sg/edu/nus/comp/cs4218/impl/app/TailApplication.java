@@ -11,9 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
+import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.TailException;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /**
  * The cat command concatenates the content of given files and prints on the
@@ -50,7 +53,7 @@ public class TailApplication implements Application {
 			args = parseTail(args);
 
 			try {
-				if(args.length == 1 && args[0].toLowerCase().equals("tail")) {
+				if(args.length == 1 && args[0].toLowerCase().equals("Tail")) {
 					String input = readFromStdin(args, stdin);
 					stdout.write(input.getBytes());
 					stdout.write(System.lineSeparator().getBytes());
@@ -59,9 +62,11 @@ public class TailApplication implements Application {
 					if(isFileValid(file)) {
 						printLine(10, file, stdin, stdout);
 					} else {
-						String input = readFromStdin(args, stdin);
-						if(Integer.parseInt(args[1]) > 0) {
-							stdout.write(input.getBytes());
+						String[] input = readFromStdin(args, stdin).split("\n");
+						int numOfLines = (Integer.parseInt(args[1]) < input.length) ? Integer.parseInt(args[1]) : input.length;
+
+						for(int i = input.length - numOfLines; i < input.length; i++) {
+							stdout.write(input[i].getBytes());
 							stdout.write(System.lineSeparator().getBytes());
 						}
 					}
@@ -72,7 +77,7 @@ public class TailApplication implements Application {
 					}
 				}
 			} catch (IOException e) {
-			 	throw new TailException("Cannot Read From Stdin");
+				throw new TailException("Cannot Read From Stdin");
 			} catch (NumberFormatException e) {
 				throw new TailException("Invalid arguments");
 			}
@@ -87,16 +92,16 @@ public class TailApplication implements Application {
 
 		String cmdline = getOptionArguments(args);
 		String options = new String();
-		
+
 		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+").matcher(cmdline);
-	    if(matcher.matches()) {
+		if(matcher.matches()) {
 			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)").matcher(cmdline);
 			while(matcher.find()){
 				options = matcher.group("number");
 			}
-	    } else {
-	    	throw new TailException("Invalid arguments");
-	    }
+		} else {
+			throw new TailException("Invalid arguments");
+		}
 
 		if(isLastArgumentFile(args)) {
 			return new String[] { args[0], options, args[args.length - 1] };
@@ -134,11 +139,11 @@ public class TailApplication implements Application {
 
 	private void printLine(int numberOfLines, File file, InputStream stdin, OutputStream stdout) 
 			throws TailException {
-		
+
 		if (stdin == null || stdout == null) {
 			throw new TailException("Null Pointer Exception");
 		}
-		
+
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			int tempNumberOfLines = numberOfLines;
@@ -218,14 +223,19 @@ public class TailApplication implements Application {
 	 */
 	private String readFromStdin(String[] args, InputStream stdin) throws TailException {
 
-		String input = null;
+		String input = new String();
 
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-			input = bufferedReader.readLine();
-		} catch (IOException e) {
-			throw new TailException("Cannot Read From Stdin");
-		} 
+		if(PipeCommand.isPipe) {
+			input = new BufferedReader(new InputStreamReader(stdin)).lines()
+					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+		} else {
+			try {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				input = bufferedReader.readLine();
+			} catch (IOException e) {
+				throw new TailException("Cannot Read From Stdin");
+			} 
+		}
 
 		// try to replace substrings
 		if(input == null || input.isEmpty()) {

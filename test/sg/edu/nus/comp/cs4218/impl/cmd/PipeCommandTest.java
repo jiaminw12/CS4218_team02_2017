@@ -93,11 +93,9 @@ public class PipeCommandTest {
 	
 	@Test
 	public void testPipeMultipleCommandsSuccess() {
-		args = "cat test1.txt | head -n 2 | tail -n 1";
+		args = "cat test1.txt | head -n 2 | tail -n 3";
 		result = shellImpl.pipeMultipleCommands(args);
-		assertEquals("The quick$%^^%% brown fox jumps over the lazy dog" + System.getProperty("line.separator") 
-				+ "Quick brown fox the jumps over the lazy dog"  + System.getProperty("line.separator")
-				+ "thE Quick brown fox THE jumps over lazy dog the", result);
+		assertEquals("The quick$%^^%% brown fox jumps over the lazy dog"  + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
