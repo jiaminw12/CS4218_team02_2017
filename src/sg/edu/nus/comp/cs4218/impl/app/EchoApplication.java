@@ -46,7 +46,10 @@ public class EchoApplication implements Application {
 			} else {
 				for (int i = 1; i < args.length; i++) {
 					stdout.write(args[i].getBytes("UTF-8"));
-					stdout.write(" ".getBytes("UTF-8"));
+					
+					if (i <= args.length - 2) {
+						stdout.write(" ".getBytes("UTF-8"));
+					}
 				}
 				stdout.write("\n".getBytes("UTF-8"));
 			}
