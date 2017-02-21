@@ -98,8 +98,12 @@ public class SeqCommand implements Command {
 	/**
 	 * For testing purposes only
 	 */
-	public int getArgsLength(){
+	public int getArgsArrayLength(){
 		return argsArray.size(); 
+	}
+	
+	public String getArgsArray(){
+		return argsArray.get(0);
 	}
 
 	/**
