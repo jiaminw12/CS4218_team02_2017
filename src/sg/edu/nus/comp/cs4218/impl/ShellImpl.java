@@ -83,7 +83,7 @@ public class ShellImpl implements Shell {
 				// System.out.println("backquote" + bqStr);
 				OutputStream bqOutputStream = new ByteArrayOutputStream();
 				ShellImpl shell = new ShellImpl();
-				//shell.parseAndEvaluate(bqStr, bqOutputStream);
+				shell.parseAndEvaluate(bqStr, bqOutputStream);
 
 				ByteArrayOutputStream outByte = (ByteArrayOutputStream) bqOutputStream;
 				byte[] byteArray = outByte.toByteArray();
@@ -374,7 +374,7 @@ public class ShellImpl implements Shell {
 		
 		SeqCommand seqCommand = new SeqCommand(cmdline);
 		seqCommand.parse();
-		seqCommand.evaluate(System.in, System.out);
+		seqCommand.evaluate(System.in, stdout);
 	}
 
 	@Override

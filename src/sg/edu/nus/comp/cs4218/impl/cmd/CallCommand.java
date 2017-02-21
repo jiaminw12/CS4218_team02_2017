@@ -46,6 +46,10 @@ public class CallCommand implements Command {
 		errorMsg = "";
 		argsArray = new String[0];
 	}
+	
+	public CallCommand() {
+		
+	}
 
 	/**
 	 * Evaluates sub-command using data provided through stdin stream. Writes
