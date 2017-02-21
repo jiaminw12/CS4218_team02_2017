@@ -45,7 +45,7 @@ public class CdApplication implements Application{
 	public void setDirectory(String[] args) throws DirectoryNotFoundException {
 		if (args == null) {
 			throw new DirectoryNotFoundException("Invalid Arguments.");
-		} else if (args.length != 2) {
+		} else if (args.length > 2) {
 			throw new DirectoryNotFoundException("Too many Arguments.");
 		}
 		
