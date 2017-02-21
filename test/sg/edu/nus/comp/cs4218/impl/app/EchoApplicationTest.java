@@ -47,75 +47,88 @@ public class EchoApplicationTest {
 	
 	@Test(expected = EchoException.class)
 	public void testEchoAppWithNullOutputStream() throws EchoException  {
-		String[] args = {"echo", "'Travel time Singapore -> Paris is 13h and 15`'"};
+		String[] args = {"echo", "Travel time Singapore -> Paris is 13h and 15`"};
 		echoApp.run(args, null, null);
 	}
 	
-	@Test(expected = EchoException.class)
-	public void testEchoAppWithDoubleQuoteWithNewline() throws EchoException {
-		String[] args = {"echo", "\"\n\""};
+	@Test
+	public void testEchoAppWithSingleQuote() throws EchoException {
+		String[] args = {"echo", "'Walallalal'"};
 		echoApp.run(args, null, outContent);
-	}
-	
-	@Test(expected = EchoException.class)
-	public void testEchoAppWithDoubleQuoteWithDoubleQuote() throws EchoException {
-		String[] args = {"echo", "\"\"\"\""};
-		echoApp.run(args, null, outContent);
-	}
-	
-	@Test(expected = EchoException.class)
-	public void testEchoAppWithDoubleQuoteWithBackQuote() throws EchoException {
-		String[] args = {"echo", "``"};
-		echoApp.run(args, null, outContent);
+		String actualResult = outContent.toString();
+		assertEquals("'Walallalal'", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithoutQuoteSingle() throws EchoException {
+	public void testEchoAppWithNewline() throws EchoException {
+		String[] args = {"echo", ""};
+		echoApp.run(args, null, outContent);
+		String actualResult = outContent.toString();
+		assertEquals("", actualResult.trim());
+	}
+	
+	@Test
+	public void testEchoAppWithDoubleQuote() throws EchoException {
+		String[] args = {"echo", "This is space: `echo \" \"`."};
+		echoApp.run(args, null, outContent);
+		String actualResult = outContent.toString();
+		assertEquals("This is space: `echo \" \"`.", actualResult.trim());
+	}
+	
+	@Test
+	public void testEchoAppWithoutQuote() throws EchoException {
 		String[] args = {"echo", "hello"};
 		echoApp.run(args, null, outContent);
-		assertEquals("hello", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("hello", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithoutQuoteDouble() throws EchoException {
+	public void testEchoAppWithoutQuoteMultipleArgs() throws EchoException {
 		String[] args = {"echo", "hello", "world"};
 		echoApp.run(args, null, outContent);
-		assertEquals("hello world", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("hello world", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithSingleBackQuote() throws EchoException {
-		String[] args = {"echo", "'Travel time Singapore -> Paris is 13h and 15`'"};
+	public void testEchoAppWithABackqQuote() throws EchoException {
+		String[] args = {"echo", "Travel time Singapore -> Paris is 13h and 15`"};
 		echoApp.run(args, null, outContent);
-		assertEquals("Travel time Singapore -> Paris is 13h and 15`", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("Travel time Singapore -> Paris is 13h and 15`", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithDoubleBackQuote() throws EchoException {
-		String[] args = {"echo", "\"This is space:`echo \" \"`.\""};
+	public void testEchoAppWithMultipleArgs() throws EchoException {
+		String[] args = {"echo", "This", "is space: . "};
 		echoApp.run(args, null, outContent);
-		assertEquals("This is space: .", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("This is space: .", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithSingleDoubleBackQuote() throws EchoException {
-		String[] args = {"echo", "'This is space:`echo \" \"`.'"};
+	public void testEchoAppWithDoubleBackBackQuote() throws EchoException {
+		String[] args = {"echo", "This is space:`echo \" \"`."};
 		echoApp.run(args, null, outContent);
-		assertEquals("This is space:`echo \" \"`.", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("This is space:`echo \" \"`.", actualResult.trim());
 	}
 	
 	@Test
-	public void testEchoAppWithDoubleBackQuoteWithGlobbibg() throws EchoException {
-		String[] args = {"echo", "\"This is space:`echo \" \"`*.\""};
+	public void testEchoAppWithGlobbing() throws EchoException {
+		String[] args = {"echo", "This is space:" ,"*."};
 		echoApp.run(args, null, outContent);
-		assertEquals("This is space: *.", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("This is space: *.", actualResult.trim());
 	}
 	
 	@Test
 	public void testEchoAppWithSpecialCharacters() throws EchoException {
-		String[] args = {"echo", "\t*&^<>$ +|~`"};
+		String[] args = {"echo", "*&^<>$ +|~`"};
 		echoApp.run(args, null, outContent);
-		assertEquals("\t*&^<>$ +|~`", outContent.toString());
+		String actualResult = outContent.toString();
+		assertEquals("*&^<>$ +|~`", actualResult.trim());
 	}
 	
 	
