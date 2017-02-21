@@ -106,14 +106,14 @@ public class CatApplicationTest {
 		catApplication.run(args, stdin, stdout);
 	}
 	
-	@Test(expected = NullPointerException.class)
+	@Test(expected = CatException.class)
 	public void testNoStdout() throws CatException {
 		String[] args = new String[] {"cat","muttest.txt","slicing.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		catApplication.run(args, stdin, stdout);
 	} 
 	
-	@Test
+	@Test(expected = CatException.class)
 	public void testOnlyArgsNull() throws CatException {
 		String[] args = null;
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
@@ -121,14 +121,12 @@ public class CatApplicationTest {
 		catApplication.run(args, stdin, stdout);
 	} 
 	
-	//to test for IOexception handling - need modification
-	@Test(expected = IOException.class)
-	public void testOnlyArgsIOException() throws CatException, IOException {
+	@Test(expected = CatException.class)
+	public void testOnlyArgsIOException() throws CatException {
 		String[] args = null;
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		stdout = System.out;
 		catApplication.run(args, stdin, stdout);
-		throw new IOException("Test IOException");
 	}
 
 	
