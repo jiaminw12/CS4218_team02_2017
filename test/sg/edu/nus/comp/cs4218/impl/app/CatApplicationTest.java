@@ -74,15 +74,7 @@ public class CatApplicationTest {
 		stdout = null;
 		catApplication.run(args, stdin, stdout);
 	}
-	
-	@Test(expected = CatException.class)
-	public void testCatInsufficientArgs() throws CatException {
-		String[] args = new String[] { "cat" };
-		stdin = new ByteArrayInputStream(TEXT.getBytes());
-		stdout = System.out;
-		catApplication.run(args, stdin, stdout);
-	}
-	
+		
 	@Test(expected = CatException.class)
 	public void testExtraArgs() throws CatException {
 		String[] args = new String[] { "cat", "s/hi/bye/", "muttest.txt","slicing.txt" };
@@ -145,6 +137,24 @@ public class CatApplicationTest {
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		stdout = new ByteArrayOutputStream();
 		catApplication.run(args, stdin, stdout);
+	}
+	
+	@Test(expected = CatException.class)
+	public void testStdin() throws CatException {
+		String[] args = new String [] {"cat", "hello"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = new ByteArrayOutputStream();
+		catApplication.run(args, stdin, stdout);
+		assertEquals("hello", stdout.toString());
+	}
+	
+	@Test
+	public void testCatSingleFile() throws CatException {
+		String[] args = new String [] {"cat", "slicing.txt"};
+		stdin = new ByteArrayInputStream(TEXT.getBytes());
+		stdout = new ByteArrayOutputStream();
+		catApplication.run(args, stdin, stdout);
+		assertEquals("Program slicing can be used in debugging to locate source of errors more easily.", stdout.toString().trim());
 	}
 	
 	@After
