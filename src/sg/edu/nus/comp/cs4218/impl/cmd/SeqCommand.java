@@ -54,7 +54,6 @@ public class SeqCommand implements Command {
 				pipeCommand.parse();
 				pipeCommand.evaluate(System.in, stdout);
 			} else {
-				//				System.out.println("CALL: " + argsArray.get(i));
 				CallCommand callCmd = new CallCommand(argsArray.get(i));
 				callCmd.parse();
 				callCmd.evaluate(stdin, stdout);
@@ -71,9 +70,12 @@ public class SeqCommand implements Command {
 	 *             semicolon is the 1st and last index of the cmdline
 	 */
 	public void parse() throws ShellException {
-
+		
+		cmdline = cmdline.replace("\n", "");
+		
 		int countSQ = 0;
 		int countDQ = 0;
+		int countBQ = 0;
 		int index = 0;
 
 		if(cmdline.length() > 0 && (cmdline.charAt(0) == ';' 
@@ -81,18 +83,32 @@ public class SeqCommand implements Command {
 			error = true;
 			throw new ShellException("Invalid sequence operators");
 		}
-
+		
 		cmdline = cmdline + ";";
 		for (int i = 0 ; i < cmdline.length(); i++) {
-			if (cmdline.charAt(i) == '"'){
+			if(cmdline.charAt(i) == '`'){
+				countBQ += 1;
+			} else if (cmdline.charAt(i) == '"'){
 				countDQ += 1;
 			} else if (cmdline.charAt(i) =='\'') {
 				countSQ += 1;
-			} else if (cmdline.charAt(i) == ';' && countDQ % 2 == 0 && countSQ %2 == 0) {
+			} else if (cmdline.charAt(i) == ';' && countBQ % 2 == 0  && countDQ % 2 == 0 && countSQ %2 == 0) {
 				argsArray.add(cmdline.substring(index, i));
 				index = i+1;
+			} else if (countSQ %2 == 0){
+				if (cmdline.charAt(i) == ';' && countDQ %2 == 0 && countBQ % 2 == 0 ){
+					argsArray.add(cmdline.substring(index, i));
+					index = i+1;
+				}
 			}
 		}
+		
+		if(countBQ >= 1 && countBQ %2 != 0 && countSQ %2 == 0){
+			if(argsArray.size() <= 0){
+				argsArray.add(cmdline.substring(0, cmdline.length()-1));
+			}
+		}
+		
 	}
 
 	/**

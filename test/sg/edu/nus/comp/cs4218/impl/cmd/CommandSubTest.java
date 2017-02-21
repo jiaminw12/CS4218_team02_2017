@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import org.junit.*;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
@@ -24,22 +25,13 @@ public class CommandSubTest {
 	@Before
 	public void setUp() {
 		shellImpl = new ShellImpl();
-		outputStream = new ByteArrayOutputStream();
 	}
-	
-	@Test
-	public void testEmptyCallCommand() throws ShellException,
-		AbstractApplicationException {
-			CallCommand cmd = new CallCommand("");
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			cmd.evaluate(null, out);
-			assertEquals(out.toString(), "");
-	}
-	
+
 	@Test(expected = ShellException.class)
 	public void testIllegalApplicationName()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `echa token1 `";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
@@ -47,6 +39,7 @@ public class CommandSubTest {
 	public void testIllegalNumOfBackQuoteAtBack()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo ` token1 ```";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
@@ -54,13 +47,15 @@ public class CommandSubTest {
 	public void testIllegalNumOfBackQuoteAtStart()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo ``` token1 `";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
 	@Test(expected = ShellException.class)
 	public void testIllegalCommand()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cybody40.txt |`";
+		String cmdLine = "echo `cat farfarway.txt |`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
@@ -68,6 +63,7 @@ public class CommandSubTest {
 	public void testInvalidArg()
 			throws ShellException, AbstractApplicationException, IOException {
 		String cmdLine = "echo `hahaha.... echo` echo";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
@@ -75,6 +71,7 @@ public class CommandSubTest {
 	public void testBQContainBQ()
 			throws ShellException, AbstractApplicationException, IOException {
 		String cmdLine = "echo `echo `echo testing ing ....``";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
@@ -84,59 +81,69 @@ public class CommandSubTest {
 	// This is space: .
 	// echo 'This is space:`echo " "`.'
 	// This is space:`echo " "`.
+	// echo `echo bhdfghdf`; echo "`echo fjghfjgh | echo dhfjhfdg`"; echo "`echo hfbghgf; echo jgfhdgdg`"
+	// bhdfghdf
+	// dhfjhfdg
+	// hfbghgf jgfhdgdg
 
 	@Test
 	public void testEchoWithSemicolon() throws Exception {
 		String cmdLine = "echo `echo ABC; echo DEF`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		String expectedResult = "ABC DEF" + System.lineSeparator();
-		assertEquals(expectedResult, actualResult);
+		String expectedResult = "ABCDEF" + System.lineSeparator();
+		assertEquals(expectedResult.trim(), actualResult);
 	}
-	
+
 	@Test
 	public void testCommandSub() throws Exception {
-		String cmdLine = "echo `cat cybody40.txt`";
+		String cmdLine = "echo `cat farfaraway.txt`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca. They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
+				"Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.A small river named Duden flows by their place and supplies it with the necessary regelialia.It is a paradisematic country, in which roasted parts of sentences fly into your mouth.At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.",
 				actualResult);
 	}
 
 	@Test
 	public void testInputSingleQuote()
 			throws IOException, AbstractApplicationException, ShellException {
-		String cmdLine = "echo '`cat cxintro20.txt`' ";
+		String cmdLine = "echo '`cat farfaraway.txt`' ";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("cat cxintro20.txt", actualResult);
+		assertEquals("`cat farfaraway.txt`", actualResult);
 	}
 
 	@Test
 	public void testOneCommandSubWithNewLine()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat " + "\n" + "cxintro02.txt`";
+		String cmdLine = "echo `cat " + "\n" + "slicing.txt`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
+				"Program slicing can be used in debugging to locate source of errors more easily.",
 				actualResult);
 	}
 
 	@Test
 	public void testOneCommandSubWithDoubleQuote()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo \"`echo i'm here`\"";
+		String cmdLine = "echo \"`echo popeye here`\"";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("i'm here", actualResult);
+		assertEquals("popeye here", actualResult);
 	}
 
 	@Test
 	public void testOneCommandSub()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `wc -l cxintro02.txt`";
+		String cmdLine = "echo `wc -l slicing.txt`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals("1", actualResult);
@@ -144,86 +151,88 @@ public class CommandSubTest {
 
 	@Test
 	public void testCommandSubWithPipeHeadWithNoOptions() throws Exception {
-		String cmdLine = "echo `cat cybody40.txt | head`";
+		String cmdLine = "echo `cat farfaraway.txt | head`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca. They may be found on menus in restaurants that serve seafood. Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
+				"Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.A small river named Duden flows by their place and supplies it with the necessary regelialia.It is a paradisematic country, in which roasted parts of sentences fly into your mouth.At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.",
 				actualResult);
 	}
 
 	@Test
 	public void testOneCommandWithPipeHead()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cybody40.txt | head -n 1`";
+		String cmdLine = "echo `cat farfaraway.txt | head -n 1`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood.",
+				"Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.",
 				actualResult);
 	}
 
 	@Test
 	public void testOneCommandWithPipeTail()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cybody40.txt | tail -n 5`";
+		String cmdLine = "echo `cat farfaraway.txt | tail -n 5`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
-				actualResult);
-	}
-
-	@Test
-	public void testOneCommandWithSemicolonCdEcho()
-			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cd test; echo 'Travel time Singapore -> Los Angels is 24h and 15`'`";
-		shellImpl.parseAndEvaluate(cmdLine, outputStream);
-		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("Travel time Singapore -> Los Angels is 24h and 15`",
+				"Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.A small river named Duden flows by their place and supplies it with the necessary regelialia.It is a paradisematic country, in which roasted parts of sentences fly into your mouth.At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.",
 				actualResult);
 	}
 
 	@Test
 	public void testOneCommandWithSemicolonCdCat()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "wc -l `cd test; cat cxintro02.txt`";
+		String originalPath = Environment.currentDirectory;
+		String cmdLine = "echo `cat slicing.txt; cd test`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
+				"Program slicing can be used in debugging to locate source of errors more easily.",
 				actualResult);
+		assertEquals(originalPath + "/test", Environment.currentDirectory);
+		Environment.currentDirectory = originalPath;
 	}
 
 	@Test
 	public void testOneCommandWithSemicolonCatPipe()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cxintro02.txt` ; echo `cat cxintro02.txt` | echo";
+		String cmdLine = "echo `cat slicing.txt` ; echo `cat slicing.txt` | echo";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"Clams are a fairly common form of bivalve, therefore making it part of the phylum mollusca.",
+				"Program slicing can be used in debugging to locate source of errors more easily.",
 				actualResult);
 	}
 
 	@Test
 	public void testMultipleCommandSub()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cxintro02.txt` ; echo `wc -l cybody40.txt`";
+		String cmdLine = "echo `cat slicing.txt` ; echo `wc -l farfaraway.txt`";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("Clams can be found in saltwater and freshwater. 4",
+		assertEquals(
+				"Program slicing can be used in debugging to locate source of errors more easily."
+						+ System.lineSeparator() + "5",
 				actualResult);
 	}
 
 	@Test
 	public void testMultiplePipeSub()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat cxintro02.txt | tail -n 1` | cat";
+		String cmdLine = "echo `cat slicing.txt | tail -n 1` | cat";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
 		assertEquals(
-				"Clams can be found in saltwater and freshwater. Clams can be found in saltwater and freshwater.",
+				"Program slicing can be used in debugging to locate source of errors more easily.",
 				actualResult);
 	}
 
@@ -231,9 +240,10 @@ public class CommandSubTest {
 	public void testMultipleSemicolonSub()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `echo Showing contents of text1.txt cat text1.txt` ; echo yea";
+		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("Showing contents of text1.txt cat text1.txt yea",
+		assertEquals("Showing contents of text1.txt cat text1.txt" + System.lineSeparator() + "yea",
 				actualResult);
 	}
 

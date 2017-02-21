@@ -106,6 +106,7 @@ public class PipeCommand implements Command {
 
 		int countSQ = 0;
 		int countDQ = 0;
+		int countBQ = 0;
 		int index = 0;
 
 		if(cmdline.length() > 0 && (cmdline.charAt(0) == '|' 
@@ -115,11 +116,13 @@ public class PipeCommand implements Command {
 
 		cmdline = cmdline + "|";
 		for (int i = 0 ; i < cmdline.length(); i++) {
-			if (cmdline.charAt(i) == '"'){
+			if(cmdline.charAt(i) == '`'){
+				countBQ += 1;
+			} else if (cmdline.charAt(i) == '"'){
 				countDQ += 1;
 			} else if (cmdline.charAt(i) =='\'') {
 				countSQ += 1;
-			} else if (cmdline.charAt(i) == '|' && countDQ % 2 == 0 && countSQ %2 == 0) {
+			} else if (cmdline.charAt(i) == '|' && countBQ % 2 == 0 && countDQ % 2 == 0 && countSQ %2 == 0) {
 				argsArray.add(cmdline.substring(index, i));
 				index = i+1;
 			}
