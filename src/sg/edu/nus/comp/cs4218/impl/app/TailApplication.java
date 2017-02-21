@@ -53,7 +53,7 @@ public class TailApplication implements Application {
 			args = parseTail(args);
 
 			try {
-				if(args.length == 1 && args[0].toLowerCase().equals("Tail")) {
+				if(args.length == 1 && args[0].toLowerCase().equals("tail")) {
 					String input = readFromStdin(args, stdin);
 					stdout.write(input.getBytes());
 					stdout.write(System.lineSeparator().getBytes());

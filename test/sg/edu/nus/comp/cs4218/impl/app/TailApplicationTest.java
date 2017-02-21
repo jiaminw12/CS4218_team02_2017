@@ -53,56 +53,56 @@ public class TailApplicationTest {
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWithNullArgument() throws TailException {
+	public void testTailAppWithNullArgument() throws TailException {
 		String[] args = {};
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWithIllegalOption() throws TailException {
+	public void testTailAppWithIllegalOption() throws TailException {
 		String[] args = { "tail", "-a", "15", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWith5Arguments() throws TailException {
+	public void testTailAppWith5Arguments() throws TailException {
 		String[] args = { "tail", "-n", "15", "muttest.txt", "slicing.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWithIllegalNumOfLinesUseNegativeDigits()
+	public void testTailAppWithIllegalNumOfLinesUseNegativeDigits()
 			throws TailException {
 		String[] args = { "tail", "-n", "-2", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWithIllegalNumOfLinesUseChar() throws TailException {
+	public void testTailAppWithIllegalNumOfLinesUseChar() throws TailException {
 		String[] args = { "tail", "-n", "aaa", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWithIllegalFile() throws TailException {
+	public void testTailAppWithIllegalFile() throws TailException {
 		String[] args = { "tail", "-n", "15", "muttestS.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test(expected = TailException.class)
-	public void testHeadAppWith3Arguments() throws TailException {
+	public void testTailAppWith3Arguments() throws TailException {
 		String[] args = { "tail", "-n", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test
-	public void testHeadAppWithIllegalNumOfLinesUseZero() throws TailException {
+	public void testTailAppWithIllegalNumOfLinesUseZero() throws TailException {
 		String[] args = { "tail", "-n", "0", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 	}
 
 	@Test
-	public void testHeadAppWithoutOption() throws TailException {
+	public void testTailAppWithoutOption() throws TailException {
 		String[] args = { "tail", "slicing.txt" };
 		tailApp.run(args, System.in, outContent);
 		assertEquals(
@@ -111,21 +111,21 @@ public class TailApplicationTest {
 	}
 
 	@Test
-	public void testHeadAppWithOption() throws TailException {
+	public void testTailAppWithOption() throws TailException {
 		String[] args = { "tail", "-n", "1", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 		assertEquals("}\n", outContent.toString());
 	}
 
 	@Test
-	public void testHeadAppWithMultiplesOption() throws TailException {
+	public void testTailAppWithMultiplesOption() throws TailException {
 		String[] args = { "tail", "-n2", "-n5", "-n", "3", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
 		assertEquals("    ps2.run();\n" + "  }\n" + "}\n", outContent.toString());
 	}
 
 	@Test
-	public void testHeadAppWithoutOptionInStdin() throws TailException {
+	public void testTailAppWithoutOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
 				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
 						.getBytes());
@@ -137,7 +137,7 @@ public class TailApplicationTest {
 	}
 
 	@Test
-	public void testHeadAppWithOptionInStdin() throws TailException {
+	public void testTailAppWithOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
 				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
 						.getBytes());
@@ -149,7 +149,7 @@ public class TailApplicationTest {
 	}
 
 	@Test
-	public void testHeadAppWithMultiplesOptionInStdin() throws TailException {
+	public void testTailAppWithMultiplesOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
 				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
 						.getBytes());

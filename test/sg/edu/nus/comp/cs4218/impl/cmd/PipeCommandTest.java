@@ -72,9 +72,20 @@ public class PipeCommandTest {
 	
 	@Test
 	public void testPipeTwoCommandsSuccess() {
-		args = "cat test1.txt | sed s/brown/PINK/";
+		args = "cat test1.txt | sed s/dog/PINK/";
 		result = shellImpl.pipeTwoCommands(args);
-		assertEquals("The quick$%^^%% PINK fox jumps over the lazy dog" + System.getProperty("line.separator"), result);
+		assertEquals("The quick$%^^%% brown fox jumps over the lazy PINK" + System.getProperty("line.separator") 
+			+ "Quick brown fox the jumps over the lazy PINK" + System.getProperty("line.separator")  
+			+ "Quick brown fox jumps over the lazy PINK))(~(!@@" + System.getProperty("line.separator")
+			+ "@((#*#&&@@(#Quick brown fox jumps over lazy PINK The" + System.getProperty("line.separator")
+			+ "thE Quick brown fox THE jumps over lazy PINK the" + System.getProperty("line.separator"), result);
+	}
+	
+	@Test
+	public void testPipeTwoCommandsExceptionInFirstCommand() {
+		args = "cat test.txt | cat test1.txt";
+		result = shellImpl.pipeTwoCommands(args);
+		assertEquals("cat: Exception Caught", result);
 	}
 	
 	@Test
@@ -92,17 +103,32 @@ public class PipeCommandTest {
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsSuccess() {
-		args = "cat test1.txt | head -n 2 | tail -n 3";
+	public void testPipeMultipleCommandsHeadTailSuccess() {
+		args = "cat test1.txt | head -n 3 | tail -n 1";
 		result = shellImpl.pipeMultipleCommands(args);
-		assertEquals("The quick$%^^%% brown fox jumps over the lazy dog"  + System.getProperty("line.separator"), result);
+		assertEquals("Quick brown fox jumps over the lazy dog))(~(!@@" + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
-	public void testPipeMultipleCommandsRepeatSuccess() {
-		args = "cat test2.txt | cat test1.txt | sed s/brown/RED/";
+	public void testPipeMultipleCommandsHeadSedSuccess() {
+		args = "cat test1.txt | head -n3 -n 2 | sed s/dog/PINK/";
 		result = shellImpl.pipeMultipleCommands(args);
-		assertEquals("The quick$%^^%% RED fox jumps over the lazy dog" + System.getProperty("line.separator"), result);
+		assertEquals("The quick$%^^%% brown fox jumps over the lazy PINK" + System.getProperty("line.separator") 
+		+ "Quick brown fox the jumps over the lazy PINK" + System.getProperty("line.separator"), result);
+	}
+	
+	@Test
+	public void testPipeComplexQuotesSuccess() {
+		args = "echo 'This is space:`echo \" \"`.' | sed s/s/AAA/g";
+		result = shellImpl.pipeMultipleCommands(args);
+		assertEquals("ThiAAA iAAA AAApace:`echo \" \"`." + System.getProperty("line.separator"), result);
+	}
+	
+	@Test
+	public void testPipePipesInQuotesSuccess() {
+		args = "echo 'This is space:`echo \" ||||\"`.' | sed s/s/AAA/g";
+		result = shellImpl.pipeMultipleCommands(args);
+		assertEquals("ThiAAA iAAA AAApace:`echo \" ||||\"`." + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
