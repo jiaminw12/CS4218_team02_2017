@@ -84,7 +84,7 @@ public class CatApplicationTest {
 	
 	@Test(expected = CatException.class)
 	public void testExtraArgs() throws CatException {
-		String[] args = new String[] { "cat", "s/hi/bye/", "cxintro02.txt","cybody40.txt" };
+		String[] args = new String[] { "cat", "s/hi/bye/", "muttest.txt","slicing.txt" };
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		stdout = System.out;
 		catApplication.run(args, stdin, stdout);
@@ -106,9 +106,9 @@ public class CatApplicationTest {
 		catApplication.run(args, stdin, stdout);
 	}
 	
-	@Test(expected = CatException.class)
+	@Test(expected = NullPointerException.class)
 	public void testNoStdout() throws CatException {
-		String[] args = new String[] {"cat","cxintro02.txt","cybody40.txt"};
+		String[] args = new String[] {"cat","muttest.txt","slicing.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
 		catApplication.run(args, stdin, stdout);
 	} 
