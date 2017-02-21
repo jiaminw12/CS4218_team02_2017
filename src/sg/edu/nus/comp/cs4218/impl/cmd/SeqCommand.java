@@ -102,17 +102,12 @@ public class SeqCommand implements Command {
 		return argsArray.size(); 
 	}
 
-	public void setErrorTrue(Boolean setError){
-		error = setError;
-	}
-
 	/**
 	 * Terminates current execution of the command (unused for now)
 	 */
 	@Override
 	public void terminate() {
 		// TODO Auto-generated method stub
-
 	}
 
 }

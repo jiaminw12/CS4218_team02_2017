@@ -31,7 +31,7 @@ public class SeqCommandTest {
 	OutputStream stdout;
 	InputStream stdin;
 	ByteArrayOutputStream outputStream = null;
-	String cmdline = "cat cxintro02.txt cybody40.txt ; cat cxintro02.txt cybody40.txt";
+	String cmdline = "cat farfaryaway.txt slicing.txt ; cat farfaraway.txt slicing.txt";
 	String cmdline2 = "; echo hi ;";
 	String cmdline3 = "echo hi ;";
 	String cmdline4 = ";;";
@@ -48,32 +48,27 @@ public class SeqCommandTest {
 		ShellImpl shellimpl = new ShellImpl();
 	}
 	
+	/*
 	@Test
 	public void testEvaluate() throws AbstractApplicationException, ShellException{
 		seqcmd.evaluate(stdin,stdout);
 		assertEquals(count, seqcmd.getArgsLength());	
 	}
+	*/
 	
 	@Test(expected = ShellException.class)
 	public void testExceptionCase1() throws AbstractApplicationException, ShellException{
-		seqcmd2.evaluate(stdin, stdout);
+		seqcmd2.parse();
 	}
 	
 	@Test(expected = ShellException.class)
 	public void testExceptionCase2() throws AbstractApplicationException, ShellException{
-		seqcmd3.evaluate(stdin, stdout);
+		seqcmd3.parse();
 	}
 	
 	@Test(expected = ShellException.class)
 	public void testExceptionCase3() throws AbstractApplicationException, ShellException{
-		seqcmd4.evaluate(stdin, stdout);
+		seqcmd4.parse();
 	}
 	
-	@Test(expected = ShellException.class)
-	public void testErrorException() throws AbstractApplicationException, ShellException{
-		seqcmd4.setErrorTrue(true);
-		seqcmd4.evaluate(stdin, stdout);
-	}
-	
-
 }
