@@ -185,8 +185,10 @@ public class CallCommand implements Command {
 		String patternSQ = "[\\s]+\'([^\\n']*)\'[\\s]";
 		String patternBQ = "[\\s]+(`[^\\n`]*`)[\\s]";
 		String patternBQinDQ = "[\\s]+\"([^\\n\"`]*`[^\\n]*`[^\\n\"`]*)\"[\\s]";
+		String patternBQinSQ = "[\\s]+\'([^\\n\'`]*`[^\\n]*`[^\\n\'`]*)\'[\\s]";
+		
 		String[] patterns = { patternDash, patternUQ, patternDQ, patternSQ,
-				patternBQ, patternBQinDQ };
+				patternBQ, patternBQinDQ, patternBQinSQ };
 		String substring;
 		int newStartIdx = 0, smallestStartIdx, smallestPattIdx, newEndIdx = 0;
 		do {
@@ -207,7 +209,7 @@ public class CallCommand implements Command {
 				}
 			}
 			if (smallestPattIdx != -1) { // if a pattern is found
-				if(smallestPattIdx == 6) {
+				if(smallestPattIdx == 3) {
 					processBq = false;
 				}
 				
