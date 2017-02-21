@@ -100,13 +100,13 @@ public class CatApplicationTest {
 	
 	@Test
 	public void testProperArgs() throws CatException {
-		String[] args = new String[] {"cat","cxintro02.txt","cybody40.txt"};
+		String[] args = new String[] {"cat","muttest.txt","slicing.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());;
 		stdout = System.out;
 		catApplication.run(args, stdin, stdout);
 	}
 	
-	@Test(expected = NullPointerException.class)
+	@Test(expected = CatException.class)
 	public void testNoStdout() throws CatException {
 		String[] args = new String[] {"cat","cxintro02.txt","cybody40.txt"};
 		stdin = new ByteArrayInputStream(TEXT.getBytes());
