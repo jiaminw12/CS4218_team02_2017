@@ -6,8 +6,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
-// write your matric number here: A0111608R
-// write your name here: Stanley Ong Wei Wen
 // write list of collaborators here:
 // year 2017 hash code: DZAjKugdE9QiOQKGFbut (do NOT delete this line)
 class BSTVertex {
