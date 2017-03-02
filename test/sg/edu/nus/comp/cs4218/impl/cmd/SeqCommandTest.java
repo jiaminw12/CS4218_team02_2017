@@ -40,6 +40,7 @@ public class SeqCommandTest {
 	String cmdline6 =  "\"echo 'Travel time Singapore -> Paris is 13h and 15`'\"; echo hi";
 	String cmdline7 = " ; ";
 	String cmdline8 = null;
+	String cmdline9 = "cat farfaryaway.txt slicing.txt;";
 	
 	int count = 2;
 	List<String> expectedArgsArray;
@@ -51,11 +52,11 @@ public class SeqCommandTest {
 	SeqCommand seqcmd5 = new SeqCommand(cmdline5);
 	SeqCommand seqcmd6 = new SeqCommand(cmdline6);
 	SeqCommand seqcmd7 = new SeqCommand(cmdline7);
-	
+	SeqCommand seqcmd9 = new SeqCommand(cmdline9);
 	
 	@Before
 	public void setup(){
-		ShellImpl shellimpl = new ShellImpl();
+		
 	}
 	
 	@Test(expected = ShellException.class)
@@ -74,15 +75,24 @@ public class SeqCommandTest {
 	}
 	
 	@Test
+	public void testWithOneSemicolon() throws AbstractApplicationException, ShellException{
+		seqcmd.parse();
+		expectedArgsArray = Arrays.asList("cat farfaryaway.txt slicing.txt", "cat farfaraway.txt slicing.txt");
+		assertArrayEquals(expectedArgsArray.toArray(), seqcmd.getArgsArray().toArray());
+	}
+	
+	@Test
 	public void testWithQuotes() throws AbstractApplicationException, ShellException{
 		seqcmd5.parse();
-		assertEquals(seqcmd5.getArgsArray(), cmdline5);
+		expectedArgsArray = Arrays.asList("\"echo 'Travel time Singapore -> Paris is 13h and 15`'\"");
+		assertArrayEquals(expectedArgsArray.toArray(), seqcmd5.getArgsArray().toArray());
 	}
 	
 	@Test
 	public void testWithMultiCommandAndQuotes() throws AbstractApplicationException, ShellException{
 		seqcmd6.parse();
-		assertEquals(seqcmd6.getArgsArrayLength(), count);
+		expectedArgsArray = Arrays.asList("\"echo 'Travel time Singapore -> Paris is 13h and 15`'\"", "echo hi");
+		assertArrayEquals(expectedArgsArray.toArray(), seqcmd6.getArgsArray().toArray());
 	}
 	
 	@Test(expected = ShellException.class)
@@ -93,6 +103,11 @@ public class SeqCommandTest {
 	@Test(expected = NullPointerException.class)
 	public void testNullCmd() throws AbstractApplicationException, ShellException{
 		SeqCommand seqcmd8 = new SeqCommand(cmdline8);
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testWithOneSemicolonWithOneStatement() throws AbstractApplicationException, ShellException{
+		seqcmd9.parse();
 	}
 	
 	

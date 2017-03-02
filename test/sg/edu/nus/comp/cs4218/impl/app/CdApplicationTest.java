@@ -27,7 +27,7 @@ public class CdApplicationTest {
 	@BeforeClass
 	public static void setUpOnce() {
 		originalPath = Environment.currentDirectory;
-		
+
 		testDir = new File("test_resources");
 		testDir.mkdir();
 
@@ -39,7 +39,7 @@ public class CdApplicationTest {
 
 		folderDepth3 = new File(folderDepth2, "depth3");
 		folderDepth3.mkdir();
-		
+
 	}
 
 	@Before
@@ -57,75 +57,87 @@ public class CdApplicationTest {
 		folderDepth2.delete();
 		folderDepth1.delete();
 		testDir.delete();
-		
+
 		cdApp = null;
 		Environment.currentDirectory = originalPath;
 	}
 
 	@Test(expected = DirectoryNotFoundException.class)
-	public void testCdAppWithNullArgument()
-			throws DirectoryNotFoundException {
+	public void testCdAppWithNullArgument() throws DirectoryNotFoundException {
 		cdApp.setDirectory(null);
 	}
 
 	@Test(expected = DirectoryNotFoundException.class)
 	public void testCdAppWithIllegallLengthArgument()
 			throws DirectoryNotFoundException {
-		String[] args = { "cd", "/testFolder", "here" };
+		String[] args = { "cd", File.separatorChar + "testFolder" + File.separatorChar + "here" };
 		cdApp.setDirectory(args);
 	}
 
 	@Test(expected = DirectoryNotFoundException.class)
 	public void testCdAppWithIllegalDirectory()
 			throws DirectoryNotFoundException {
-		String[] args = { "cd", "/testFolder" };
+		String[] args = { "cd", File.separatorChar + "testFolder" };
 		cdApp.setDirectory(args);
 	}
-	
+
 	@Test(expected = DirectoryNotFoundException.class)
 	public void testCdAppWithIllegalFilePath()
 			throws DirectoryNotFoundException {
-		String[] args = { "cd", "/testFolder/test01.txt" };
+		String[] args = { "cd", File.separatorChar + "testFolder"
+				+ File.separatorChar + "test01.txt" };
 		cdApp.setDirectory(args);
 	}
-	
+
 	@Test(expected = DirectoryNotFoundException.class)
-	public void testCdAppWithSymbol01()
-			throws DirectoryNotFoundException {
+	public void testCdAppWithSymbol01() throws DirectoryNotFoundException {
 		String[] args = { "cd", "~/test_resources" };
 		cdApp.setDirectory(args);
 	}
-	
+
 	@Test
 	public void testCdAppWithValidDirectoryPath()
 			throws DirectoryNotFoundException {
 		String[] args = { "cd", "test_resources" };
 		cdApp.setDirectory(args);
-		assertEquals(originalPath + "/test_resources", Environment.currentDirectory);
+		assertEquals(originalPath + File.separatorChar + "test_resources",
+				Environment.currentDirectory);
 	}
-	
+
 	@Test
 	public void testCdAppWithValidDirectoryPathInNestedLevel()
 			throws DirectoryNotFoundException {
-		String[] args = { "cd", "test_resources/depth1/depth2/depth3" };
+		String[] args = { "cd", "test_resources" + File.separatorChar
+						+ "depth1" + File.separatorChar + "depth2"
+						+ File.separatorChar + "depth3" };
 		cdApp.setDirectory(args);
-		assertEquals(originalPath + "/test_resources/depth1/depth2/depth3", Environment.currentDirectory);
+		assertEquals(
+				originalPath + File.separatorChar + "test_resources"
+						+ File.separatorChar + "depth1" + File.separatorChar
+						+ "depth2" + File.separatorChar + "depth3",
+				Environment.currentDirectory);
 	}
-	
+
 	@Test
 	public void testCdAppWithValidDirectoryPathFromRun()
 			throws AbstractApplicationException {
 		String[] args = { "cd", "test_resources" };
 		cdApp.run(args, null, null);
-		assertEquals(originalPath + "/test_resources", Environment.currentDirectory);
+		assertEquals(originalPath + File.separatorChar + "test_resources",
+				Environment.currentDirectory);
 	}
-	
+
 	@Test
 	public void testCdAppWithValidDirectoryPathInNestedLevelFromRun()
 			throws AbstractApplicationException {
-		String[] args = { "cd", "test_resources/depth1/depth2/depth3" };
+		String[] args = { "cd", "test_resources" + File.separatorChar
+				+ "depth1" + File.separatorChar + "depth2"
+				+ File.separatorChar + "depth3" };
 		cdApp.run(args, null, null);
-		assertEquals(originalPath + "/test_resources/depth1/depth2/depth3", Environment.currentDirectory);
+		assertEquals(originalPath + File.separatorChar + "test_resources"
+				+ File.separatorChar + "depth1" + File.separatorChar
+				+ "depth2" + File.separatorChar + "depth3",
+				Environment.currentDirectory);
 	}
 
 }

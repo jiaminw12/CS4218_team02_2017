@@ -106,7 +106,8 @@ public class TailApplicationTest {
 		String[] args = { "tail", "slicing.txt" };
 		tailApp.run(args, System.in, outContent);
 		assertEquals(
-				"Program slicing can be used in debugging to locate source of errors more easily.\n",
+				"Program slicing can be used in debugging to locate source of errors more easily."
+						+ System.lineSeparator(),
 				outContent.toString());
 	}
 
@@ -114,49 +115,55 @@ public class TailApplicationTest {
 	public void testTailAppWithOption() throws TailException {
 		String[] args = { "tail", "-n", "1", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
-		assertEquals("}\n", outContent.toString());
+		assertEquals("}" + System.lineSeparator(), outContent.toString());
 	}
 
 	@Test
 	public void testTailAppWithMultiplesOption() throws TailException {
 		String[] args = { "tail", "-n2", "-n5", "-n", "3", "muttest.txt" };
 		tailApp.run(args, System.in, outContent);
-		assertEquals("    ps2.run();\n" + "  }\n" + "}\n", outContent.toString());
+		assertEquals(
+				"    ps2.run();" + System.lineSeparator() + "  }"
+						+ System.lineSeparator() + "}" + System.lineSeparator(),
+				outContent.toString());
 	}
 
 	@Test
 	public void testTailAppWithoutOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
-						.getBytes());
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator()).getBytes());
 		String[] args = { "tail" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator(),
 				outContent.toString());
 	}
 
 	@Test
 	public void testTailAppWithOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
-						.getBytes());
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator()).getBytes());
 		String[] args = { "tail", "-n", "1" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator(),
 				outContent.toString());
 	}
 
 	@Test
 	public void testTailAppWithMultiplesOptionInStdin() throws TailException {
 		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n")
-						.getBytes());
+				("They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator()).getBytes());
 		String[] args = { "tail", "-n2", "-n5", "-n", "999" };
 		tailApp.run(args, stdin, outContent);
 		assertEquals(
-				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA\n",
+				"They may be found on menus in restaurants that serve seafood. SEA SEA SEA"
+						+ System.lineSeparator(),
 				outContent.toString());
 	}
 

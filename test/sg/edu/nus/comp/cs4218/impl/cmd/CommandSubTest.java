@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.*;
@@ -75,17 +76,6 @@ public class CommandSubTest {
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 	}
 
-	// echo 'Travel time Singapore -> Paris is 13h and 15`'
-	// Travel time Singapore -> Paris is 13h and 15`
-	// echo "This is space:`echo " "`."
-	// This is space: .
-	// echo 'This is space:`echo " "`.'
-	// This is space:`echo " "`.
-	// echo `echo bhdfghdf`; echo "`echo fjghfjgh | echo dhfjhfdg`"; echo "`echo hfbghgf; echo jgfhdgdg`"
-	// bhdfghdf
-	// dhfjhfdg
-	// hfbghgf jgfhdgdg
-
 	@Test
 	public void testEchoWithSemicolon() throws Exception {
 		String cmdLine = "echo `echo ABC; echo DEF`";
@@ -120,7 +110,7 @@ public class CommandSubTest {
 	@Test
 	public void testOneCommandSubWithNewLine()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "echo `cat " + "\n" + "slicing.txt`";
+		String cmdLine = "echo `cat " + System.lineSeparator() + "slicing.txt`";
 		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
@@ -195,7 +185,7 @@ public class CommandSubTest {
 		assertEquals(
 				"Program slicing can be used in debugging to locate source of errors more easily.",
 				actualResult);
-		assertEquals(originalPath + "/test", Environment.currentDirectory);
+		assertEquals(originalPath + File.separatorChar + "test", Environment.currentDirectory);
 		Environment.currentDirectory = originalPath;
 	}
 
@@ -243,8 +233,8 @@ public class CommandSubTest {
 		outputStream = new ByteArrayOutputStream();
 		shellImpl.parseAndEvaluate(cmdLine, outputStream);
 		String actualResult = new String(outputStream.toByteArray()).trim();
-		assertEquals("Showing contents of text1.txt cat text1.txt" + System.lineSeparator() + "yea",
-				actualResult);
+		assertEquals("Showing contents of text1.txt cat text1.txt"
+				+ System.lineSeparator() + "yea", actualResult);
 	}
 
 	@After

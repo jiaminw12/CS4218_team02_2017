@@ -71,7 +71,7 @@ public class SeqCommand implements Command {
 	 */
 	public void parse() throws ShellException {
 		
-		cmdline = cmdline.replace("\n", "");
+		cmdline = cmdline.replace(System.lineSeparator(), "");
 		
 		int countSQ = 0;
 		int countDQ = 0;
@@ -93,11 +93,11 @@ public class SeqCommand implements Command {
 			} else if (cmdline.charAt(i) =='\'') {
 				countSQ += 1;
 			} else if (cmdline.charAt(i) == ';' && countBQ % 2 == 0  && countDQ % 2 == 0 && countSQ %2 == 0) {
-				argsArray.add(cmdline.substring(index, i));
+				argsArray.add(cmdline.substring(index, i).trim());
 				index = i+1;
 			} else if (countSQ %2 == 0){
 				if (cmdline.charAt(i) == ';' && countDQ %2 == 0 && countBQ % 2 == 0 ){
-					argsArray.add(cmdline.substring(index, i));
+					argsArray.add(cmdline.substring(index, i).trim());
 					index = i+1;
 				}
 			}
@@ -105,7 +105,7 @@ public class SeqCommand implements Command {
 		
 		if(countBQ >= 1 && countBQ %2 != 0 && countSQ %2 == 0){
 			if(argsArray.size() <= 0){
-				argsArray.add(cmdline.substring(0, cmdline.length()-1));
+				argsArray.add(cmdline.substring(0, cmdline.length()-1).trim());
 			}
 		}
 		
@@ -118,8 +118,8 @@ public class SeqCommand implements Command {
 		return argsArray.size(); 
 	}
 	
-	public String getArgsArray(){
-		return argsArray.get(0);
+	public List<String> getArgsArray(){
+		return argsArray;
 	}
 
 	/**
