@@ -34,6 +34,24 @@ public class DateApplicationTest {
 		String[] args = {"date", "-l"};
 		dateApplication.run(args, inputStream, outputStream);
 	}
+	
+	@Test(expected = DateException.class)
+	public void testPrintWithNullOutput() throws DateException{
+		String[] args = {"date"};
+		dateApplication.run(args, inputStream, null);
+	}
+	
+	@Test(expected = DateException.class)
+	public void testPrintWithNullInputAndOutput() throws DateException{
+		String[] args = {"date"};
+		dateApplication.run(args, null, null);
+	}
+	
+	@Test
+	public void testPrintWithNullInput() throws DateException {
+		String[] args = {"date"};
+		dateApplication.run(args, null, outputStream);
+	}
 
 	@Test
 	public void testPrintDate() throws DateException {
