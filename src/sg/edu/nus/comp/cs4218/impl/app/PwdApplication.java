@@ -24,6 +24,8 @@ public class PwdApplication implements Application {
 			throws PwdException {
 		if (args == null) {
 			throw new PwdException("Argument cannot be null.");
+		} else if (stdout == null){
+			throw new PwdException("OutputStream not provided");
 		} else if (args.length != 1) {
 			throw new PwdException(
 					"Too many arguments. Pwd do not accept any arguments.");
