@@ -92,23 +92,20 @@ public class SeqCommand implements Command {
 				countDQ += 1;
 			} else if (cmdline.charAt(i) =='\'') {
 				countSQ += 1;
-			} else if (cmdline.charAt(i) == ';' && countBQ % 2 == 0  && countDQ % 2 == 0 && countSQ %2 == 0) {
-				argsArray.add(cmdline.substring(index, i).trim());
-				index = i+1;
-			} else if (countSQ %2 == 0){
-				if (cmdline.charAt(i) == ';' && countDQ %2 == 0 && countBQ % 2 == 0 ){
-					argsArray.add(cmdline.substring(index, i).trim());
-					index = i+1;
+			} else if (cmdline.charAt(i) == ';'){
+				if (countSQ > 1){
+					if (countSQ %2 == 0){
+						argsArray.add(cmdline.substring(index, i).trim());
+						index = i+1;
+					}
+				} else {
+					if (countBQ % 2 == 0  && countDQ % 2 == 0){
+						argsArray.add(cmdline.substring(index, i).trim());
+						index = i+1;
+					}
 				}
 			}
 		}
-		
-		if(countBQ >= 1 && countBQ %2 != 0 && countSQ %2 == 0){
-			if(argsArray.size() <= 0){
-				argsArray.add(cmdline.substring(0, cmdline.length()-1).trim());
-			}
-		}
-		
 	}
 
 	/**

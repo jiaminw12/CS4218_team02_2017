@@ -24,18 +24,6 @@ public class PwdApplicationTest {
 		pwdApp.run(null, null, System.out);
 	}
 	
-	@Test
-	public void testNullInput() throws PwdException {
-		String[] args = {"pwd"};
-		pwdApp.run(args, null, System.out);
-	}
-	
-	@Test(expected = PwdException.class)
-	public void testNullOutput() throws PwdException {
-		String[] args = {"pwd"};
-		pwdApp.run(args, System.in, null);
-	}
-	
 	@Test(expected = PwdException.class)
 	public void testNullInputAndOutput() throws PwdException {
 		String[] args = {"pwd"};
@@ -46,6 +34,13 @@ public class PwdApplicationTest {
 	public void testIllegalLengthArguments() throws PwdException {
 		String[] args = {"pwd", "-v"};
 		pwdApp.run(args, null, System.out);
+	}
+	
+	@Test
+	public void testNullInput() throws PwdException {
+		String[] args = {"pwd"};
+		ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+		pwdApp.run(args, null, stdout);
 	}
 	
 	@Test

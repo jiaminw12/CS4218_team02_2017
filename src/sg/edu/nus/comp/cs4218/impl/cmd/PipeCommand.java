@@ -122,9 +122,18 @@ public class PipeCommand implements Command {
 				countDQ += 1;
 			} else if (cmdline.charAt(i) =='\'') {
 				countSQ += 1;
-			} else if (cmdline.charAt(i) == '|' && countBQ % 2 == 0 && countDQ % 2 == 0 && countSQ %2 == 0) {
-				argsArray.add(cmdline.substring(index, i));
-				index = i+1;
+			} else if (cmdline.charAt(i) == '|'){
+				if (countSQ > 1){
+					if (countSQ %2 == 0){
+						argsArray.add(cmdline.substring(index, i).trim());
+						index = i+1;
+					}
+				} else {
+					if (countBQ % 2 == 0  && countDQ % 2 == 0){
+						argsArray.add(cmdline.substring(index, i).trim());
+						index = i+1;
+					}
+				}
 			}
 		}
 	}
