@@ -9,17 +9,8 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.Shell;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
-import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
-import sg.edu.nus.comp.cs4218.impl.app.CdApplication;
-import sg.edu.nus.comp.cs4218.impl.app.EchoApplication;
-import sg.edu.nus.comp.cs4218.impl.app.HeadApplication;
-import sg.edu.nus.comp.cs4218.impl.app.PwdApplication;
-import sg.edu.nus.comp.cs4218.impl.app.SedApplication;
-import sg.edu.nus.comp.cs4218.impl.app.TailApplication;
-import sg.edu.nus.comp.cs4218.impl.app.WcApplication;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+import sg.edu.nus.comp.cs4218.impl.app.*;
 import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
-import sg.edu.nus.comp.cs4218.impl.app.DateApplication;
 
 /**
  * A Shell is a command interpreter and forms the backbone of the entire
@@ -198,6 +189,12 @@ public class ShellImpl implements Shell {
 			absApp = new SedApplication();
 		} else if (("wc").equals(app)) {// wc
 			absApp = new WcApplication();
+		}  else if (("cal").equals(app)) {// cal
+			absApp = new CalApplication();
+		}  else if (("grep").equals(app)) {// grep
+			absApp = new GrepApplication();
+		}  else if (("sort").equals(app)) {// sort
+			absApp = new SortApplication();
 		} else { // invalid command
 			throw new ShellException(app + ": " + EXP_INVALID_APP);
 		}
@@ -371,7 +368,6 @@ public class ShellImpl implements Shell {
 	@Override
 	public void parseAndEvaluate(String cmdline, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
-		
 		SeqCommand seqCommand = new SeqCommand(cmdline);
 		seqCommand.parse();
 		seqCommand.evaluate(System.in, stdout);
