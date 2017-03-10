@@ -59,6 +59,13 @@ public class DateApplication implements Application, Date {
 		}
 	}
 
+	/**
+	 * For testing purpose. Split the args.
+	 * 
+	 * @param args
+	 * 			A string, User input
+	 * 
+	 */
 	@Override
 	public String printCurrentDate(String args) {
 		String[] splitArgs = args.split("\\s{2,}");
