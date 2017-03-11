@@ -77,76 +77,46 @@ public class CalApplication implements Application, Cal {
 		if (args.length > 4) {
 			throw new CalException("Too many arguments");
 		}
-
+		
 		if (args[0].equals("cal")) {
 			Calendar cal = Calendar.getInstance();
 			month = cal.get(Calendar.MONTH) + 1;
 			year = cal.get(Calendar.YEAR);
-			if (args.length > 1) {
-				if (args[1].equals("-m")) {
-					mondayFirst = true;
-				}
-
-				if (args.length == 2) {
-					if (!mondayFirst) {
-						if (checkInteger(args[1])) {
-							if (checkLengthOfString(args[1])
-									&& checkValidYear(args[1])) {
-								year = Integer.parseInt(args[1]);
-								yearOnly = true;
-							} else {
-								throw new CalException(EXP_ARG);
-							}
+			
+			for (int i=1; i < args.length; i++){
+				if (args[i].equals("-m")) {
+					if (!mondayFirst){
+						mondayFirst = true;
+					} else {
+						throw new CalException(EXP_ARG);
+					}
+				} else if (checkInteger(args[i])) {
+					if (args[i].length() == 4 && checkValidYear(args[i])){
+						if (!yearOnly){
+							year = Integer.parseInt(args[i]);
+							yearOnly = true;
 						} else {
 							throw new CalException(EXP_ARG);
 						}
-					}
-				} else if (args.length == 3) {
-					if (!mondayFirst) {
-						if (checkInteger(args[1])) {
-							if (checkLengthOfString(args[1])
-									&& checkValidMonth(args[1])) {
-								month = Integer.parseInt(args[1]);
-								monthOnly = true;
-							} else {
-								throw new CalException(EXP_ARG);
-							}
-						} else if (checkValidMonthString(args[1]) != 1
-								|| checkValidMonthString(args[1]) == 0) {
-							month = checkValidMonthString(args[1]);
+					} else if ((args[i].length() == 1 || args[i].length() == 2) && checkValidMonth(args[i])) {
+						if (!monthOnly){
+							month = Integer.parseInt(args[i]);
 							monthOnly = true;
 						} else {
 							throw new CalException(EXP_ARG);
 						}
-					}
-
-					if (checkInteger(args[2]) && checkValidYear(args[2])) {
-						year = Integer.parseInt(args[2]);
-						yearOnly = true;
 					} else {
 						throw new CalException(EXP_ARG);
 					}
-
-				} else if (args.length == 4) {
-					if (checkInteger(args[2])) {
-						if (checkLengthOfString(args[2])
-								&& checkValidMonth(args[2])) {
-							month = Integer.parseInt(args[2]);
+				} else {
+					if (checkValidMonthString(args[i]) != 1
+							|| checkValidMonthString(args[i]) == 0) {
+						if (!monthOnly){
+							month = checkValidMonthString(args[i]);
 							monthOnly = true;
 						} else {
 							throw new CalException(EXP_ARG);
 						}
-					} else if (checkValidMonthString(args[2]) != 1
-							|| checkValidMonthString(args[2]) == 0) {
-						month = checkValidMonthString(args[2]);
-						monthOnly = true;
-					} else {
-						throw new CalException(EXP_ARG);
-					}
-
-					if (checkInteger(args[3]) && checkValidYear(args[3])) {
-						year = Integer.parseInt(args[3]);
-						yearOnly = true;
 					} else {
 						throw new CalException(EXP_ARG);
 					}
@@ -154,13 +124,25 @@ public class CalApplication implements Application, Cal {
 			}
 		} else {
 			throw new CalException(EXP_SYNTAX);
-		}
+		} 
 
 		try {
 			String result = null;
-			if (monthOnly == false && yearOnly == true) {
-				result = printFullCalendar(year);
-			} else {
+			if (args.length == 1 && args[0].equals("cal")){
+				result = printCalendar(month, year);
+			} else if (args.length == 2){
+				if (mondayFirst){
+					result = printCalendar(month, year);
+				} else if (yearOnly){
+					result = printFullCalendar(year);
+				}
+			} else if (args.length == 3){
+				if (monthOnly && yearOnly){
+					result = printCalendar(month, year);
+				} else if (mondayFirst && yearOnly){
+					result = printFullCalendar(year);
+				}
+			} else if (args.length == 4 && mondayFirst && monthOnly && yearOnly){
 				result = printCalendar(month, year);
 			}
 			stdout.write(result.getBytes());
@@ -184,7 +166,7 @@ public class CalApplication implements Application, Cal {
 
 		if (month == 2 && checkLeapYear(year))
 			days[month] = 29;
-
+		
 		String title = "      " + months[month] + " " + year
 				+ System.lineSeparator();
 

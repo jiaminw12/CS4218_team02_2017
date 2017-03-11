@@ -319,6 +319,16 @@ public class CalApplicationTest {
 	}
 	
 	@Test(expected = CalException.class)
+	public void multipleMonthStringInShortFullFormatFromRun() throws CalException {
+		args = new String[3];
+		args[0] = "cal";
+		args[1] = "september";
+		args[2] = "apr";
+		calendarApp.run(args, null, System.out);
+		System.out.flush();
+	}
+	
+	@Test(expected = CalException.class)
 	public void invalidMonthFromRun() throws CalException {
 		args = new String[2];
 		args[0] = "cal";
@@ -343,6 +353,18 @@ public class CalApplicationTest {
 		args[1] = "300";
 		calendarApp.run(args, null, System.out);
 		System.out.flush();
+	}
+
+	@Test
+	public void unorderedFromRun() throws CalException {
+		args = new String[4];
+		args[0] = "cal";
+		args[1] = _2017;
+		args[2] = "-m";
+		args[3] = "03";
+		calendarApp.run(args, null, System.out);
+		System.out.flush();
+		assertEquals(MARCH2017MON + System.lineSeparator(), baos.toString());
 	}
 
 	private String printMonth() {
