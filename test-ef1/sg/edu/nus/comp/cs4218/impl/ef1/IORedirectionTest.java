@@ -16,6 +16,8 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
+/* Assumption: 
+ */
 public class IORedirectionTest {
 
 	private static ShellImpl shell;
@@ -24,7 +26,7 @@ public class IORedirectionTest {
 
 	private String readFile(String path) throws IOException {
 		byte[] byteArr = Files
-				.readAllBytes(Paths.get(System.getProperty("user.dir") + path));
+				.readAllBytes(Paths.get(System.getProperty("user.dir") + File.separatorChar + path));
 		return new String(byteArr);
 	}
 
@@ -43,13 +45,71 @@ public class IORedirectionTest {
 		file = new File("test2.txt");
 		file.setWritable(true);
 		file.delete();
+	}	
+	
+	// FAIL??? USING NULL VALUE?
+	@Test(expected = ShellException.class)
+	public void testInputRedirectionWithEmtpyFile() throws Exception {
+		String cmdLine = "cat TEST < ";
+		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	// FAIL??? USING NULL VALUE?
+	@Test(expected = ShellException.class)
+	public void testOutputRedirectionWithEmtpyFile() throws Exception {
+		String cmdLine = "cat TEST > ";
+		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testInputOutputRedirectionWithMultipleFiles()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "echo TEST > test1.txt test2.txt > test3.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
+	// FAIL? PASS?
 	@Test(expected = ShellException.class)
-	public void testIllegalIORedirectionOneLine()
+	public void testIllegalMultipleInputRedirection()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo TEST > test1.txt > test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	// FAIL? PASS?
+	@Test(expected = ShellException.class)
+	public void testIllegalMultipleOutputRedirection()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat < test1.txt < test2.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+
+	@Test(expected = ShellException.class)
+	public void testIORedirectionWithIllegalFile() throws Exception {
+		String cmdLine = "cat TEST < noFile.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testIORedirectionWithIllegalFormat() throws Exception {
+		String cmdLine = "cat TEST < > noFile.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	@Test
+	public void testInputRedirectionWithCat() throws Exception {
+		String cmdLine = "cat < slicing.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+		String expected = "Program slicing can be used in debugging to locate source of errors more easily.";
+		assertEquals(expected, readFile("slicing.txt"));
+	}
+	
+	@Test
+	public void testOutputRedirectionWithEcho() throws Exception {
+		String cmdLine = "echo TEST > test1.txt";
+		shell.parseAndEvaluate(cmdLine, stdout);
+		String expected = "TEST" + System.lineSeparator();
+		assertEquals(expected, readFile("test1.txt"));
 	}
 	
 	@Test(expected = ShellException.class)
@@ -60,42 +120,16 @@ public class IORedirectionTest {
 		cmdLine = "echo TEST > test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 
-		cmdLine = "grep TEST < test1.txt < test2.txt";
-		shell.parseAndEvaluate(cmdLine, stdout);
-	}
-	
-	@Test(expected = ShellException.class)
-	public void testIORedirectionWithEmtpyFile() throws Exception {
-		String cmdLine = "grep TEST < ";
-		shell.parseAndEvaluate(cmdLine, stdout);
-	}
-
-	@Test(expected = ShellException.class)
-	public void testIORedirectionWithIllegalFile() throws Exception {
-		String cmdLine = "grep TEST < noFile.txt";
-		shell.parseAndEvaluate(cmdLine, stdout);
-	}
-	
-	@Test(expected = ShellException.class)
-	public void testIORedirectionWithIllegalFormat() throws Exception {
-		String cmdLine = "grep TEST < > noFile.txt";
+		cmdLine = "cat TEST < test1.txt < test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
 	@Test
-	public void testIORedirectionWithEcho() throws Exception {
-		String cmdLine = "echo TEST > test1.txt";
-		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "TEST" + System.lineSeparator();
-		assertEquals(expected, readFile("test1.txt"));
-	}
-
-	@Test
-	public void testIORedirectionWithEchoGrep() throws Exception {
+	public void testIORedirectionWithEchoCat() throws Exception {
 		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
-		String cmdLine2 = "grep TEST < test1.txt";
+		String cmdLine2 = "cat < test1.txt";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine2, stdout);
 
@@ -108,7 +142,7 @@ public class IORedirectionTest {
 		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
-		String cmdLine2 = "grep TEST < test1.txt > test2.txt";
+		String cmdLine2 = "cat < test1.txt > test2.txt";
 		stdout = new ByteArrayOutputStream();
 		shell.parseAndEvaluate(cmdLine2, stdout);
 
