@@ -36,6 +36,7 @@ public class CallCommand implements Command {
 	String[] argsArray;
 	Boolean error;
 	Boolean processBq;
+	Boolean globbing;
 	String errorMsg;
 
 	public CallCommand(String cmdline) {
@@ -43,6 +44,7 @@ public class CallCommand implements Command {
 		app = inputStreamS = outputStreamS = "";
 		error = false;
 		processBq = true;
+		globbing = true;
 		errorMsg = "";
 		argsArray = new String[0];
 	}
@@ -78,6 +80,20 @@ public class CallCommand implements Command {
 		if(processBq) {
 			argsArray = ShellImpl.processBQ(argsArray);
 		}
+		
+		if(globbing){
+			String [] allGlobs = new String[argsArray.length];
+			int j=0;
+			for (int i = 0; i < argsArray.length; i++) {
+				if (argsArray[i].contains("*")) {
+					String path = argsArray[i].substring(0, argsArray[i].length()-2);
+					argsArray[i] = ShellImpl.evaluateGlob(argsArray[i]);
+				}
+				allGlobs[j] = argsArray[i];
+				j++;
+			}
+			argsArray = allGlobs;
+		}
 
 		if (("").equals(inputStreamS)) {// empty
 			inputStream = stdin;
@@ -93,6 +109,7 @@ public class CallCommand implements Command {
 		ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 		ShellImpl.closeInputStream(inputStream);
 		ShellImpl.closeOutputStream(outputStream);
+		
 	}
 
 	/**
