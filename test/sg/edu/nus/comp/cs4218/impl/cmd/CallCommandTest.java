@@ -2,6 +2,9 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Vector;
@@ -21,6 +24,8 @@ public class CallCommandTest {
 	static CallCommand callCmd;
 	private Vector<String> cmdVector;
 	String inputLine;
+	public InputStream stdin;
+	public OutputStream stdout;
 
 	@BeforeClass
 	public static void setUpOnce() {
@@ -131,6 +136,14 @@ public class CallCommandTest {
 		String[] resultStrArr = { "text1", "text2", "text3 `text3.2`", "dir/text-4.txt", "-text5" };
 		Vector<String> resultStrVect = new Vector<String>(Arrays.asList(resultStrArr));
 		assertEquals(cmdVector, resultStrVect);
+	}
+	
+	@Test (expected = ShellException.class)
+	public void testGlobbing() throws AbstractApplicationException, ShellException{
+		inputLine = "cat article/*";
+		stdin = new ByteArrayInputStream(inputLine.getBytes());
+		stdout = System.out;
+		callCmd.evaluate(stdin, stdout);
 	}
 	
 }
