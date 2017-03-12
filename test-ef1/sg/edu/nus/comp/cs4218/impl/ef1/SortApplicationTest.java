@@ -2,217 +2,332 @@ package sg.edu.nus.comp.cs4218.impl.ef1;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.exception.SortException;
-import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
 
-public class SortApplicationTest {
-
-	private SortApplication sortApp;
-
-	@BeforeClass
-	public static void setUpOnce() {
-	}
-
-	@AfterClass
-	public static void tearDown() {
-	}
-
+public class SortApplicationTest { 
+  
+    SortApplication ssa;
+	String args[];
+	String fileName;
+	InputStream stdin;
+	InputStream numericStdin;
+	InputStream emptyStdin;
+	String numericFile;
+	String testMethodsFile;
+	String emptyFile;
+	String reorderStr1 = "test.txt";
+	String reorderStr2 = "test1.txt";
+	
+ 	String defaultString = "Boisterous he on understood attachment as entreaties ye devonshire.\n" +
+							"In mile an form snug were been sell.\n" +
+							"Hastened admitted joy nor absolute gay its.\n" +
+							"Extremely ham any his departure for contained curiosity defective.\n" +
+							"Way now instrument had eat diminution melancholy expression sentiments stimulated.\n" +
+							"One built fat you out manor books.\n" +
+							"Mrs interested now his affronting inquietude contrasted cultivated.\n" +
+							"Lasting showing expense greater on colonel no.\n\n" +
+							
+							"Prepared do an dissuade be so whatever steepest.\n" +
+							"Yet her beyond looked either day wished nay.\n" +
+							"By doubtful disposed do juvenile an.\n" +
+							"Now curiosity you explained immediate why behaviour.\n" +
+							"An dispatched impossible of of melancholy favourable.\n" +
+							"Our quiet not heart along scale sense timed.\n" +
+							"Consider may dwelling old him her surprise finished families graceful.\n" +
+							"Gave led past poor met fine was new.\n\n" +
+							
+							"Is at purse tried jokes china ready decay an.\n" +
+							"Small its shy way had woody downs power.\n" +
+							"To denoting admitted speaking learning my exercise so in.\n" +
+							"Procured shutters mr it feelings.\n" +
+							"To or three offer house begin taken am at.\n" +
+							"As dissuade cheerful overcame so of friendly he indulged unpacked.\n" +
+							"Alteration connection to so as collecting me.\n" +
+							"Difficult in delivered extensive at direction allowance.\n" +
+							"Alteration put use diminution can considered sentiments interested discretion.\n" +
+							"An seeing feebly stairs am branch income me unable.\n\n" +
+							
+							"No comfort do written conduct at prevent manners on.\n" +
+							"Celebrated contrasted discretion him sympathize her collecting occasional.\n" +
+							"Do answered bachelor occasion in of offended no concerns.\n" +
+							"Supply worthy warmth branch of no ye.\n" +
+							"Voice tried known to as my to.\n" +
+							"Though wished merits or be.\n" +
+							"Alone visit use these smart rooms ham.\n" +
+							"No waiting in on enjoyed placing it inquiry.\n\n" +
+							
+							"Fat new smallness few supposing suspicion two.\n" +
+							"Course sir people worthy horses add entire suffer.\n" +
+							"How one dull get busy dare far.\n" +
+							"At principle perfectly by sweetness do.\n" +
+							"As mr started arrival subject by believe.\n" +
+							"Strictly numerous outlived kindness whatever on we no on addition.\n\n" +
+							
+							"Are sentiments apartments decisively the especially alteration.\n" +
+							"Thrown shy denote ten ladies though ask saw.\n" +
+							"Or by to he going think order event music.\n" +
+							"Incommode so intention defective at convinced.\n" +
+							"Led income months itself and houses you. After nor you leave might share court balls.";
+	
+	String sortedString = "\n\n\n\n\nAlone visit use these smart rooms ham.\n" +
+							"Alteration connection to so as collecting me.\n" +
+							"Alteration put use diminution can considered sentiments interested discretion.\n" +
+							"An dispatched impossible of of melancholy favourable.\n" +
+							"An seeing feebly stairs am branch income me unable.\n" +
+							"Are sentiments apartments decisively the especially alteration.\n" +
+							"As dissuade cheerful overcame so of friendly he indulged unpacked.\n" +
+							"As mr started arrival subject by believe.\n" +
+							"At principle perfectly by sweetness do.\n" +
+							"Boisterous he on understood attachment as entreaties ye devonshire.\n" +
+							"By doubtful disposed do juvenile an.\n" +
+							"Celebrated contrasted discretion him sympathize her collecting occasional.\n" +
+							"Consider may dwelling old him her surprise finished families graceful.\n" +
+							"Course sir people worthy horses add entire suffer.\n" +
+							"Difficult in delivered extensive at direction allowance.\n" +
+							"Do answered bachelor occasion in of offended no concerns.\n" +
+							"Extremely ham any his departure for contained curiosity defective.\n" +
+							"Fat new smallness few supposing suspicion two.\n" +
+							"Gave led past poor met fine was new.\n" +
+							"Hastened admitted joy nor absolute gay its.\n" +
+							"How one dull get busy dare far.\n" +
+							"In mile an form snug were been sell.\n" +
+							"Incommode so intention defective at convinced.\n" +
+							"Is at purse tried jokes china ready decay an.\n" +
+							"Lasting showing expense greater on colonel no.\n" +
+							"Led income months itself and houses you. After nor you leave might share court balls.\n" +
+							"Mrs interested now his affronting inquietude contrasted cultivated.\n" +
+							"No comfort do written conduct at prevent manners on.\n" +
+							"No waiting in on enjoyed placing it inquiry.\n" +
+							"Now curiosity you explained immediate why behaviour.\n" +
+							"One built fat you out manor books.\n" +
+							"Or by to he going think order event music.\n" +
+							"Our quiet not heart along scale sense timed.\n" +
+							"Prepared do an dissuade be so whatever steepest.\n" +
+							"Procured shutters mr it feelings.\n" +
+							"Small its shy way had woody downs power.\n" +
+							"Strictly numerous outlived kindness whatever on we no on addition.\n" +
+							"Supply worthy warmth branch of no ye.\n" +
+							"Though wished merits or be.\n" +
+							"Thrown shy denote ten ladies though ask saw.\n" +
+							"To denoting admitted speaking learning my exercise so in.\n" +
+							"To or three offer house begin taken am at.\n" +
+							"Voice tried known to as my to.\n" +
+							"Way now instrument had eat diminution melancholy expression sentiments stimulated.\n" +
+							"Yet her beyond looked either day wished nay.\n" ;
+					
 	@Before
-	public void setUp() throws SortException, IOException {
-		sortApp = new SortApplication();
+	public void setUp() throws FileNotFoundException{
+		ssa = new SortApplication();
+		args = new String[2];
+		fileName = "test/sg/edu/nus/comp/cs4218/impl/app/testdoc.txt";
+		stdin = new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/testdoc.txt");
+		numericStdin = new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/TestSortNumeric.txt");
+		numericFile = "test/sg/edu/nus/comp/cs4218/impl/app/TestSortNumeric.txt";
+		testMethodsFile = "test/sg/edu/nus/comp/cs4218/impl/app/TestSortMethods.txt";
+		emptyFile = "test/sg/edu/nus/comp/cs4218/impl/app/emptydoc.txt";
+		emptyStdin =  new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/emptydoc.txt");
+	}
+
+	@Test(expected = SortException.class)
+	public void testSort() throws SortException {
+		args[0] = "-n";
+		args[1] = fileName;
+		ssa.run(args,null,null);
 	}
 	
 	@Test(expected = SortException.class)
-	public void testWcAppWithEmptyArgsWithEmptyInput() throws SortException {
-		String[] args = {};
-		sortApp.run(args, null, System.out);
+	public void testNull() throws SortException {
+		ssa.run(null,null,System.out);
 	}
 	
+	@Test
+	public void testReOrder1(){
+		assertTrue(Arrays.equals(new String[]{"-n", reorderStr2, reorderStr1}, ssa.reOrder(new String[]{reorderStr1, reorderStr2, "-n"})));
+	}
+	
+	@Test
+	public void testReOrder2(){
+		assertTrue(Arrays.equals(new String[]{"-n", reorderStr1, reorderStr2}, ssa.reOrder(new String[]{reorderStr1, "-n", reorderStr2})));
+	}
+	@Test
+	public void testReOrder3(){
+		assertTrue(Arrays.equals(new String[]{"-n", reorderStr1, reorderStr2}, ssa.reOrder(new String[]{"-n", reorderStr1, reorderStr2})));
+	}
+	
+	@Test
+	public void testReOrder4(){
+		assertTrue(Arrays.equals(new String[]{"-n", reorderStr1}, ssa.reOrder(new String[]{reorderStr1, "-n"})));
+	}
+	
+	@Test
+	public void testReOrder5(){
+		assertTrue(Arrays.equals(new String[]{"-n"}, ssa.reOrder(new String[]{"-n"})));
+	}
+
 	@Test(expected = SortException.class)
-	public void testWcAppWithOneItemInArgs() throws SortException {
-		String[] args = {"sort"};
-		sortApp.run(args, System.in, System.out);
-	}
-	
-	@Test(expected = SortException.class)
-	public void testIllegalOption() throws SortException {
-		String[] args = { "sort", "-z", "muttest.txt" };
-		sortApp.run(args, System.in, System.out);
-	}
-	
-	@Test(expected = SortException.class)
-	public void testIllegalFile() throws SortException {
-		String[] args = { "sort", "-n", "muttest" };
-		sortApp.run(args, System.in, System.out);
+	public void moreThanOneOpt() throws SortException {
+		// More than 1 -n
+		ssa.validate(new String[]{"-n", "-n"});
 	}
 	
 	@Test
-	public void testArgsWithoutOption() throws SortException {
-		String[] args = { "sort", "muttest.txt" };
-		sortApp.run(args, System.in, System.out);
+	public void validArgs() throws SortException {
+		ssa.validate(new String[]{"-n", fileName, fileName});
 	}
 	
 	@Test
-	public void testArgsWithOption() throws SortException {
-		String[] args = { "sort", "-n", "muttest.txt" };
-		sortApp.run(args, System.in, System.out);
+	public void arrToString() {
+		assertEquals("convert to string", ssa.arrToString(new String[]{"convert","to","string"}));
+	}
+
+	@Test
+	public void listToString() {
+		ArrayList<String> temp = new ArrayList<String>();
+		temp.add("convert");
+		temp.add("to");
+		temp.add("string");
+		assertEquals("convert\nto\nstring\n", ssa.listToString(temp));
+	}
+
+	@Test
+	public void stringToArr(){
+		assertTrue(Arrays.equals(new String[]{"convert", "to", "arr"}, ssa.stringToArr("convert to arr")));
 	}
 	
 	@Test
-	public void testSortStringsSimple() {
-		String arr = "simple apple fox";
-		String expected = "apple" + System.lineSeparator() + "fox"
-				+ System.lineSeparator() + "simple";
-		assertEquals(expected, sortApp.sortStringsSimple(arr));
+	public void readFromInputStream() throws SortException {
+		 assertEquals(defaultString, ssa.readFromInputStream(stdin));
+	}
+
+//	@Test
+//	public void switchLeftRight(){
+//		ArrayList<String> temp = new ArrayList<String>();
+//		temp.add("b");
+//		temp.add("a");
+//		ArrayList<String> compareTemp = (ArrayList<String>) ssa.switchLeftRight(temp, 1);
+//		temp.clear();
+//		temp.add("a");
+//		temp.add("b");
+//		assertEquals(compareTemp , temp);
+//	}
+	
+	@Test
+	public void bubbleSort(){
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("10");
+		list.add("1");
+		list.add("2");
+		ArrayList<String> compareList = new ArrayList<String>();
+		compareList.add("1");
+		compareList.add("10");
+		compareList.add("2");
+		assertEquals(ssa.bubbleSort(list), compareList);
 	}
 
 	@Test
-	public void testSortStringsCapital() {
-		String arr = "SIMPLE APPLE FOX";
-		String expected = "APPLE" + System.lineSeparator() + "FOX"
-				+ System.lineSeparator() + "SIMPLE";
-		assertEquals(expected, sortApp.sortStringsCapital(arr));
+	public void numericBubbleSort(){
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("10");
+		list.add("1");
+		list.add("2");
+		ArrayList<String> compareList = new ArrayList<String>();
+		compareList.add("1");
+		compareList.add("2");
+		compareList.add("10");
+		assertEquals(ssa.numericBubbleSort(list), compareList);
 	}
-
+	
 	@Test
-	public void testSortNumbers() {
-		String arr = "1 2 10";
-		String expected = "1" + System.lineSeparator() + "10"
-				+ System.lineSeparator() + "2";
-		assertEquals(expected, sortApp.sortNumbers(arr));
+	public void sortAllNumericInputStream() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		ssa.run(null, numericStdin, System.out);
+		System.out.flush();
+		assertEquals("1\n10\n2\n", baos.toString());
 	}
-
+	
 	@Test
-	public void testSortSpecialChars() {
-		String arr = "^% *( $) ! @; \n \t";
-		String expected = "!" + System.lineSeparator() + "$)"
-				+ System.lineSeparator() + "*(" + System.lineSeparator() + "@;"
-				+ System.lineSeparator() + "\n" + System.lineSeparator() + "\t"
-				+ System.lineSeparator() + "^%";
-
-		assertEquals(expected, sortApp.sortSpecialChars(arr));
+	public void sortAllNumericFile() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		args = new String[2];
+		args[0] = numericFile;
+		args[1] = "-n";
+		ssa.run(args, null, System.out);
+		System.out.flush();
+		assertEquals("1\n2\n10\n", baos.toString());
 	}
-
+	
 	@Test
-	public void testSortSimpleCapital() {
-		String arr = "simplE Simple simPle SIMPLE";
-		String expected = "SIMPLE" + System.lineSeparator() + "Simple"
-				+ System.lineSeparator() + "simPle" + System.lineSeparator()
-				+ "simplE";
-		assertEquals(expected, sortApp.sortSimpleCapital(arr));
+	public void sortAllInputStream() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		ssa.run(null, stdin, System.out);
+		System.out.flush();
+		assertEquals(sortedString , baos.toString());
 	}
-
+	
 	@Test
-	public void testSortSimpleNumbers() {
-		// NOT SURE
-		String arr = "simpl3 4impl5 s1mp12 7 100 4";
-		String expected = "4" + System.lineSeparator() + "100"
-				+ System.lineSeparator() + "4impl5" + System.lineSeparator()
-				+ "7" + System.lineSeparator() + "s1mp12"
-				+ System.lineSeparator() + "simpl3";
-		assertEquals(expected, sortApp.sortSimpleNumbers(arr));
+	public void sortAllFile() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		args = new String[1];
+		args[0] = fileName;
+		ssa.run(args, null, System.out);
+		System.out.flush();
+		assertEquals(sortedString, baos.toString());
 	}
-
+	
 	@Test
-	public void testSortSimpleSpecialChars() {
-		// NOT SURE
-		String arr = "s+mpl* simple s!mp!e $imple % \n";
-		String expected = "$imple" + System.lineSeparator() + "%"
-				+ System.lineSeparator() + "\n" + System.lineSeparator()
-				+ "s!mp!e" + System.lineSeparator() + "s+mpl*"
-				+ System.lineSeparator() + "simple";
-		assertEquals(expected, sortApp.sortSimpleSpecialChars(arr));
+	public void testEmptyStream() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		ssa.run(null, emptyStdin, System.out);
+		System.out.flush();
+		assertEquals("" , baos.toString());
 	}
-
+	
 	@Test
-	public void testSortCapitalNumbers() {
-		// NOT SURE
-		String arr = "S!MP!E $APPLE S+MPL* % HE** ***";
-		String expected = "$APPLE" + System.lineSeparator() + "%"
-				+ System.lineSeparator() + "***" + System.lineSeparator()
-				+ "HE**" + System.lineSeparator() + "S!MP!E"
-				+ System.lineSeparator() + "S+MPL*";
-		assertEquals(expected, sortApp.sortCapitalNumbers(arr));
+	public void testEmptyFile() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		args = new String[1];
+		args[0] = emptyFile;
+		ssa.run(args, null, System.out);
+		System.out.flush();
+		assertEquals("", baos.toString());
 	}
-
+	
 	@Test
-	public void testSortCapitalSpecialChar() {
-		String arr = "APP1E APPL3 A55LE ANNA 10 1O";
-		String expected = "10" + System.lineSeparator() + "1O"
-				+ System.lineSeparator() + "A55LE" + System.lineSeparator()
-				+ "ANNA" + System.lineSeparator() + "APP1E"
-				+ System.lineSeparator() + "APPL3";
-		assertEquals(expected, sortApp.sortCapitalSpecialChars(arr));
+	public void testNumericOpt() throws SortException {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		final PrintStream pStream = new PrintStream(baos);
+		System.setOut(pStream);
+		args = new String[3];
+		args[0] = "-n";
+		args[1] = testMethodsFile;
+		args[2] = numericFile;
+		ssa.run(args, null, System.out);
+		System.out.flush();
+		assertEquals("\n+\n1\n1\n2\n2\n5\n10\nA\nB\na\nb\n", baos.toString());
 	}
-
-	@Test
-	public void testsSortNumbersSpecialChars() {
-		String arr = "1##90 $3412* 1^*23 3* (%# ||";
-		String expected = "$3412*" + System.lineSeparator() + "(%#"
-				+ System.lineSeparator() + "A55LE" + System.lineSeparator()
-				+ "1##90" + System.lineSeparator() + "1^*23"
-				+ System.lineSeparator() + "3*" + System.lineSeparator() + "||";
-		assertEquals(expected, sortApp.sortNumbersSpecialChars(arr));
-	}
-
-	@Test
-	public void testSortSimpleCapitalNumbe() {
-		String arr = "Simpl3 4impl5 S1mp12 7 100 aPP13 anna}";
-		String expected = "100" + System.lineSeparator() + "4impl5"
-				+ System.lineSeparator() + "7" + System.lineSeparator()
-				+ "S1mp12" + System.lineSeparator() + "Simpl3"
-				+ System.lineSeparator() + "aPP13" + System.lineSeparator()
-				+ "anna}";
-		assertEquals(expected, sortApp.sortSimpleCapitalNumber(arr));
-	}
-
-	@Test
-	public void testSortSimpleCapitalSpecialChars() {
-		String arr = "S!MP!E $APPLE apple look S*MPL* %( < 90";
-		String expected = "$APPLE" + System.lineSeparator() + "%( "
-				+ System.lineSeparator() + "90" + System.lineSeparator() + "<"
-				+ System.lineSeparator() + "S!MP!E" + System.lineSeparator()
-				+ "S*MPL*" + System.lineSeparator() + "apple"
-				+ System.lineSeparator() + "look";
-		assertEquals(expected, sortApp.sortSimpleCapitalSpecialChars(arr));
-	}
-
-	@Test
-	public void testSortSimpleNumbersSpecialChars() {
-		String arr = "app!?e look a__a 1234 109 a99() book";
-		String expected = "109" + System.lineSeparator() + "1234 "
-				+ System.lineSeparator() + "a99()" + System.lineSeparator()
-				+ "a__a" + System.lineSeparator() + "app!?e"
-				+ System.lineSeparator() + "book" + System.lineSeparator()
-				+ "look";
-		assertEquals(expected, sortApp.sortSimpleNumbersSpecialChars(arr));
-	}
-
-	@Test
-	public void testSortCapitalNumbersSpecialChars() {
-		String arr = "S!MP!1E $A33LE S*MP!* A00A JUST";
-		String expected = "$A33LE" + System.lineSeparator() + "A00A"
-				+ System.lineSeparator() + "JUST" + System.lineSeparator()
-				+ "S!MP!1E" + System.lineSeparator() + "S*MP!*";
-		assertEquals(expected, sortApp.sortCapitalNumbersSpecialChars(arr));
-	}
-
-	@Test
-	public void testSortAll() {
-		String arr = "s!MP!1e $a33Le S*MP!* A1MP^& anna al1G JUST";
-		String expected = "$A33LE" + System.lineSeparator() + "A1MP^&"
-				+ System.lineSeparator() + "JUST" + System.lineSeparator()
-				+ "S*MP!*" + System.lineSeparator() + "al1G"
-				+ System.lineSeparator() + "anna" + System.lineSeparator()
-				+ "s!MP!1e";
-		assertEquals(expected, sortApp.sortAll(arr));
-	}
+	
 }

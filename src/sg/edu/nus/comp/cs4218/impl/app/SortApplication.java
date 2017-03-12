@@ -38,7 +38,7 @@ import sg.edu.nus.comp.cs4218.exception.SortException;
  * </p>
  */
 public class SortApplication implements Application, Sort {
-	
+
 	/**
 	 * Runs the sort application with the specified arguments.
 	 * 
@@ -55,16 +55,16 @@ public class SortApplication implements Application, Sort {
 	 */
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws SortException {
-		
+
 		List<String> sortedList;
-		
+
 		if (args == null && stdin == null) {
 			throw new SortException("Null arguments");
 		}
 		if (stdout == null) {
 			throw new SortException("OutputStream not provided");
 		}
-		
+
 		// Remove sort command
 		args = removeCommand(args);
 		List<String> arrList = new ArrayList<>();
@@ -73,34 +73,34 @@ public class SortApplication implements Application, Sort {
 				arrList.add(args[i]);
 			}
 		}
-		
+
 		if(args != null && args.length == 0) {
 			args = null;
 		}
-		
-		try {
-			validate(args);
-			
-			if (args == null || args.length == 0) {
-				// sort
-				if (stdin == null) {
-					throw new SortException("InputStream not provided");
-				}
-				args = readFromInputStream(stdin);
-				sortedList = bubbleSort(arrList);
-			} else if(args.length == 1 && args[0].equals("-n")) {
-				// sort -n
-				if (stdin == null) {
-					throw new SortException("InputStream not provided");
-				}
-				args = readFromInputStream(stdin);
-				sortedList = numericBubbleSort(arrList);
-			} else {
-				// sort [FILE]
-				// sort -n [FILE]
-				sortedList = readFromFile(args);
-			}
 
+		validate(args);
+
+		if (args == null || args.length == 0) {
+			// sort
+			if (stdin == null) {
+				throw new SortException("InputStream not provided");
+			}
+			args = readFromInputStream(stdin);
+			sortedList = bubbleSort(arrList);
+		} else if(args.length == 1 && args[0].equals("-n")) {
+			// sort -n
+			if (stdin == null) {
+				throw new SortException("InputStream not provided");
+			}
+			args = readFromInputStream(stdin);
+			sortedList = numericBubbleSort(arrList);
+		} else {
+			// sort [FILE]
+			// sort -n [FILE]
+			sortedList = readFromFile(args);
+		}
+
+		try {
 			for (int i = 0; i < sortedList.size(); i++) {
 				stdout.write(sortedList.get(i).getBytes("UTF-8"));
 				stdout.write(System.lineSeparator().getBytes("UTF-8"));
@@ -109,7 +109,7 @@ public class SortApplication implements Application, Sort {
 			throw new SortException("IO error");
 		}
 	}
-	
+
 	/**
 	 * Remove "sort" command from args
 	 * 
@@ -119,19 +119,19 @@ public class SortApplication implements Application, Sort {
 	String[] removeCommand(String[] args) {
 		if(args != null) {
 			String[] temp = new String[args.length - 1];
-			
+
 			if(args[0].equals("sort")) {
 				for(int i = 1; i < args.length; i++) {
 					temp[i - 1] = args[i]; 
 				}
-				
+
 				return temp;
 			}
 		}
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Checks if arguments are valid
 	 * 
@@ -143,7 +143,7 @@ public class SortApplication implements Application, Sort {
 	 */
 	public void validate(String[] args) throws SortException {
 		boolean hasOption = false;
-		
+
 		if(args != null) {
 			for(int i = 0; i < args.length; i++) {
 				if(args[i].equals("-n")) {
@@ -156,7 +156,7 @@ public class SortApplication implements Application, Sort {
 			}
 		}
 	}
-	
+
 	/**
 	 * Reorder arguments such that -n is the first argument
 	 * 
@@ -166,7 +166,7 @@ public class SortApplication implements Application, Sort {
 	 */
 	public String[] reOrder(String[] args) {
 		String[] sortedList = new String[args.length];
-		
+
 		if(args[0].equals("-n")) {
 			return args;
 		} else if(args[args.length - 1].equals("-n")) {
@@ -183,10 +183,10 @@ public class SortApplication implements Application, Sort {
 				}
 			}
 		}
-		
+
 		return sortedList;
 	}
-	
+
 	/**
 	 * Reads from stdin.
 	 * 
@@ -202,23 +202,28 @@ public class SortApplication implements Application, Sort {
 	 */
 	public String[] readFromInputStream(InputStream stdin) throws SortException {
 		ArrayList<String> text = new ArrayList<String>();
+		String str = new String();
 		String[] args;
-		
+
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-			text.add(bufferedReader.readLine());
+
+			while ((str = bufferedReader.readLine()) != null) {
+				text.add(str);
+			}
+
 		} catch (IOException e) {
 			throw new SortException("Could not read input");
 		}
-		
+
 		args = new String[text.size()];
 		for(int i = 0; i < text.size(); i++) {
 			args[i] = text.get(i);
 		}
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Reads from file.
 	 * 
@@ -233,28 +238,28 @@ public class SortApplication implements Application, Sort {
 		ArrayList<String> text = new ArrayList<String>();
 		String str = new String();
 		List<String> args;
-		
+
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
 					new FileInputStream(filePath.toString()), "UTF-8"));
-			
+
 			while ((str = bufferedReader.readLine()) != null) {
 				text.add(str);
 			}
-			
+
 			bufferedReader.close();
 		} catch (IOException e) {
 			throw new SortException("Could not read input");
 		}
-		
+
 		args = new ArrayList<>();
 		for(int i = 0; i < text.size(); i++) {
 			args.add(text.get(i));
 		}
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Checks if a file is readable.
 	 * 
@@ -275,7 +280,7 @@ public class SortApplication implements Application, Sort {
 			throw new SortException("Could not read file");
 		}
 	}
-	
+
 	/**
 	 * Reads from file.
 	 * 
@@ -290,7 +295,7 @@ public class SortApplication implements Application, Sort {
 		Path currentDir = Paths.get(Environment.currentDirectory);
 		Path filePath;
 		List<String> sortedList = new ArrayList<>();
-		
+
 		if (args.length == 1 && !args[0].equals("-n")) {
 			// sort [FILE]
 			filePath = currentDir.resolve(args[0]);
@@ -313,14 +318,14 @@ public class SortApplication implements Application, Sort {
 						text.addAll(readFromFile(filePath));
 					}
 				}
-				
+
 				sortedList = numericBubbleSort(text);
 			} 
 		}
-		
+
 		return sortedList;
 	}
-	
+
 	/**
 	 * Convert an array of strings to string
 	 * 
@@ -330,17 +335,17 @@ public class SortApplication implements Application, Sort {
 	 */
 	public String arrToString(String[] args) {
 		String text = new String();
-		
+
 		for(int i = 0; i < args.length; i++) {
 			text += args[i];
 			if(i != args.length - 1) {
-				 text += " ";
+				text += " ";
 			}
 		}
-		
+
 		return text;
 	}
-	
+
 	/**
 	 * Convert list of strings to string
 	 * 
@@ -350,14 +355,14 @@ public class SortApplication implements Application, Sort {
 	 */
 	public String listToString(List<String> args) {
 		String text = new String();
-		
+
 		for(int i = 0; i < args.size(); i++) {
 			text += args.get(i) + "\n";
 		}
-		
+
 		return text;
 	}
-	
+
 	/**
 	 * Convert list of strings to string
 	 * 
@@ -367,15 +372,15 @@ public class SortApplication implements Application, Sort {
 	 */
 	public List<String> stringToList(String text) {
 		List<String> args = new ArrayList<>();
-		
+
 		String[] splitArgs = text.split("\n");
 		for(int i = 0; i < splitArgs.length; i++) {
 			args.add(splitArgs[i]);
 		}
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Convert string to array
 	 * 
@@ -386,7 +391,7 @@ public class SortApplication implements Application, Sort {
 	public String[] stringToArr(String text) {
 		return text.split(" ");
 	}
-	
+
 	/**
 	 * Sort text according to ASCII.
 	 * 
@@ -408,10 +413,10 @@ public class SortApplication implements Application, Sort {
 			args.set(i, args.get(min));
 			args.set(min, temp);
 		}
-		
+
 		return args;
 	}
-	
+
 	/**
 	 * Sort numbers.
 	 * 
@@ -442,10 +447,10 @@ public class SortApplication implements Application, Sort {
 			arrList.set(i, arrList.get(min));
 			arrList.set(min, temp);
 		}
-		
+
 		return arrList;
 	}
-	
+
 	/**
 	 * Checks if both strings are numbers.
 	 * 
@@ -459,7 +464,7 @@ public class SortApplication implements Application, Sort {
 	 * 
 	 */
 	boolean isNumbers(String num1, String num2) {
-	
+
 		try {
 			Integer.parseInt(num1);
 			Integer.parseInt(num2);
