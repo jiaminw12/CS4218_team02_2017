@@ -71,9 +71,11 @@ public class CatApplication implements Application {
 					Path[] filePathArray = new Path[numOfFiles];
 					Path currentDir = Paths.get(Environment.currentDirectory);
 					boolean isFileReadable = false;
-
+					System.out.println("currentdir: "+currentDir);
+					
 					for (int i = 1; i < numOfFiles; i++) {
 						filePath = currentDir.resolve(args[i]);
+						System.out.println("filePath: "+filePath);
 						isFileReadable = checkIfFileIsReadable(filePath);
 						if (isFileReadable) {
 							filePathArray[i] = filePath;
@@ -101,8 +103,9 @@ public class CatApplication implements Application {
 					}
 				}
 			}
-		} catch (Exception exIO) {
-			throw new CatException("Exception Caught");
+		} catch (IOException exIO) {
+			exIO.printStackTrace();
+			//throw new CatException("Exception Caught");
 		}
 
 	}
@@ -123,6 +126,9 @@ public class CatApplication implements Application {
 		}
 		if (Files.exists(filePath) && Files.isReadable(filePath)) {
 			return true;
+		} else if (Files.notExists(filePath)) {
+			System.out.println(filePath);
+			throw new CatException("No such file exists");
 		} else {
 			throw new CatException("Could not read file");
 		}
