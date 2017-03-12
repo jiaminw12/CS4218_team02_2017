@@ -12,6 +12,8 @@ import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.app.*;
 import sg.edu.nus.comp.cs4218.impl.cmd.SeqCommand;
 
+import java.nio.file.*;
+
 /**
  * A Shell is a command interpreter and forms the backbone of the entire
  * program. Its responsibility is to interpret commands that the user type and
@@ -433,30 +435,73 @@ public class ShellImpl implements Shell {
 		
 		return result;
 	}
-
+	
+	public static String evaluateGlob(String args) {
+		ShellImpl shell = new ShellImpl();
+		System.out.print(args);
+		return shell.globWithException(args);
+	}
+	
 	@Override
 	public String globNoPaths(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		return args;
 	}
 
 	@Override
 	public String globOneFile(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		File file = new File(args);
+		if(file.isFile()){
+			return args;
+		} else {
+			return "not a file";
+		}
 	}
 
 	@Override
 	public String globFilesDirectories(String args) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		File file = new File(args);
+        if (file.isDirectory()){
+            return args;
+        } else {
+        	return "not a directory";
+        }
+        
+	} 
 
 	@Override
 	public String globWithException(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			File directory = new File(args);
+	        //get all the files from a directory
+	        File[] fList = directory.listFiles();
+	        String fileNames = "";
+	        String directoryNames = "";
+	        String result;
+
+	        if(fList.length == 0){
+	        	return globNoPaths(args);
+	        } else {
+		        for (File file : fList){
+			        if (!globOneFile(file.getName()).equals("not a file")){
+			            fileNames = fileNames + globOneFile(file.getName()) + " ";
+			            //System.out.println(file.getAbsolutePath());
+			        } else if (!globFilesDirectories(file.getName()).equals("not a directory")){
+			        	//System.out.println(file.getAbsolutePath());
+			        	//globWithException(file.getAbsolutePath());
+			            directoryNames = directoryNames + globFilesDirectories(file.getName()) + " ";
+			        }
+        		}
+        		result = fileNames + " " + directoryNames;
+	        }
+	        return result;   
+		} catch (NullPointerException e) {
+			String x = "null";
+			System.out.print(x);
+			return x;
+		}
 	}
+	
+	
 
 	@Override
 	public String redirectInput(String args) {
@@ -529,4 +574,5 @@ public class ShellImpl implements Shell {
         
         return result;
     }
+
 }
