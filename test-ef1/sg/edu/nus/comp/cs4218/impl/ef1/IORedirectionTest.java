@@ -49,16 +49,30 @@ public class IORedirectionTest {
 	
 	// FAIL??? USING NULL VALUE?
 	@Test(expected = ShellException.class)
-	public void testInputRedirectionWithEmtpyFile() throws Exception {
+	public void testInputRedirectionWithEmtpyFileFromShell() throws Exception {
 		String cmdLine = "cat TEST < ";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
+	@Test
+	public void testInputRedirectionWithEmtpyFile() throws Exception {
+		String cmdLine = "cat TEST < ";
+		String result = shell.redirectInputWithNoFile(cmdLine);
+		assertEquals("shell: Invalid syntax encountered.", result);
+	}
+	
 	// FAIL??? USING NULL VALUE?
 	@Test(expected = ShellException.class)
-	public void testOutputRedirectionWithEmtpyFile() throws Exception {
+	public void testOutputRedirectionWithEmtpyFileFromShell() throws Exception {
 		String cmdLine = "cat TEST > ";
 		shell.parseAndEvaluate(cmdLine, stdout);
+	}
+	
+	@Test
+	public void testOutputRedirectionWithEmtpyFile() throws Exception {
+		String cmdLine = "cat TEST > ";
+		String result = shell.redirectOutputWithNoFile(cmdLine);
+		assertEquals("shell: Invalid syntax encountered.", result);
 	}
 	
 	@Test(expected = ShellException.class)
@@ -70,19 +84,36 @@ public class IORedirectionTest {
 
 	// FAIL? PASS?
 	@Test(expected = ShellException.class)
-	public void testIllegalMultipleInputRedirection()
+	public void testIllegalMultipleInputRedirectionFromShell()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo TEST > test1.txt > test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
+	@Test
+	public void testIllegalMultipleInputRedirection()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "echo TEST > test1.txt > test2.txt";
+		String result = shell.redirectInputWithException(cmdLine);
+		assertEquals("shell: Invalid syntax encountered.", result);
+	}
+	
 	// FAIL? PASS?
 	@Test(expected = ShellException.class)
-	public void testIllegalMultipleOutputRedirection()
+	public void testIllegalMultipleOutputRedirectionFromShell()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat < test1.txt < test2.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
+	
+	@Test
+	public void testIllegalMultipleOutputRedirection()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat < test1.txt < test2.txt";
+		String result = shell.redirectOutputWithException(cmdLine);
+		assertEquals("shell: Invalid syntax encountered.", result);
+	}
+	
 
 	@Test(expected = ShellException.class)
 	public void testIORedirectionWithIllegalFile() throws Exception {
@@ -97,7 +128,7 @@ public class IORedirectionTest {
 	}
 	
 	@Test
-	public void testInputRedirectionWithCat() throws Exception {
+	public void testInputRedirectionWithCatFromShell() throws Exception {
 		String cmdLine = "cat < slicing.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		String expected = "Program slicing can be used in debugging to locate source of errors more easily.";
@@ -105,15 +136,31 @@ public class IORedirectionTest {
 	}
 	
 	@Test
-	public void testOutputRedirectionWithEcho() throws Exception {
+	public void testInputRedirectionWithCat() throws Exception {
+		String cmdLine = "cat < slicing.txt";
+		shell.redirectInput(cmdLine);
+		String expected = "Program slicing can be used in debugging to locate source of errors more easily.";
+		assertEquals(expected, readFile("slicing.txt"));
+	}
+	
+	@Test
+	public void testOutputRedirectionWithEchoFromShell() throws Exception {
 		String cmdLine = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 		String expected = "TEST" + System.lineSeparator();
 		assertEquals(expected, readFile("test1.txt"));
 	}
 	
+	@Test
+	public void testOutputRedirectionWithEcho() throws Exception {
+		String cmdLine = "echo TEST > test1.txt";
+		shell.redirectOutput(cmdLine);
+		String expected = "TEST" + System.lineSeparator();
+		assertEquals(expected, readFile("test1.txt"));
+	}
+	
 	@Test(expected = ShellException.class)
-	public void testIllegalIORedirectionMultipleLines() throws Exception {
+	public void testIllegalIORedirectionMultipleLinesFromShell() throws Exception {
 		String cmdLine = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
 
@@ -125,7 +172,7 @@ public class IORedirectionTest {
 	}
 
 	@Test
-	public void testIORedirectionWithEchoCat() throws Exception {
+	public void testIORedirectionWithEchoCatFromShell() throws Exception {
 		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
@@ -138,7 +185,7 @@ public class IORedirectionTest {
 	}
 
 	@Test
-	public void testIORedirectionWithLeftAndRight() throws Exception {
+	public void testIORedirectionWithLeftAndRightFromShell() throws Exception {
 		String cmdLine1 = "echo TEST > test1.txt";
 		shell.parseAndEvaluate(cmdLine1, stdout);
 
