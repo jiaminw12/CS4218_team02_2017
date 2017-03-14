@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.junit.Before;
@@ -34,7 +35,7 @@ public class SampleGrepApplicationTest {
 	private static final String NOMATCHSTDIN = "Pattern Not Found In Stdin!";
 	private GrepApplication grepApp;
 	private String[] args;
-	private FileInputStream stdin;
+	private InputStream stdin;
 	private String fileName;
 	private String fileName2;
 	private String fileName3;
@@ -59,8 +60,9 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepStdInNoMatchesFromRun() throws GrepException {
-		args = new String[1];
-		args[0] = HIEPATTERN;
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = HIEPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(NOMATCHSTDIN + "\n", baos.toString());
@@ -76,8 +78,9 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepStdInMatchesFromRun() throws GrepException {
-		args = new String[1];
-		args[0] = ABCPATTERN;
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = ABCPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(ABCSINGLEFILEOUT + "\n", baos.toString());
@@ -164,9 +167,10 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepSingleFileMatchesFromRun() throws GrepException {
-		args = new String[2];
-		args[0] = ABCPATTERN;
-		args[1] = fileName;
+		args = new String[3];
+		args[0] = "grep";
+		args[1] = ABCPATTERN;
+		args[2] = fileName;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(ABCSINGLEFILEOUT + "\n", baos.toString());
@@ -366,9 +370,9 @@ public class SampleGrepApplicationTest {
 	public void grepMultiplePatternFromRun() throws GrepException {
 		args = new String[4];
 		args[0] = "grep";
-		args[0] = REGEXPATTERN;
-		args[1] = ABCPATTERN;
-		args[2] = fileName;
+		args[1] = REGEXPATTERN;
+		args[2] = ABCPATTERN;
+		args[3] = fileName;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 	}
