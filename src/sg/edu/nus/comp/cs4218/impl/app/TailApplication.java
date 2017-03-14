@@ -39,41 +39,42 @@ public class TailApplication implements Application {
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws TailException {
 
-		processArguments(args, stdin, stdout);
-	}
-
-	private void processArguments(String[] args, InputStream stdin,
-			OutputStream stdout) throws TailException {
-
 		File file;
 
 		if (args.length == 0) {
 			throw new TailException("Insufficient arguments.");
 		} else {
-			args = parseTail(args);
+			String[] afterParseTail = parseTail(args);
 
 			try {
-				if(args.length == 1 && args[0].toLowerCase().equals("tail")) {
-					String input = readFromStdin(args, stdin);
+				if (afterParseTail.length == 1
+						&& afterParseTail[0].toLowerCase().equals("tail")) {
+					String input = readFromStdin(afterParseTail, stdin);
 					stdout.write(input.getBytes());
 					stdout.write(System.lineSeparator().getBytes());
-				} else if(args.length == 2) {
-					file = new File(args[1]);
-					if(isFileValid(file)) {
+				} else if (afterParseTail.length == 2) {
+					file = new File(afterParseTail[1]);
+					if (isFileValid(file)) {
 						printLine(10, file, stdin, stdout);
 					} else {
-						String[] input = readFromStdin(args, stdin).split("\n");
-						int numOfLines = (Integer.parseInt(args[1]) < input.length) ? Integer.parseInt(args[1]) : input.length;
+						String[] input = readFromStdin(afterParseTail, stdin)
+								.split("\n");
+						int numOfLines = (Integer
+								.parseInt(afterParseTail[1]) < input.length)
+										? Integer.parseInt(afterParseTail[1])
+										: input.length;
 
-						for(int i = input.length - numOfLines; i < input.length; i++) {
+						for (int i = input.length
+								- numOfLines; i < input.length; i++) {
 							stdout.write(input[i].getBytes());
 							stdout.write(System.lineSeparator().getBytes());
 						}
 					}
-				} else if(args.length == 3) {
-					file = new File(args[2]);
+				} else if (afterParseTail.length == 3) {
+					file = new File(afterParseTail[2]);
 					if (checkValidFile(file)) {
-						printLine(Integer.parseInt(args[1]), file, stdin, stdout);
+						printLine(Integer.parseInt(afterParseTail[1]), file,
+								stdin, stdout);
 					}
 				}
 			} catch (IOException e) {
@@ -86,24 +87,27 @@ public class TailApplication implements Application {
 
 	private String[] parseTail(String[] args) throws TailException {
 
-		if(args.length == 1 || (args.length == 2 && isFileValid(new File(args[1])))) {
+		if (args.length == 1
+				|| (args.length == 2 && isFileValid(new File(args[1])))) {
 			return args;
 		}
 
 		String cmdline = getOptionArguments(args);
-		String options = new String();
+		String options = "";
 
-		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+").matcher(cmdline);
-		if(matcher.matches()) {
-			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)").matcher(cmdline);
-			while(matcher.find()){
+		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+")
+				.matcher(cmdline);
+		if (matcher.matches()) {
+			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)")
+					.matcher(cmdline);
+			while (matcher.find()) {
 				options = matcher.group("number");
 			}
 		} else {
 			throw new TailException("Invalid arguments");
 		}
 
-		if(isLastArgumentFile(args)) {
+		if (isLastArgumentFile(args)) {
 			return new String[] { args[0], options, args[args.length - 1] };
 		}
 
@@ -112,10 +116,11 @@ public class TailApplication implements Application {
 
 	private String getOptionArguments(String[] args) {
 
-		String cmdline = new String();
+		String cmdline = "";
 
-		int length = isLastArgumentFile(args) ? args.length - 2 : args.length - 1;
-		for(int i = 0; i < length; i++) {
+		int length = isLastArgumentFile(args) ? args.length - 2
+				: args.length - 1;
+		for (int i = 0; i < length; i++) {
 			cmdline += args[i + 1] + " ";
 		}
 
@@ -127,18 +132,18 @@ public class TailApplication implements Application {
 		boolean isLastArgFile = false;
 
 		try {
-			if(checkValidFile(new File(args[args.length - 1].trim()))) {
+			if (checkValidFile(new File(args[args.length - 1].trim()))) {
 				isLastArgFile = true;
 			}
-		} catch(TailException e) {
+		} catch (TailException e) {
 			isLastArgFile = false;
 		}
 
 		return isLastArgFile;
 	}
 
-	private void printLine(int numberOfLines, File file, InputStream stdin, OutputStream stdout) 
-			throws TailException {
+	private void printLine(int numberOfLines, File file, InputStream stdin,
+			OutputStream stdout) throws TailException {
 
 		if (stdin == null || stdout == null) {
 			throw new TailException("Null Pointer Exception");
@@ -153,9 +158,9 @@ public class TailApplication implements Application {
 			while (tempNumberOfLines > 0) {
 				String line = reader.readLine();
 				if (line != null) {
-					linesArray[count%numberOfLines] = line;
+					linesArray[count % numberOfLines] = line;
 					count++;
-				} else if (line==null) {
+				} else if (line == null) {
 					tempNumberOfLines = 0;
 				}
 			}
@@ -168,7 +173,7 @@ public class TailApplication implements Application {
 			} else if (numberOfLines < count) {
 				int start = count - numberOfLines;
 				for (int i = start; i < count; i++) {
-					stdout.write(linesArray[i%numberOfLines].getBytes());
+					stdout.write(linesArray[i % numberOfLines].getBytes());
 					stdout.write(System.lineSeparator().getBytes());
 				}
 			}
@@ -191,7 +196,7 @@ public class TailApplication implements Application {
 			isValid = false;
 		} else if (Files.isDirectory(filePath)) {
 			isValid = false;
-		} 
+		}
 
 		return isValid;
 	}
@@ -221,27 +226,30 @@ public class TailApplication implements Application {
 	 *            An InputStream. The input for the command is read from this
 	 *            InputStream if no files are specified.
 	 */
-	private String readFromStdin(String[] args, InputStream stdin) throws TailException {
+	private String readFromStdin(String[] args, InputStream stdin)
+			throws TailException {
 
-		String input = new String();
+		String userInput = "";
 
-		if(PipeCommand.isPipe) {
-			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+		if (PipeCommand.isPipe) {
+			userInput = new BufferedReader(new InputStreamReader(stdin)).lines()
+					.parallel().collect(Collectors
+							.joining(System.getProperty("line.separator")));
 		} else {
 			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-				input = bufferedReader.readLine();
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(stdin));
+				userInput = bufferedReader.readLine();
 			} catch (IOException e) {
 				throw new TailException("Cannot Read From Stdin");
-			} 
+			}
 		}
 
 		// try to replace substrings
-		if(input == null || input.isEmpty()) {
+		if (userInput == null || userInput.isEmpty()) {
 			throw new TailException("Invalid Input");
-		} 
+		}
 
-		return input;
+		return userInput;
 	}
 }

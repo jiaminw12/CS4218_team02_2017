@@ -1,8 +1,5 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
-import org.junit.runners.JUnit4;
-//@RunWith(JUnit4.class)
-
 import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
@@ -21,10 +18,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CatException;
-import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.app.CatApplication;
 
 

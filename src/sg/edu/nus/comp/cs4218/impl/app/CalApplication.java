@@ -77,29 +77,30 @@ public class CalApplication implements Application, Cal {
 		if (args.length > 4) {
 			throw new CalException("Too many arguments");
 		}
-		
+
 		if (args[0].equals("cal")) {
 			Calendar cal = Calendar.getInstance();
 			month = cal.get(Calendar.MONTH) + 1;
 			year = cal.get(Calendar.YEAR);
-			
-			for (int i=1; i < args.length; i++){
+
+			for (int i = 1; i < args.length; i++) {
 				if (args[i].equals("-m")) {
-					if (!mondayFirst){
+					if (!mondayFirst) {
 						mondayFirst = true;
 					} else {
 						throw new CalException(EXP_ARG);
 					}
 				} else if (checkInteger(args[i])) {
-					if (args[i].length() == 4 && checkValidYear(args[i])){
-						if (!yearOnly){
+					if (args[i].length() == 4 && checkValidYear(args[i])) {
+						if (!yearOnly) {
 							year = Integer.parseInt(args[i]);
 							yearOnly = true;
 						} else {
 							throw new CalException(EXP_ARG);
 						}
-					} else if ((args[i].length() == 1 || args[i].length() == 2) && checkValidMonth(args[i])) {
-						if (!monthOnly){
+					} else if ((args[i].length() == 1 || args[i].length() == 2)
+							&& checkValidMonth(args[i])) {
+						if (!monthOnly) {
 							month = Integer.parseInt(args[i]);
 							monthOnly = true;
 						} else {
@@ -111,7 +112,7 @@ public class CalApplication implements Application, Cal {
 				} else {
 					if (checkValidMonthString(args[i]) != 1
 							|| checkValidMonthString(args[i]) == 0) {
-						if (!monthOnly){
+						if (!monthOnly) {
 							month = checkValidMonthString(args[i]);
 							monthOnly = true;
 						} else {
@@ -124,25 +125,26 @@ public class CalApplication implements Application, Cal {
 			}
 		} else {
 			throw new CalException(EXP_SYNTAX);
-		} 
+		}
 
 		try {
 			String result = null;
-			if (args.length == 1 && args[0].equals("cal")){
+			if (args.length == 1 && args[0].equals("cal")) {
 				result = printCalendar(month, year);
-			} else if (args.length == 2){
-				if (mondayFirst){
+			} else if (args.length == 2) {
+				if (mondayFirst) {
 					result = printCalendar(month, year);
-				} else if (yearOnly){
+				} else if (yearOnly) {
 					result = printFullCalendar(year);
 				}
-			} else if (args.length == 3){
-				if (monthOnly && yearOnly){
+			} else if (args.length == 3) {
+				if (monthOnly && yearOnly) {
 					result = printCalendar(month, year);
-				} else if (mondayFirst && yearOnly){
+				} else if (mondayFirst && yearOnly) {
 					result = printFullCalendar(year);
 				}
-			} else if (args.length == 4 && mondayFirst && monthOnly && yearOnly){
+			} else if (args.length == 4 && mondayFirst && monthOnly
+					&& yearOnly) {
 				result = printCalendar(month, year);
 			}
 			stdout.write(result.getBytes());
@@ -166,7 +168,7 @@ public class CalApplication implements Application, Cal {
 
 		if (month == 2 && checkLeapYear(year))
 			days[month] = 29;
-		
+
 		String title = "      " + months[month] + " " + year
 				+ System.lineSeparator();
 
@@ -256,7 +258,8 @@ public class CalApplication implements Application, Cal {
 			}
 		}
 
-		String lines = "                              " + year + System.lineSeparator();
+		String lines = "                              " + year
+				+ System.lineSeparator();
 		lines += "      January               February               March          "
 				+ System.lineSeparator();
 		lines += datesLine(jan, feb, mar);
@@ -305,14 +308,15 @@ public class CalApplication implements Application, Cal {
 	}
 
 	/**
-	 * Return the day of week which falls on Sun or Mon by using given month and year.
+	 * Return the day of week which falls on Sun or Mon by using given month and
+	 * year.
 	 * 
 	 * @param month
 	 *            An integer. Given month.
 	 * @param year
 	 *            An integer. Given year.
 	 * @param day
-	 * 			  An integer. 7 means Monday first while 1 means Sunday first.
+	 *            An integer. 7 means Monday first while 1 means Sunday first.
 	 * 
 	 */
 	private static int day(int givenMonth, int givenYear, int givenDay) {
@@ -327,15 +331,15 @@ public class CalApplication implements Application, Cal {
 	 * Check whether the given year is a leap year
 	 *
 	 * @param year
-	 *            An integer.     
-	 *            
+	 *            An integer.
+	 * 
 	 */
 	private static boolean checkLeapYear(int year) {
-		if ((year % 4 == 0) && (year % 100 != 0)){
+		if ((year % 4 == 0) && (year % 100 != 0)) {
 			return true;
 		}
-		
-		if (year % 400 == 0){
+
+		if (year % 400 == 0) {
 			return true;
 		}
 		return false;
@@ -347,8 +351,8 @@ public class CalApplication implements Application, Cal {
 	 * @param month
 	 *            An array. Array of months.
 	 * @param position
-	 * 			  An integer. The current position of array item            
-	 *            
+	 *            An integer. The current position of array item
+	 * 
 	 */
 	private String addSpaces(String[] month, int position) {
 		String lines = "";
@@ -367,8 +371,8 @@ public class CalApplication implements Application, Cal {
 	 * @param month
 	 *            An array. Array of months.
 	 * @param position
-	 * 			  An integer. The current position of array item            
-	 *            
+	 *            An integer. The current position of array item
+	 * 
 	 */
 	private String addSpacesForLastRow(String[] month, int position) {
 		String lines = "";
@@ -393,7 +397,7 @@ public class CalApplication implements Application, Cal {
 	 *
 	 * @param userInput
 	 *            A string. User's input.
-	 *            
+	 * 
 	 */
 	private boolean checkInteger(String word) {
 		if (word.matches("^\\d+$")) {
@@ -407,7 +411,7 @@ public class CalApplication implements Application, Cal {
 	 *
 	 * @param userInput
 	 *            A string. User's input.
-	 *            
+	 * 
 	 */
 	private boolean checkLengthOfString(String userInput) {
 		// single digit or double digit for month
@@ -424,7 +428,7 @@ public class CalApplication implements Application, Cal {
 	 *
 	 * @param userInput
 	 *            A string. User's input.
-	 *            
+	 * 
 	 */
 	private boolean checkValidMonth(String userInput) {
 		if (Integer.parseInt(userInput) >= 1
@@ -435,11 +439,12 @@ public class CalApplication implements Application, Cal {
 	}
 
 	/**
-	 * Check whether month which in string is valid. Return the digit of month if is matched.
+	 * Check whether month which in string is valid. Return the digit of month
+	 * if is matched.
 	 *
 	 * @param userInput
 	 *            A string. User's input.
-	 *            
+	 * 
 	 */
 	private int checkValidMonthString(String userInput) {
 		for (int i = 0; i < months.length; i++) {
@@ -456,7 +461,7 @@ public class CalApplication implements Application, Cal {
 	 *
 	 * @param userInput
 	 *            A string. User's input.
-	 *            
+	 * 
 	 */
 	private boolean checkValidYear(String userInput) {
 		if (Integer.parseInt(userInput) >= 1000) {

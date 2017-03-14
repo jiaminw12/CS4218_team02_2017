@@ -21,7 +21,7 @@ import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
  * </dl>
  * </p>
  */
-public class CdApplication implements Application{
+public class CdApplication implements Application {
 
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
@@ -33,14 +33,14 @@ public class CdApplication implements Application{
 			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param args
-	 * 			Array of elements for the application. 2nd argument of the array contains the file path that the 
-	 * 			would like to go to.
+	 *            Array of elements for the application. 2nd argument of the
+	 *            array contains the file path that the would like to go to.
 	 * @throws DirectoryNotFoundException
-	 * 				If application has errors
+	 *             If application has errors
 	 */
 	public void setDirectory(String[] args) throws DirectoryNotFoundException {
 		if (args == null) {
@@ -48,16 +48,16 @@ public class CdApplication implements Application{
 		} else if (args.length > 2) {
 			throw new DirectoryNotFoundException("Too many Arguments.");
 		}
-		
+
 		String filePath = args[1];
 		File file = new File(filePath);
-		
+
 		if (!file.exists()) {
 			throw new DirectoryNotFoundException("File does not exists.");
 		} else if (!file.isDirectory()) {
 			throw new DirectoryNotFoundException("Invalid Arguments.");
 		}
-		
+
 		try {
 			Environment.currentDirectory = file.getCanonicalPath();
 		} catch (IOException e) {

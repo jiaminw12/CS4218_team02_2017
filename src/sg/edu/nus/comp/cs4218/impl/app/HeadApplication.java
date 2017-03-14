@@ -38,41 +38,41 @@ public class HeadApplication implements Application {
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws HeadException {
 
-		processArguments(args, stdin, stdout);
-	}
-
-	private void processArguments(String[] args, InputStream stdin,
-			OutputStream stdout) throws HeadException {
-
 		File file;
 
 		if (args.length == 0) {
 			throw new HeadException("Insufficient arguments.");
 		} else {
-			args = parseHead(args);
+			String[] afterParseHead = parseHead(args);
 
 			try {
-				if(args.length == 1 && args[0].toLowerCase().equals("head")) {
-					String input = readFromStdin(args, stdin);
+				if (afterParseHead.length == 1
+						&& afterParseHead[0].toLowerCase().equals("head")) {
+					String input = readFromStdin(afterParseHead, stdin);
 					stdout.write(input.getBytes());
 					stdout.write(System.lineSeparator().getBytes());
-				} else if(args.length == 2) {
-					file = new File(args[1]);
-					if(isFileValid(file)) {
+				} else if (afterParseHead.length == 2) {
+					file = new File(afterParseHead[1]);
+					if (isFileValid(file)) {
 						printLine(10, file, stdin, stdout);
 					} else {
-						String[] input = readFromStdin(args, stdin).split("\n");
-						int numOfLines = (Integer.parseInt(args[1]) < input.length) ? Integer.parseInt(args[1]) : input.length;
-						
-						for(int i = 0; i < numOfLines; i++) {
+						String[] input = readFromStdin(afterParseHead, stdin)
+								.split("\n");
+						int numOfLines = (Integer
+								.parseInt(afterParseHead[1]) < input.length)
+										? Integer.parseInt(afterParseHead[1])
+										: input.length;
+
+						for (int i = 0; i < numOfLines; i++) {
 							stdout.write(input[i].getBytes());
 							stdout.write(System.lineSeparator().getBytes());
 						}
 					}
-				} else if(args.length == 3) {
-					file = new File(args[2]);
+				} else if (afterParseHead.length == 3) {
+					file = new File(afterParseHead[2]);
 					if (checkValidFile(file)) {
-						printLine(Integer.parseInt(args[1]), file, stdin, stdout);
+						printLine(Integer.parseInt(afterParseHead[1]), file,
+								stdin, stdout);
 					}
 				}
 			} catch (IOException e) {
@@ -85,24 +85,27 @@ public class HeadApplication implements Application {
 
 	private String[] parseHead(String[] args) throws HeadException {
 
-		if(args.length == 1 || (args.length == 2 && isFileValid(new File(args[1])))) {
+		if (args.length == 1
+				|| (args.length == 2 && isFileValid(new File(args[1])))) {
 			return args;
 		}
 
 		String cmdline = getOptionArguments(args);
-		String options = new String();
-		
-		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+").matcher(cmdline);
-	    if(matcher.matches()) {
-			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)").matcher(cmdline);
-			while(matcher.find()){
+		String options = "";
+
+		Matcher matcher = Pattern.compile("(\\s*-n\\s*[0-9]+\\s*)+")
+				.matcher(cmdline);
+		if (matcher.matches()) {
+			matcher = Pattern.compile("-n\\s*(?<number>[0-9]+)")
+					.matcher(cmdline);
+			while (matcher.find()) {
 				options = matcher.group("number");
 			}
-	    } else {
-	    	throw new HeadException("Invalid arguments");
-	    }
+		} else {
+			throw new HeadException("Invalid arguments");
+		}
 
-		if(isLastArgumentFile(args)) {
+		if (isLastArgumentFile(args)) {
 			return new String[] { args[0], options, args[args.length - 1] };
 		}
 
@@ -111,10 +114,11 @@ public class HeadApplication implements Application {
 
 	private String getOptionArguments(String[] args) {
 
-		String cmdline = new String();
+		String cmdline = "";
 
-		int length = isLastArgumentFile(args) ? args.length - 2 : args.length - 1;
-		for(int i = 0; i < length; i++) {
+		int length = isLastArgumentFile(args) ? args.length - 2
+				: args.length - 1;
+		for (int i = 0; i < length; i++) {
 			cmdline += args[i + 1] + " ";
 		}
 
@@ -126,10 +130,10 @@ public class HeadApplication implements Application {
 		boolean isLastArgFile = false;
 
 		try {
-			if(checkValidFile(new File(args[args.length - 1].trim()))) {
+			if (checkValidFile(new File(args[args.length - 1].trim()))) {
 				isLastArgFile = true;
 			}
-		} catch(HeadException e) {
+		} catch (HeadException e) {
 			isLastArgFile = false;
 		}
 
@@ -143,14 +147,15 @@ public class HeadApplication implements Application {
 			throw new HeadException("Null Pointer Exception");
 		}
 		try {
+			int linesOfNumber = numberOfLines;
 			BufferedReader reader = new BufferedReader(new FileReader(file));
-			while (numberOfLines > 0) {
+			while (linesOfNumber > 0) {
 				String line = reader.readLine();
 				if (line != null) {
 					stdout.write(line.getBytes());
 					stdout.write(System.lineSeparator().getBytes());
 				}
-				numberOfLines--;
+				linesOfNumber--;
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -169,7 +174,7 @@ public class HeadApplication implements Application {
 			isValid = false;
 		} else if (Files.isDirectory(filePath)) {
 			isValid = false;
-		} 
+		}
 
 		return isValid;
 	}
@@ -199,26 +204,29 @@ public class HeadApplication implements Application {
 	 *            An InputStream. The input for the command is read from this
 	 *            InputStream if no files are specified.
 	 */
-	private String readFromStdin(String[] args, InputStream stdin) throws HeadException {
+	private String readFromStdin(String[] args, InputStream stdin)
+			throws HeadException {
 
-		String input = new String();
-		
-		if(PipeCommand.isPipe) {
+		String input = "";
+
+		if (PipeCommand.isPipe) {
 			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+					.parallel().collect(Collectors
+							.joining(System.getProperty("line.separator")));
 		} else {
 			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(stdin));
 				input = bufferedReader.readLine();
 			} catch (IOException e) {
 				throw new HeadException("Cannot Read From Stdin");
-			} 
+			}
 		}
-		
+
 		// try to replace substrings
-		if(input == null || input.isEmpty()) {
+		if (input == null || input.isEmpty()) {
 			throw new HeadException("Invalid Input");
-		} 
+		}
 
 		return input;
 	}
