@@ -285,10 +285,11 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepUnorderedInput1FromRun() throws GrepException {
-		args = new String[3];
-		args[0] = fileName;
-		args[1] = REGEXPATTERN;
-		args[2] = fileName2;
+		args = new String[4];
+		args[0] = "grep";
+		args[1] = fileName;
+		args[2] = REGEXPATTERN;
+		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(REGEXMULTIOUT + "\n", baos.toString());
