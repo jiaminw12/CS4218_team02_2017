@@ -297,8 +297,9 @@ public class GrepApplication implements Application, Grep {
 					} else {
 						input = input + System.lineSeparator() + line;
 					}
+					lineCount ++;
+					line = bufferedReader.readLine();
 				}
-				line = bufferedReader.readLine();
 			} catch (IOException e) {
 			} 
 		}
