@@ -137,18 +137,25 @@ public class GrepApplication implements Application, Grep {
 		ArrayList <File> listOfTextFiles = new ArrayList <File>();
 		String fileContent = "";
 		String [] stringArray= args.split(" ");
-		Pattern pattern = Pattern.compile(stringArray[0]);
+		Pattern pattern = null; 
 		File file;
 		BufferedReader reader;
 		int lineCount = 0;
 		
-		for (int i=1; i<stringArray.length; i++) {
+		for (int i=0; i<stringArray.length; i++) {
 			try {
-				if (checkValidFile(new File(stringArray[i]))) {
-					file = new File(stringArray[i]);
+				file = new File(stringArray[i]);
+				if (checkValidFile(file) && isFileValid(file)) {
 					listOfTextFiles.add(file);
 				}
 			} catch (GrepException e) {
+				if (pattern == null) {
+					try {
+						pattern = Pattern.compile(stringArray[i]);
+					} catch (PatternSyntaxException e1) {
+						
+					}
+				}
 				
 			}
 //			System.out.println(stringArray[i]);
