@@ -248,7 +248,7 @@ public class SampleGrepApplicationTest {
 		args[1] = invalidFile;
 		args[2] = fileName2;
 		args[3] = fileName;
-		assertEquals("ABCDEFGHI\nDEF", grepApp.grepFromOneFile(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals("DEF\nABCDEFGHI", grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " " + args[2] + " " + args[3] ));
 	}
 
 	@Test
