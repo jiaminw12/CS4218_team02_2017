@@ -96,8 +96,9 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepStdInRegexMatchesFromRun() throws GrepException {
-		args = new String[1];
-		args[0] = REGEXPATTERN;
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = REGEXPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(REGEXPATTERNOUT + "\n", baos.toString());
@@ -207,10 +208,11 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepMultipleFileNoMatchesFromRun() throws GrepException {
-		args = new String[3];
-		args[0] = HIEPATTERN;
-		args[1] = fileName;
-		args[2] = fileName2;
+		args = new String[4];
+		args[0] = "grep";
+		args[1] = HIEPATTERN;
+		args[2] = fileName;
+		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 		assertEquals(NOMATCHFILE + "\n", baos.toString());
