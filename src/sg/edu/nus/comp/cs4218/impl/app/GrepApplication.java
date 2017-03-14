@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.app.Grep;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.exception.HeadException;
+import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /**
  * 
@@ -65,7 +68,17 @@ public class GrepApplication implements Application, Grep {
 	@Override
 	public String grepFromStdin(String args, InputStream stdin) {
 		// TODO Auto-generated method stub
-		return null;
+		String fileContent = "";
+		Pattern pattern = Pattern.compile(args);
+		String input = readFromInputStream(stdin);
+		System.out.println(input);
+		int lineCount = 0;
+		
+		if(lineCount == 0) {
+			fileContent = "Pattern Not Found In Stdin!";
+		}
+		
+		return fileContent;
 	}
 
 	@Override
@@ -166,6 +179,36 @@ public class GrepApplication implements Application, Grep {
 		return null;
 	}
 
+	public String readFromInputStream(InputStream stdin) {
+		String input = new String();
+		String line;
+		int lineCount = 0;
+		if(PipeCommand.isPipe) {
+			input = new BufferedReader(new InputStreamReader(stdin)).lines()
+					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+		} else {
+			try {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				line = bufferedReader.readLine();
+				while (line != null) {
+					if (lineCount == 0) {
+						input = line;
+					} else {
+						input = input + System.lineSeparator() + line;
+					}
+				}
+				line = bufferedReader.readLine();
+			} catch (IOException e) {
+			} 
+		}
+		
+		// try to replace substrings
+		if(input == null || input.isEmpty()) {
+		} 
+
+		return input;
+	}
+
 	public void setData(Object readFromInputStream) {
 		// TODO Auto-generated method stub
 		
@@ -175,4 +218,5 @@ public class GrepApplication implements Application, Grep {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }
