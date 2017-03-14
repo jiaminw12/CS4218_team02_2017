@@ -35,7 +35,7 @@ public class ShellImpl implements Shell {
 			+ "as output redirection file.";
 	public static final String EXP_STDOUT = "Error writing to stdout.";
 	public static final String EXP_NOT_SUPPORTED = " not supported yet";
-	
+
 	public static InputStream stdin;
 
 	/**
@@ -73,7 +73,7 @@ public class ShellImpl implements Shell {
 				String bqStr = matcherBQ.group(1);
 				// cmdVector.add(bqStr.trim());
 				// process back quote
-				//System.out.println("backquote : " + bqStr);
+				// System.out.println("backquote : " + bqStr);
 				OutputStream bqOutputStream = new ByteArrayOutputStream();
 				ShellImpl shell = new ShellImpl();
 				shell.parseAndEvaluate(bqStr, bqOutputStream);
@@ -91,13 +91,13 @@ public class ShellImpl implements Shell {
 		}
 		return resultArr;
 	}
-	
+
 	/**
 	 * Searches for and processes the commands enclosed by single quotes for
-	 * command substitution.If no single quotes are found, the argsArray from the
-	 * input is returned unchanged. If single quotes are found, the single quotes
-	 * and its enclosed commands substituted with the output from processing the
-	 * commands enclosed in the single quotes.
+	 * command substitution.If no single quotes are found, the argsArray from
+	 * the input is returned unchanged. If single quotes are found, the single
+	 * quotes and its enclosed commands substituted with the output from
+	 * processing the commands enclosed in the single quotes.
 	 * 
 	 * @param argsArray
 	 *            String array of the individual commands.
@@ -111,20 +111,20 @@ public class ShellImpl implements Shell {
 	 *             If an exception happens while processing the content in the
 	 *             single quotes.
 	 */
-	public static String [] processSQ(String... argsArray)
+	public static String[] processSQ(String... argsArray)
 			throws AbstractApplicationException, ShellException {
-		//TODO
-		
-		String [] resultArr = new String[argsArray.length];
+		// TODO
+
+		String[] resultArr = new String[argsArray.length];
 		return resultArr;
 	}
-	
+
 	/**
 	 * Searches for and processes the commands enclosed by double quotes for
-	 * command substitution.If no double quotes are found, the argsArray from the
-	 * input is returned unchanged. If double quotes are found, the double quotes
-	 * and its enclosed commands substituted with the output from processing the
-	 * commands enclosed in the double quotes.
+	 * command substitution.If no double quotes are found, the argsArray from
+	 * the input is returned unchanged. If double quotes are found, the double
+	 * quotes and its enclosed commands substituted with the output from
+	 * processing the commands enclosed in the double quotes.
 	 * 
 	 * @param argsArray
 	 *            String array of the individual commands.
@@ -138,14 +138,14 @@ public class ShellImpl implements Shell {
 	 *             If an exception happens while processing the content in the
 	 *             double quotes.
 	 */
-	public static String [] processDQ(String... argsArray)
+	public static String[] processDQ(String... argsArray)
 			throws AbstractApplicationException, ShellException {
-		//TODO
-		
-		String [] resultArr = new String[argsArray.length];
+		// TODO
+
+		String[] resultArr = new String[argsArray.length];
 		return resultArr;
 	}
-	
+
 	/**
 	 * Static method to run the application as specified by the application
 	 * command keyword and arguments.
@@ -171,7 +171,7 @@ public class ShellImpl implements Shell {
 	public static void runApp(String app, String[] argsArray,
 			InputStream inputStream, OutputStream outputStream)
 			throws AbstractApplicationException, ShellException {
-		
+
 		Application absApp = null;
 		if (("cat").equals(app)) {// cat [FILE]...
 			absApp = new CatApplication();
@@ -191,16 +191,16 @@ public class ShellImpl implements Shell {
 			absApp = new SedApplication();
 		} else if (("wc").equals(app)) {// wc
 			absApp = new WcApplication();
-		}  else if (("cal").equals(app)) {// cal
+		} else if (("cal").equals(app)) {// cal
 			absApp = new CalApplication();
-		}  else if (("grep").equals(app)) {// grep
+		} else if (("grep").equals(app)) {// grep
 			absApp = new GrepApplication();
-		}  else if (("sort").equals(app)) {// sort
+		} else if (("sort").equals(app)) {// sort
 			absApp = new SortApplication();
 		} else { // invalid command
 			throw new ShellException(app + ": " + EXP_INVALID_APP);
 		}
-		
+
 		absApp.run(argsArray, inputStream, outputStream);
 	}
 
@@ -344,8 +344,8 @@ public class ShellImpl implements Shell {
 	public static void main(String... args) {
 		ShellImpl shell = new ShellImpl();
 
-		BufferedReader bReader = new BufferedReader(new InputStreamReader(
-				System.in));
+		BufferedReader bReader = new BufferedReader(
+				new InputStreamReader(System.in));
 		String readLine = null;
 		String currentDir;
 
@@ -377,25 +377,26 @@ public class ShellImpl implements Shell {
 
 	@Override
 	public String pipeTwoCommands(String args) {
-		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim().split("\\|");	//TODO Change this split method
+		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim()
+				.split("\\|"); // TODO Change this split method
 		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
-		
+
 		if (splitArgs.length == 2) {
 			String firstCommand = splitArgs[0];
 			String secondCommand = splitArgs[1];
-			
+
 			try {
 				parseAndEvaluate(firstCommand + "|" + secondCommand, stdout);
 			} catch (ShellException | AbstractApplicationException e) {
 				return e.getMessage();
 			}
-			
+
 			ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
 			byte[] byteArray = outByte.toByteArray();
 			result = new String(byteArray);
-		} 
-		
+		}
+
 		// Testing purpose: Returns empty if pipe command is not split into 2
 		return result;
 	}
@@ -404,44 +405,44 @@ public class ShellImpl implements Shell {
 	public String pipeMultipleCommands(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
-		
+
 		try {
 			parseAndEvaluate(args, stdout);
 		} catch (ShellException | AbstractApplicationException e) {
 			return result;
 		}
-		
+
 		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
 		byte[] byteArray = outByte.toByteArray();
 		result = new String(byteArray);
-		
+
 		return result;
 	}
 
 	@Override
-	public String pipeWithException(String args) {	
+	public String pipeWithException(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
 		String result = new String();
-		
+
 		try {
 			parseAndEvaluate(args, stdout);
 		} catch (ShellException | AbstractApplicationException e) {
 			return e.getMessage();
 		}
-		
+
 		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
 		byte[] byteArray = outByte.toByteArray();
 		result = new String(byteArray);
-		
+
 		return result;
 	}
-	
+
 	public static String evaluateGlob(String args) {
 		ShellImpl shell = new ShellImpl();
 		System.out.print(args);
 		return shell.globWithException(args);
 	}
-	
+
 	@Override
 	public String globNoPaths(String args) {
 		return args;
@@ -450,7 +451,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String globOneFile(String args) {
 		File file = new File(args);
-		if(file.isFile()){
+		if (file.isFile()) {
 			return args;
 		} else {
 			return "not a file";
@@ -460,119 +461,190 @@ public class ShellImpl implements Shell {
 	@Override
 	public String globFilesDirectories(String args) {
 		File file = new File(args);
-        if (file.isDirectory()){
-            return args;
-        } else {
-        	return "not a directory";
-        }
-        
-	} 
+		if (file.isDirectory()) {
+			return args;
+		} else {
+			return "not a directory";
+		}
+
+	}
 
 	@Override
 	public String globWithException(String args) {
 		try {
 			File directory = new File(args);
-	        //get all the files from a directory
-	        File[] fList = directory.listFiles();
-	        String fileNames = "";
-	        String directoryNames = "";
-	        String result;
+			// get all the files from a directory
+			File[] fList = directory.listFiles();
+			String fileNames = "";
+			String directoryNames = "";
+			String result;
 
-	        if(fList.length == 0){
-	        	return globNoPaths(args);
-	        } else {
-		        for (File file : fList){
-			        if (!globOneFile(file.getName()).equals("not a file")){
-			            fileNames = fileNames + globOneFile(file.getName()) + " ";
-			            //System.out.println(file.getAbsolutePath());
-			        } else if (!globFilesDirectories(file.getName()).equals("not a directory")){
-			        	//System.out.println(file.getAbsolutePath());
-			        	//globWithException(file.getAbsolutePath());
-			            directoryNames = directoryNames + globFilesDirectories(file.getName()) + " ";
-			        }
-        		}
-        		result = fileNames + " " + directoryNames;
-	        }
-	        return result;   
+			if (fList.length == 0) {
+				return globNoPaths(args);
+			} else {
+				for (File file : fList) {
+					if (!globOneFile(file.getName()).equals("not a file")) {
+						fileNames = fileNames + globOneFile(file.getName())
+								+ " ";
+						// System.out.println(file.getAbsolutePath());
+					} else if (!globFilesDirectories(file.getName())
+							.equals("not a directory")) {
+						// System.out.println(file.getAbsolutePath());
+						// globWithException(file.getAbsolutePath());
+						directoryNames = directoryNames
+								+ globFilesDirectories(file.getName()) + " ";
+					}
+				}
+				result = fileNames + " " + directoryNames;
+			}
+			return result;
 		} catch (NullPointerException e) {
 			String x = "null";
 			System.out.print(x);
 			return x;
 		}
 	}
-	
-	
 
 	@Override
 	public String redirectInput(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
 	}
 
 	@Override
 	public String redirectOutput(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
 	}
 
 	@Override
 	public String redirectInputWithNoFile(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
 	}
 
 	@Override
 	public String redirectOutputWithNoFile(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
 	}
 
 	@Override
 	public String redirectInputWithException(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+			ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+			byte[] byteArray = outByte.toByteArray();
+			result = new String(byteArray);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		return result;
 	}
 
 	@Override
 	public String redirectOutputWithException(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
 	}
 
-    @Override
-    public String performCommandSubstitution(String args) {
-        OutputStream stdout = new ByteArrayOutputStream();
-        String result = new String();
-        
-        try {
-            parseAndEvaluate(args, stdout);
-        } catch (ShellException | AbstractApplicationException e) {
-            return e.getMessage();
-        }
-        
-        ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
-        byte[] byteArray = outByte.toByteArray();
-        result = new String(byteArray);
-        
-        return result;
-    }
-    
-    @Override
-    public String performCommandSubstitutionWithException(String args) {
-        OutputStream stdout = new ByteArrayOutputStream();
-        String result = new String();
-        
-        try {
-            parseAndEvaluate(args, stdout);
-        } catch (ShellException | AbstractApplicationException e) {
-            return e.getMessage();
-        }
-        
-        ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
-        byte[] byteArray = outByte.toByteArray();
-        result = new String(byteArray);
-        
-        return result;
-    }
+	@Override
+	public String performCommandSubstitution(String args) {
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+		byte[] byteArray = outByte.toByteArray();
+		result = new String(byteArray);
+
+		return result;
+	}
+
+	@Override
+	public String performCommandSubstitutionWithException(String args) {
+		OutputStream stdout = new ByteArrayOutputStream();
+		String result = new String();
+
+		try {
+			parseAndEvaluate(args, stdout);
+			ByteArrayOutputStream outByte = (ByteArrayOutputStream) stdout;
+			byte[] byteArray = outByte.toByteArray();
+			result = new String(byteArray);
+		} catch (ShellException | AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		return result;
+	}
 
 }

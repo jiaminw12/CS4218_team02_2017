@@ -47,16 +47,15 @@ public class IORedirectionTest {
 		file.delete();
 	}	
 	
-	// FAIL??? USING NULL VALUE?
 	@Test(expected = ShellException.class)
 	public void testInputRedirectionWithEmtpyFileFromShell() throws Exception {
-		String cmdLine = "cat TEST < ";
+		String cmdLine = "cat < ";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
 	@Test
 	public void testInputRedirectionWithEmtpyFile() throws Exception {
-		String cmdLine = "cat TEST < ";
+		String cmdLine = "cat < ";
 		String result = shell.redirectInputWithNoFile(cmdLine);
 		assertEquals("shell: Invalid syntax encountered.", result);
 	}
@@ -64,13 +63,13 @@ public class IORedirectionTest {
 	// FAIL??? USING NULL VALUE?
 	@Test(expected = ShellException.class)
 	public void testOutputRedirectionWithEmtpyFileFromShell() throws Exception {
-		String cmdLine = "cat TEST > ";
+		String cmdLine = "cat > ";
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
 	@Test
 	public void testOutputRedirectionWithEmtpyFile() throws Exception {
-		String cmdLine = "cat TEST > ";
+		String cmdLine = "cat > ";
 		String result = shell.redirectOutputWithNoFile(cmdLine);
 		assertEquals("shell: Invalid syntax encountered.", result);
 	}
@@ -82,7 +81,6 @@ public class IORedirectionTest {
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 
-	// FAIL? PASS?
 	@Test(expected = ShellException.class)
 	public void testIllegalMultipleInputRedirectionFromShell()
 			throws AbstractApplicationException, ShellException {
@@ -98,7 +96,6 @@ public class IORedirectionTest {
 		assertEquals("shell: Invalid syntax encountered.", result);
 	}
 	
-	// FAIL? PASS?
 	@Test(expected = ShellException.class)
 	public void testIllegalMultipleOutputRedirectionFromShell()
 			throws AbstractApplicationException, ShellException {
