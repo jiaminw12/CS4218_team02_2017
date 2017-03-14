@@ -166,4 +166,13 @@ public class GrepApplication implements Application, Grep {
 		return null;
 	}
 
+	public void setData(Object readFromInputStream) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Object readFromFile(String fileName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
