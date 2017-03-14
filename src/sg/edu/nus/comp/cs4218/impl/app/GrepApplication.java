@@ -64,7 +64,22 @@ public class GrepApplication implements Application, Grep {
 			throw new GrepException("OutputStream not provided");
 		}
 	}
+	
+	public boolean isFileValid(File file) {
 
+		Path filePath = file.toPath();
+		boolean isValid = true;
+
+		if (!Files.exists(filePath)) {
+			isValid = false;
+		} else if (!Files.isReadable(filePath)) {
+			isValid = false;
+		} else if (Files.isDirectory(filePath)) {
+			isValid = false;
+		} 
+
+		return isValid;
+	}
 	@Override
 	public String grepFromStdin(String args, InputStream stdin) {
 		// TODO Auto-generated method stub
