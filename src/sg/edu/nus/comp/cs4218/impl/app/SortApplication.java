@@ -85,14 +85,14 @@ public class SortApplication implements Application, Sort {
 			if (stdin == null) {
 				throw new SortException("InputStream not provided");
 			}
-			args = readFromInputStream(stdin);
+			arrList = stringToList(readFromInputStream(stdin));
 			sortedList = bubbleSort(arrList);
 		} else if(args.length == 1 && args[0].equals("-n")) {
 			// sort -n
 			if (stdin == null) {
 				throw new SortException("InputStream not provided");
 			}
-			args = readFromInputStream(stdin);
+			arrList = stringToList(readFromInputStream(stdin));
 			sortedList = numericBubbleSort(arrList);
 		} else {
 			// sort [FILE]
@@ -103,7 +103,9 @@ public class SortApplication implements Application, Sort {
 		try {
 			for (int i = 0; i < sortedList.size(); i++) {
 				stdout.write(sortedList.get(i).getBytes("UTF-8"));
-				stdout.write(System.lineSeparator().getBytes("UTF-8"));
+				if(!(sortedList.size() == 1 && sortedList.get(i).trim().isEmpty())) {
+					stdout.write(System.lineSeparator().getBytes("UTF-8"));
+				}
 			}
 		} catch (IOException e) {
 			throw new SortException("IO error");
@@ -200,28 +202,23 @@ public class SortApplication implements Application, Sort {
 	 * @throws SortException
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
-	public String[] readFromInputStream(InputStream stdin) throws SortException {
-		ArrayList<String> text = new ArrayList<String>();
-		String str = new String();
-		String[] args;
+	public String readFromInputStream(InputStream stdin) throws SortException {
+		StringBuffer text = new StringBuffer();
+		String str = "";
 
 		try {
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-
-			while ((str = bufferedReader.readLine()) != null) {
-				text.add(str);
+			
+			while((str = bufferedReader.readLine()) != null) {
+				text.append(str);
+				text.append(System.getProperty("line.separator"));
 			}
-
+			
 		} catch (IOException e) {
 			throw new SortException("Could not read input");
 		}
-
-		args = new String[text.size()];
-		for(int i = 0; i < text.size(); i++) {
-			args[i] = text.get(i);
-		}
-
-		return args;
+		
+		return text.toString().trim();
 	}
 
 	/**
@@ -375,7 +372,7 @@ public class SortApplication implements Application, Sort {
 
 		String[] splitArgs = text.split("\n");
 		for(int i = 0; i < splitArgs.length; i++) {
-			args.add(splitArgs[i]);
+			args.add(splitArgs[i].trim());
 		}
 
 		return args;
