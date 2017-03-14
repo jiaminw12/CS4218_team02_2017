@@ -40,7 +40,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * </p>
  */
 public class GrepApplication implements Application, Grep {
-
+	String line;
 	/**
 	 * Runs the grep application with the specified arguments.
 	 * 
@@ -57,11 +57,90 @@ public class GrepApplication implements Application, Grep {
 	 */
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws GrepException {
-		if (args == null) {
+//		for (int z=0; z<args.length; z++) {
+//			System.out.println(args[z]);
+//		}
+		if (args.length == 1 && args[0].equalsIgnoreCase("grep")) {
 			throw new GrepException("Null arguments");
 		}
 		if (stdout == null) {
 			throw new GrepException("OutputStream not provided");
+		}
+
+		int numberOfTxtFiles = 0;
+		int numberOfRegex = 0;
+		StringBuilder builder = new StringBuilder();
+		for(int s=1; s<args.length; s++) {
+			try {
+				File file = new File(args[s]);
+				if (checkValidFile(file) && isFileValid(file)) {
+					numberOfTxtFiles++;
+				} 
+			} catch (GrepException e) {
+				try {
+					Pattern.compile((args[s]));
+					numberOfRegex ++;
+				} catch (PatternSyntaxException e1) {
+					
+				}
+			}
+		    builder.append(args[s]);
+		    builder.append(" ");
+		}
+		
+//		System.out.println(numberOfTxtFiles);
+//		System.out.println(numberOfRegex);
+		
+		if (numberOfRegex == 0) {
+			throw new GrepException("No pattern detected");
+		} else if (numberOfRegex > 1) {
+			throw new GrepException("Too many patterns found");
+		}
+		
+		String argsString =  builder.toString();
+//		System.out.println(argsString);
+//		System.out.println(numberOfTxtFiles);
+		
+		if (numberOfTxtFiles == 0) {
+			line = grepFromStdin(args[0], stdin);
+			try {
+				stdout.write(line.getBytes());
+				stdout.write(System.lineSeparator().getBytes());
+			} catch (IOException e) {
+			}
+		} 
+		
+		else if (numberOfTxtFiles == 1) {
+			line = grepFromOneFile(argsString);
+			try {
+				stdout.write(line.getBytes());
+				stdout.write(System.lineSeparator().getBytes());
+			} catch (IOException e) {
+			}
+		} 
+		
+		else if (numberOfTxtFiles > 1) {
+			line = grepFromMultipleFiles(argsString);
+			try {
+				stdout.write(line.getBytes());
+				stdout.write(System.lineSeparator().getBytes());
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	public boolean checkValidFile(File file) throws GrepException {
+
+		Path filePath = file.toPath();
+
+		if (!Files.exists(filePath)) {
+			throw new GrepException("File does not exist.");
+		} else if (!Files.isReadable(filePath)) {
+			throw new GrepException("Unable to read file.");
+		} else if (Files.isDirectory(filePath)) {
+			throw new GrepException("This is a directory");
+		} else {
+			return true;
 		}
 	}
 	
