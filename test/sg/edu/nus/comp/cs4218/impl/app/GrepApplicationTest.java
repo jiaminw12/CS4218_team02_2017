@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
  * 6) Args for grepFromStdin: pattern (Stdin will be parsed from run)
  */
 
-public class SampleGrepApplicationTest {
+public class GrepApplicationTest {
 	private static final String REGEXMULTIOUT = "Hello Hello\nABC Hello\nello milo";
 	private static final String NOMATCHFILE = "Pattern Not Found In File!";
 	private static final String REGEXPATTERNOUT = "Hello Hello\nABC Hello";
@@ -47,12 +48,12 @@ public class SampleGrepApplicationTest {
 	@Before
 	public void setUp() throws FileNotFoundException {
 		grepApp = new GrepApplication();
-		stdin = new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/greptestdoc.txt");
-		fileName = "test/sg/edu/nus/comp/cs4218/impl/app/greptestdoc.txt";
-		fileName2 = "test/sg/edu/nus/comp/cs4218/impl/app/greptestdoc2.txt";
-		fileName3 = "test/sg/edu/nus/comp/cs4218/impl/app/testdoc.txt";
-		invalidFile = "test/sg/edu/nus/comp/cs4218/impl/app/abjkcsnakjc.txt";
 		directory = "test/sg/edu/nus/comp/cs4218/impl/app/";
+		stdin = new FileInputStream(directory + "greptestdoc.txt");
+		fileName = directory + "greptestdoc.txt";
+		fileName2 = directory + "greptestdoc2.txt";
+		fileName3 = directory + "testdoc.txt";
+		invalidFile = directory + "abjkcsnakjc.txt";
 		baos = new ByteArrayOutputStream();
 		print = new PrintStream(baos);
 		System.setOut(print);
@@ -70,9 +71,9 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepStdInNoMatches() throws GrepException {
-		args = new String[1];
-		grepApp.setData(grepApp.readFromInputStream(stdin));
-		args[0] = HIEPATTERN;
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = HIEPATTERN;
 		assertEquals(NOMATCHSTDIN, grepApp.grepFromStdin(args[0], stdin));
 	}
 
@@ -88,10 +89,11 @@ public class SampleGrepApplicationTest {
 
 	@Test
 	public void grepStdInMatches() throws GrepException {
-		args = new String[1];
-		grepApp.setData(grepApp.readFromInputStream(stdin));
-		args[0] = ABCPATTERN;
-		assertEquals(ABCSINGLEFILEOUT, grepApp.grepFromStdin(args[0], stdin));
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = ABCPATTERN;
+		ByteArrayInputStream in = new ByteArrayInputStream(ABCSINGLEFILEOUT.getBytes());
+		assertEquals(ABCSINGLEFILEOUT, grepApp.grepFromStdin(args[1], in));
 	}
 
 	@Test
@@ -107,7 +109,6 @@ public class SampleGrepApplicationTest {
 	@Test
 	public void grepStdInRegexMatches() throws GrepException {
 		args = new String[1];
-		grepApp.setData(grepApp.readFromInputStream(stdin));
 		args[0] = REGEXPATTERN;
 		assertEquals(REGEXPATTERNOUT, grepApp.grepFromStdin(args[0], stdin));
 	}

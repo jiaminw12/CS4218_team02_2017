@@ -41,6 +41,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  */
 public class GrepApplication implements Application, Grep {
 	String line;
+
 	/**
 	 * Runs the grep application with the specified arguments.
 	 * 
@@ -57,9 +58,7 @@ public class GrepApplication implements Application, Grep {
 	 */
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws GrepException {
-//		for (int z=0; z<args.length; z++) {
-//			System.out.println(args[z]);
-//		}
+
 		if (args.length == 1 && args[0].equalsIgnoreCase("grep")) {
 			throw new GrepException("Null arguments");
 		}
@@ -70,46 +69,45 @@ public class GrepApplication implements Application, Grep {
 		int numberOfTxtFiles = 0;
 		int numberOfRegex = 0;
 		StringBuilder builder = new StringBuilder();
-		for(int s=1; s<args.length; s++) {
+		for (int s = 1; s < args.length; s++) {
 			try {
 				File file = new File(args[s]);
 				if (checkValidFile(file) && isFileValid(file)) {
 					numberOfTxtFiles++;
-				} 
+				}
 			} catch (GrepException e) {
 				try {
 					Pattern.compile((args[s]));
-					numberOfRegex ++;
+					numberOfRegex++;
 				} catch (PatternSyntaxException e1) {
-					
+
 				}
 			}
-		    builder.append(args[s]);
-		    builder.append(" ");
+			builder.append(args[s]);
+			builder.append(" ");
 		}
-		
-//		System.out.println(numberOfTxtFiles);
-//		System.out.println(numberOfRegex);
-		
+
 		if (numberOfRegex == 0) {
 			throw new GrepException("No pattern detected");
 		} else if (numberOfRegex > 1) {
 			throw new GrepException("Too many patterns found");
 		}
-		
-		String argsString =  builder.toString();
-//		System.out.println(argsString);
-//		System.out.println(numberOfTxtFiles);
-		
+
+		String argsString = builder.toString();
 		if (numberOfTxtFiles == 0) {
-			line = grepFromStdin(args[0], stdin);
+
+			if (args.length == 2) {
+				line = grepFromStdin(args[1], stdin);
+			} else {
+				line = grepFromStdin(args[0], stdin);
+			}
 			try {
 				stdout.write(line.getBytes());
 				stdout.write(System.lineSeparator().getBytes());
 			} catch (IOException e) {
 			}
-		} 
-		
+		}
+
 		else if (numberOfTxtFiles == 1) {
 			line = grepFromOneFile(argsString);
 			try {
@@ -117,8 +115,8 @@ public class GrepApplication implements Application, Grep {
 				stdout.write(System.lineSeparator().getBytes());
 			} catch (IOException e) {
 			}
-		} 
-		
+		}
+
 		else if (numberOfTxtFiles > 1) {
 			line = grepFromMultipleFiles(argsString);
 			try {
@@ -143,7 +141,7 @@ public class GrepApplication implements Application, Grep {
 			return true;
 		}
 	}
-	
+
 	public boolean isFileValid(File file) {
 
 		Path filePath = file.toPath();
@@ -155,47 +153,44 @@ public class GrepApplication implements Application, Grep {
 			isValid = false;
 		} else if (Files.isDirectory(filePath)) {
 			isValid = false;
-		} 
+		}
 
 		return isValid;
 	}
+
 	@Override
 	public String grepFromStdin(String args, InputStream stdin) {
-		// TODO Auto-generated method stub
 		String fileContent = "";
 		Pattern pattern = Pattern.compile(args);
 		String input = readFromInputStream(stdin);
 		int lineCount = 0;
 		String[] inputArray = input.split("\\r?\\n");
-		
+
 		Matcher matcher;
-		
-		System.out.println("testing");
-		for (int i=0; i<inputArray.length; i++) {
-			System.out.println("Input Array" + inputArray[i] + " ");
+
+		for (int i = 0; i < inputArray.length; i++) {
 			matcher = pattern.matcher(inputArray[i]);
 			if (matcher.find()) {
 				if (lineCount > 0) {
-					fileContent = fileContent + System.lineSeparator() + line;
+					fileContent += System.lineSeparator() + inputArray[i];
 				} else {
-					fileContent = fileContent + line;
-				}	
+					fileContent += inputArray[i];
+				}
 				lineCount++;
 			}
 		}
-		
-		if(lineCount == 0) {
+
+		if (lineCount == 0) {
 			fileContent = "Pattern Not Found In Stdin!";
 		}
-		
+
 		return fileContent;
 	}
 
 	@Override
 	public String grepFromOneFile(String args) {
-		// TODO Auto-generated method stub
 		String fileContent = "";
-		String [] stringArray= args.split(" ");
+		String[] stringArray = args.split(" ");
 		Pattern pattern = Pattern.compile(stringArray[0]);
 		BufferedReader reader;
 		int lineCount = 0;
@@ -204,14 +199,15 @@ public class GrepApplication implements Application, Grep {
 			reader = new BufferedReader(new FileReader(file));
 			String line = reader.readLine();
 			Matcher matcher;
-			while (line!=null) {
+			while (line != null) {
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
 					if (lineCount > 0) {
-						fileContent = fileContent + System.lineSeparator() + line;
+						fileContent = fileContent + System.lineSeparator()
+								+ line;
 					} else {
 						fileContent = fileContent + line;
-					}	
+					}
 					lineCount++;
 				}
 				line = reader.readLine();
@@ -222,22 +218,21 @@ public class GrepApplication implements Application, Grep {
 		if (lineCount == 0) {
 			fileContent = "Pattern Not Found In File!";
 		}
-		
+
 		return fileContent;
 	}
 
 	@Override
 	public String grepFromMultipleFiles(String args) {
-		// TODO Auto-generated method stub
-		ArrayList <File> listOfTextFiles = new ArrayList <File>();
+		ArrayList<File> listOfTextFiles = new ArrayList<File>();
 		String fileContent = "";
-		String [] stringArray= args.split(" ");
-		Pattern pattern = null; 
+		String[] stringArray = args.split(" ");
+		Pattern pattern = null;
 		File file;
 		BufferedReader reader;
 		int lineCount = 0;
-		
-		for (int i=0; i<stringArray.length; i++) {
+
+		for (int i = 0; i < stringArray.length; i++) {
 			try {
 				file = new File(stringArray[i]);
 				if (checkValidFile(file) && isFileValid(file)) {
@@ -248,27 +243,27 @@ public class GrepApplication implements Application, Grep {
 					try {
 						pattern = Pattern.compile(stringArray[i]);
 					} catch (PatternSyntaxException e1) {
-						
+
 					}
 				}
-				
 			}
-//			System.out.println(stringArray[i]);
 		}
-		
-		for (int j=0; j<listOfTextFiles.size(); j++) {
+
+		for (int j = 0; j < listOfTextFiles.size(); j++) {
 			try {
-				reader = new BufferedReader(new FileReader(listOfTextFiles.get(j)));
+				reader = new BufferedReader(
+						new FileReader(listOfTextFiles.get(j)));
 				String line = reader.readLine();
 				Matcher matcher;
-				while (line!=null) {
+				while (line != null) {
 					matcher = pattern.matcher(line);
 					if (matcher.find()) {
 						if (lineCount > 0) {
-							fileContent = fileContent + System.lineSeparator() + line;
+							fileContent = fileContent + System.lineSeparator()
+									+ line;
 						} else {
 							fileContent = fileContent + line;
-						}	
+						}
 						lineCount++;
 					}
 					line = reader.readLine();
@@ -280,7 +275,7 @@ public class GrepApplication implements Application, Grep {
 		if (lineCount == 0) {
 			fileContent = "Pattern Not Found In File!";
 		}
-		
+
 		return fileContent;
 	}
 
@@ -297,15 +292,17 @@ public class GrepApplication implements Application, Grep {
 	}
 
 	public String readFromInputStream(InputStream stdin) {
-		String input = new String();
+		String input = "";
 		String line;
 		int lineCount = 0;
-		if(PipeCommand.isPipe) {
+		if (PipeCommand.isPipe) {
 			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+					.parallel().collect(Collectors
+							.joining(System.getProperty("line.separator")));
 		} else {
 			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(stdin));
 				line = bufferedReader.readLine();
 				while (line != null) {
 					if (lineCount == 0) {
@@ -313,23 +310,23 @@ public class GrepApplication implements Application, Grep {
 					} else {
 						input = input + System.lineSeparator() + line;
 					}
-					lineCount ++;
+					lineCount++;
 					line = bufferedReader.readLine();
 				}
 			} catch (IOException e) {
-			} 
+			}
 		}
-		
+
 		// try to replace substrings
-		if(input == null || input.isEmpty()) {
-		} 
+		if (input == null || input.isEmpty()) {
+		}
 
 		return input;
 	}
 
 	public void setData(Object readFromInputStream) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Object readFromFile(String fileName) {
