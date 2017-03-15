@@ -34,6 +34,23 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * </dl>
  * </p>
  */
+
+/*
+ * Assumption: 
+ * 1) run function will call the correct functions with the correct
+ * inputs in the correct order separated by a space 
+ * 2) Folders and Files's name contain no space 
+ * 3) In order to print all counts, need to specific "-lmw" or "-l -m -w" in any order or without any option
+ * 4) Args for printCharacterCountInFile: wc -m [FILE] 
+ * 5) Args for printWordCountInFile: wc -w [FILE] 
+ * 6) Args for printNewlineCountInFile: wc -l [FILE] 
+ * 7) Args for printAllCountsInFile: wc -lmw [FILE] / wc -l -m -w [FILE] 
+ * 8) Args for printCharacterCountInStdin: wc -m 
+ * 9) Args for printWordCountInStdin: wc -w
+ * 10) Args for printNewlineCountInStdin: wc -l 
+ * 11) Args for printAllCountsInStdin: wc -lmw / wc -l -m -w
+ */
+
 public class WcApplication implements Application, Wc {
 
 	private int lineCount = 0;
@@ -49,7 +66,7 @@ public class WcApplication implements Application, Wc {
 	private boolean totalWordFlag = false;
 	private boolean totalCharFlag = false;
 	private boolean fileFlag = false;
-	private boolean fileErrorFlag = false;
+	private boolean errorfileFlag = false;
 	private ArrayList<String> fileNameList = new ArrayList<String>();
 
 	/**
@@ -86,7 +103,6 @@ public class WcApplication implements Application, Wc {
 
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].charAt(0) == '-') {
-
 				String[] splitOptions = args[i].trim().split("");
 				for (int j = 1; j < splitOptions.length; j++) {
 					if (splitOptions[j].equals("m")) { // char counts
@@ -103,47 +119,31 @@ public class WcApplication implements Application, Wc {
 					}
 				}
 			} else {
-				String fullFileName = "";
-				File file = null;
-				for (int z = i; z < args.length; z++) {
-					if (args[z].contains(".")) {
-						fullFileName += args[z];
-						file = new File(fullFileName);
-						if (checkFileExist(file)) {
-							i = z;
-							break;
-						}
-					} else {
-						fullFileName += args[z] + " ";
-					}
-				}
-
-				if (file == null) {
-					file = new File(fullFileName);
-				}
-
+				File file = new File(args[i]);
 				if (checkFileExist(file)) {
-					fileNameList.add(getAbsolutePath(fullFileName));
 					fileFlag = true;
-					processCountFromFile(fullFileName, stdout);
 				} else {
-					try {
-						fileErrorFlag = true;
-						stdout.write(
-								(fullFileName + " is not a file").getBytes());
-						stdout.write(System.lineSeparator().getBytes());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					errorfileFlag = true;
 				}
+				fileNameList.add(args[i]);
 			}
 		}
 
-		if (!fileFlag && !fileErrorFlag) {
-			processCountFromInputStream(stdin, stdout);
+		if (fileNameList.size() == 0) {
+			if (!fileFlag && !errorfileFlag) {
+				processCountFromInputStream(stdin, stdout);
+			}
+		} else {
+			if (!charFlag && !wordFlag && !lineFlag) {
+				charFlag = true;
+				wordFlag = true;
+				lineFlag = true;
+			}
 		}
+		
+		int count = processCountFromFile(stdout);
 
-		if (fileNameList.size() > 1) {
+		if (count > 1) {
 			printTotalResult(stdout);
 		}
 
@@ -161,53 +161,61 @@ public class WcApplication implements Application, Wc {
 	 *            OutputStream.
 	 * 
 	 */
-	private void processCountFromFile(String fileName, OutputStream stdout)
-			throws WcException {
-
-		if (fileName == "") {
-			throw new WcException("Null Pointer Exception");
-		}
-
+	private int processCountFromFile(OutputStream stdout) throws WcException {
+		int totalCorrectFile = 0;
 		if (stdout == null) {
 			throw new WcException("Null Pointer Exception");
 		}
-
-		File file = new File(fileName);
+		
 		String line = null;
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			StringBuilder stringBuilder = new StringBuilder();
-			int currentChar = br.read();
-			while (currentChar != -1) {
-				stringBuilder.append((char) currentChar);
-				currentChar = br.read();
-			}
-			lineCount = processNewLineCount(stringBuilder.toString());
-			
-			br = new BufferedReader(new FileReader(file));
-			if (file.length() == 0) {
-				lineCount = 0;
-				charCount = 0;
-				wordCount = 0;
-			} else {
-				while ((line = br.readLine()) != null) {
-					charCount += line.length();
-					wordCount += line.trim().split("\\s+").length;
-				}
-				br.close();
-			}
+		for (int i = 0; i < fileNameList.size(); i++) {
+			File file = new File(getAbsolutePath(fileNameList.get(i)));
+			if (checkFileExist(file)) {
+				totalCorrectFile ++;
+				try {
+					BufferedReader br = new BufferedReader(new FileReader(file));
+					StringBuilder stringBuilder = new StringBuilder();
+					int currentChar = br.read();
+					while (currentChar != -1) {
+						stringBuilder.append((char) currentChar);
+						currentChar = br.read();
+					}
+					lineCount = processNewLineCount(stringBuilder.toString());
 
-			charCount += lineCount;
-			printResult(fileName, stdout);
-			totalLineCount += lineCount;
-			totalWordCount += wordCount;
-			totalCharCount += charCount;
-			lineCount = 0;
-			wordCount = 0;
-			charCount = 0;
-		} catch (Exception exIO) {
-			throw new WcException("Null Pointer Exception");
+					br = new BufferedReader(new FileReader(file));
+					if (file.length() == 0) {
+						lineCount = 0;
+						charCount = 0;
+						wordCount = 0;
+					} else {
+						while ((line = br.readLine()) != null) {
+							charCount += line.length();
+							wordCount += line.trim().split("\\s+").length;
+						}
+						br.close();
+					}
+
+					charCount += lineCount;
+					printResult(fileNameList.get(i), stdout);
+					totalLineCount += lineCount;
+					totalWordCount += wordCount;
+					totalCharCount += charCount;
+					lineCount = 0;
+					wordCount = 0;
+					charCount = 0;
+				} catch (Exception exIO) {
+					throw new WcException("Null Pointer Exception");
+				}
+			} else {
+				try {
+					stdout.write((fileNameList.get(i) + " is not a file").getBytes());
+					stdout.write(System.lineSeparator().getBytes());
+				} catch (IOException e) {
+					
+				}
+			}
 		}
+		return totalCorrectFile;
 	}
 
 	/**
