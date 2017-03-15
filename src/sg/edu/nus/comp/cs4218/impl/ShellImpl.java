@@ -380,7 +380,7 @@ public class ShellImpl implements Shell {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim()
 				.split("\\|"); // TODO Change this split method
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		if (splitArgs.length == 2) {
 			String firstCommand = splitArgs[0];
@@ -404,7 +404,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String pipeMultipleCommands(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -422,7 +422,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String pipeWithException(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -508,7 +508,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectInput(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -526,7 +526,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectOutput(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -544,7 +544,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectInputWithNoFile(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -562,7 +562,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectOutputWithNoFile(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -580,7 +580,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectInputWithException(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -597,7 +597,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String redirectOutputWithException(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -615,7 +615,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String performCommandSubstitution(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
@@ -633,7 +633,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String performCommandSubstitutionWithException(String args) {
 		OutputStream stdout = new ByteArrayOutputStream();
-		String result = new String();
+		String result = "";
 
 		try {
 			parseAndEvaluate(args, stdout);
