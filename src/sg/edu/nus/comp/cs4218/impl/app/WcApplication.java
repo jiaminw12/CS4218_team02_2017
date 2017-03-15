@@ -51,7 +51,6 @@ public class WcApplication implements Application, Wc {
 	private boolean fileFlag = false;
 	private boolean fileErrorFlag = false;
 	private ArrayList<String> fileNameList = new ArrayList<String>();
-	private String tabString = "\t";
 
 	/**
 	 * Runs the wc application with the specified arguments.
@@ -88,10 +87,6 @@ public class WcApplication implements Application, Wc {
 		for (int i = 1; i < args.length; i++) {
 			if (args[i].charAt(0) == '-') {
 
-				if (args[i].length() > 4 || args[i].length() < 2) {
-					throw new WcException("Illegal length");
-				}
-
 				String[] splitOptions = args[i].trim().split("");
 				for (int j = 1; j < splitOptions.length; j++) {
 					if (splitOptions[j].equals("m")) { // char counts
@@ -108,18 +103,34 @@ public class WcApplication implements Application, Wc {
 					}
 				}
 			} else {
-				// contain file extension
-				File file = new File(args[i]);
+				String fullFileName = "";
+				File file = null;
+				for (int z = i; z < args.length; z++) {
+					if (args[z].contains(".")) {
+						fullFileName += args[z];
+						file = new File(fullFileName);
+						if (checkFileExist(file)) {
+							i = z;
+							break;
+						}
+					} else {
+						fullFileName += args[z] + " ";
+					}
+				}
+
+				if (file == null) {
+					file = new File(fullFileName);
+				}
+
 				if (checkFileExist(file)) {
-					fileNameList.add(getAbsolutePath(args[i]));
+					fileNameList.add(getAbsolutePath(fullFileName));
 					fileFlag = true;
-					processCountFromFile(args[i], stdout);
+					processCountFromFile(fullFileName, stdout);
 				} else {
 					try {
 						fileErrorFlag = true;
 						stdout.write(
-								(args[i] + " is not a file")
-										.getBytes());
+								(fullFileName + " is not a file").getBytes());
 						stdout.write(System.lineSeparator().getBytes());
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -165,13 +176,27 @@ public class WcApplication implements Application, Wc {
 		String line = null;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			while ((line = br.readLine()) != null) {
-				lineCount++;
-				charCount += line.length();
-				wordCount += line.trim().split("\\s+").length;
+			StringBuilder stringBuilder = new StringBuilder();
+			int currentChar = br.read();
+			while (currentChar != -1) {
+				stringBuilder.append((char) currentChar);
+				currentChar = br.read();
 			}
-			br.close();
+			lineCount = processNewLineCount(stringBuilder.toString());
 			
+			br = new BufferedReader(new FileReader(file));
+			if (file.length() == 0) {
+				lineCount = 0;
+				charCount = 0;
+				wordCount = 0;
+			} else {
+				while ((line = br.readLine()) != null) {
+					charCount += line.length();
+					wordCount += line.trim().split("\\s+").length;
+				}
+				br.close();
+			}
+
 			charCount += lineCount;
 			printResult(fileName, stdout);
 			totalLineCount += lineCount;
@@ -183,6 +208,27 @@ public class WcApplication implements Application, Wc {
 		} catch (Exception exIO) {
 			throw new WcException("Null Pointer Exception");
 		}
+	}
+
+	/**
+	 * Count the number of new line
+	 *
+	 * @param fileContent
+	 *            A String. Content of file.
+	 * 
+	 */
+	private int processNewLineCount(String fileContent) throws WcException {
+		int totalLineCount = 0;
+		if (fileContent == null) {
+			throw new WcException("File content cannot be null");
+		}
+
+		for (int i = 0; i < fileContent.length(); i++) {
+			if (fileContent.charAt(i) == '\n') {
+				totalLineCount++;
+			}
+		}
+		return totalLineCount;
 	}
 
 	/**
@@ -204,22 +250,23 @@ public class WcApplication implements Application, Wc {
 		}
 
 		try {
-			String input = new String();
-			if(PipeCommand.isPipe) {
-				input = new BufferedReader(new InputStreamReader(stdin)).lines()
-						.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
+			String userInput = "";
+			if (PipeCommand.isPipe) {
+				userInput = new BufferedReader(new InputStreamReader(stdin))
+						.lines().parallel().collect(Collectors
+								.joining(System.getProperty("line.separator")));
 			} else {
 				try {
-					BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-					input = bufferedReader.readLine();
+					BufferedReader bufferedReader = new BufferedReader(
+							new InputStreamReader(stdin));
+					userInput = bufferedReader.readLine();
 				} catch (IOException e) {
 					throw new WcException("Cannot Read From Stdin");
-				} 
+				}
 			}
-			
-			lineCount++;
-			charCount += input.length() + lineCount;
-			wordCount += input.trim().split("\\s+").length;
+
+			charCount += userInput.length() + lineCount;
+			wordCount += userInput.trim().split("\\s+").length;
 
 			printResult("", stdout);
 			lineCount = 0;
@@ -253,20 +300,18 @@ public class WcApplication implements Application, Wc {
 
 		try {
 			if (charFlag) {
-				stdout.write(String.valueOf(charCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", charCount).getBytes());
 			}
 
 			if (wordFlag) {
-				stdout.write(String.valueOf(wordCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", wordCount).getBytes());
 			}
 
 			if (lineFlag) {
-				stdout.write(String.valueOf(lineCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", lineCount).getBytes());
 			}
 
+			stdout.write((" " + fileName).getBytes());
 			stdout.write(System.lineSeparator().getBytes());
 
 		} catch (IOException e) {
@@ -291,21 +336,18 @@ public class WcApplication implements Application, Wc {
 
 		try {
 			if (totalCharFlag) {
-				stdout.write(String.valueOf(totalCharCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", totalCharCount).getBytes());
 			}
 
 			if (totalWordFlag) {
-				stdout.write(String.valueOf(totalWordCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", totalWordCount).getBytes());
 			}
 
 			if (totalLineFlag) {
-				stdout.write(String.valueOf(totalLineCount).getBytes());
-				stdout.write(tabString.getBytes());
+				stdout.write(String.format("%8d", totalLineCount).getBytes());
 			}
 
-			stdout.write(System.lineSeparator().getBytes());
+			stdout.write((" total" + System.lineSeparator()).getBytes());
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -381,7 +423,7 @@ public class WcApplication implements Application, Wc {
 		} catch (WcException e) {
 			e.printStackTrace();
 		}
-		return new String(outputStream.toByteArray()).trim();
+		return new String(outputStream.toByteArray());
 	}
 
 	@Override

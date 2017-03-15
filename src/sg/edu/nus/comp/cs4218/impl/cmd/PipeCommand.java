@@ -66,7 +66,7 @@ public class PipeCommand implements Command {
 			isPipe = false;
 		} else {
 			for (int i = 0; i < argsArray.size(); i++) {
-				String result = new String();
+				String result = "";
 
 				if(i > 0) {
 					result = new BufferedReader(new InputStreamReader(stdin)).lines()

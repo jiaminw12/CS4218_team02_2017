@@ -44,13 +44,13 @@ public class DateApplication implements Application, Date {
 		if (args == null || args.length > 1) {
 			throw new DateException("Exception Caught");
 		}
-		
-		if (stdout == null){
+
+		if (stdout == null) {
 			throw new DateException("Null Pointer Exception");
 		}
-		
+
 		currentDate = new java.util.Date();
-		
+
 		try {
 			stdout.write(currentDate.toString().getBytes());
 			stdout.write(System.lineSeparator().getBytes());
@@ -63,13 +63,14 @@ public class DateApplication implements Application, Date {
 	 * For testing purpose. Split the args.
 	 * 
 	 * @param args
-	 * 			A string, User input
+	 *            A string, User input
 	 * 
 	 */
 	@Override
 	public String printCurrentDate(String args) {
 		String[] splitArgs = args.split("\\s{2,}");
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[1]);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(
+				new byte[1]);
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
 			run(splitArgs, inputStream, outputStream);
