@@ -37,7 +37,8 @@ public class ShellImpl implements Shell {
 	public static final String EXP_NOT_SUPPORTED = " not supported yet";
 
 	public static InputStream stdin;
-
+	public static String result = "";
+	public static String root = "";
 	/**
 	 * Searches for and processes the commands enclosed by back quotes for
 	 * command substitution.If no back quotes are found, the argsArray from the
@@ -437,72 +438,106 @@ public class ShellImpl implements Shell {
 		return result;
 	}
 
-	public static String evaluateGlob(String args) {
+	public static String processGlob(String args) throws ShellException {
 		ShellImpl shell = new ShellImpl();
-		System.out.print(args);
+		result = "";
+		root = "";
+		System.out.println(shell.globWithException(args));
 		return shell.globWithException(args);
 	}
 
 	@Override
-	public String globNoPaths(String args) {
-		return args;
+	public String globNoPaths(String[] args) {
+		if (!args[0].equals("*")) {
+			return args[0];
+		} else {
+			return "";
+		}
 	}
 
 	@Override
 	public String globOneFile(String args) {
-		File file = new File(args);
-		if (file.isFile()) {
-			return args;
-		} else {
-			return "not a file";
-		}
+		String result = args;
+		return result;
 	}
 
 	@Override
-	public String globFilesDirectories(String args) {
-		File file = new File(args);
-		if (file.isDirectory()) {
-			return args;
-		} else {
-			return "not a directory";
-		}
+	public String globFilesDirectories(String[] args) {
+		String[] resultArr = new String[args.length];
 
-	}
-
-	@Override
-	public String globWithException(String args) {
-		try {
-			File directory = new File(args);
-			// get all the files from a directory
-			File[] fList = directory.listFiles();
-			String fileNames = "";
-			String directoryNames = "";
-			String result;
-
-			if (fList.length == 0) {
-				return globNoPaths(args);
-			} else {
-				for (File file : fList) {
-					if (!globOneFile(file.getName()).equals("not a file")) {
-						fileNames = fileNames + globOneFile(file.getName())
-								+ " ";
-						// System.out.println(file.getAbsolutePath());
-					} else if (!globFilesDirectories(file.getName())
-							.equals("not a directory")) {
-						// System.out.println(file.getAbsolutePath());
-						// globWithException(file.getAbsolutePath());
-						directoryNames = directoryNames
-								+ globFilesDirectories(file.getName()) + " ";
-					}
-				}
-				result = fileNames + " " + directoryNames;
+		for (int i = 1; i < args.length; i++) {
+			if (i != args.length - 1) {
+				resultArr[i] = args[0] + args[i];
 			}
-			return result;
-		} catch (NullPointerException e) {
-			String x = "null";
-			System.out.print(x);
-			return x;
 		}
+		String result = resultArr.toString();
+		result = result.substring(1, resultArr.length - 1);
+		return result;
+	}
+
+	@Override
+	public String globWithException(String arg) throws ShellException {
+		try{
+			ShellImpl shell = new ShellImpl();
+			String directory = "";
+			String[] filesList;
+			int index = 0;
+			
+			String argArrayBuffer = arg.replaceAll(", ", "/");
+			String [] temp = argArrayBuffer.split(" ");
+			String path = ""; 
+			
+			for(int i=1; i<temp.length; i++){
+				path = path + temp[i] + " ";
+			}
+			
+			int globIdx = argArrayBuffer.indexOf("/*");
+			if (globIdx != argArrayBuffer.length() - 2 || globIdx == -1 || globIdx == 0)
+				throw new ShellException("Invalid globbing scenario");
+			
+			index = path.indexOf("*");
+			directory = path.substring(0, index - 1);
+			root = directory + "/";
+			File thisDirectory = new File(directory);
+			
+			if(thisDirectory.isDirectory()) {
+				filesList = thisDirectory.list();
+				String nextDir = "";
+				
+				for (int j = 0; j < filesList.length; j++) {
+					
+					File thisFile = new File(filesList[j]);
+					if(thisFile.isFile() || thisFile.getName().contains(".txt")){
+						result += "/" + root + globOneFile(thisFile.getName()) + "\n";
+						
+						if(j == filesList.length-1){
+							String backroot = root.substring(0, root.substring(0,root.length()-1).lastIndexOf("/")+1);
+							root = backroot;
+							nextDir = temp[0] + " "+ root + "*";
+						}
+					} else {
+						
+						if(j != filesList.length-1){
+							nextDir = temp[0] + " "+ root + thisFile.getName() + "/*";
+							root = root + thisFile.getName() + "/";
+							String x =  shell.globWithException(nextDir);
+						} else {
+							root = root + thisFile.getName() + "/";
+							nextDir = temp[0] + " "+ root + "*";
+							String x =  shell.globWithException(nextDir);
+						}
+					}
+				} 	
+				
+			} else {
+				String[] currentArg = new String[1];
+				currentArg[0] = directory;
+				return shell.globNoPaths(currentArg);
+			}
+		
+		} catch (NullPointerException e){ e.printStackTrace(); }
+		
+		return result;
 	}
 
 	@Override
