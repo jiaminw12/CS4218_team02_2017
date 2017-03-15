@@ -34,7 +34,7 @@ public interface Shell {
 	 * Evaluate globbing with no files or directories
 	 * @param args String containing the commands, input arguments and the asterisk (globbing operator)
 	 */
-	public String globNoPaths(String args);
+	public String globNoPaths(String[] args);
 
 	/**
 	 * Evaluate globbing with one file (one path)
@@ -46,13 +46,14 @@ public interface Shell {
 	 * Evaluate globbing with multiple files and directories (multiple paths)
 	 * @param args String containing the commands, input arguments and the asterisk (globbing operator)
 	 */
-	public String globFilesDirectories(String args);
+	public String globFilesDirectories(String[] args);
 
 	/**
 	 * Evaluate globbing with exception
 	 * @param args String containing the commands, input arguments and the asterisk (globbing operator)
+	 * @throws ShellException 
 	 */
-	public String globWithException(String args);
+	public String globWithException(String args) throws ShellException;
 
 	/**
 	 * Evaluate opening InputStream from file for input redirection
