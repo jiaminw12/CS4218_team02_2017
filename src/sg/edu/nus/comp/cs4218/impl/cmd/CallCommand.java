@@ -88,7 +88,7 @@ public class CallCommand implements Command {
 			for (int i = 0; i < argsArray.length; i++) {
 				if (argsArray[i].contains("*")) {
 					argsArray[i] = ShellImpl.processGlob(argsArray[0]+ " "+ argsArray[i]);
-					String[] temp = argsArray[i].split(", ");
+					String[] temp = argsArray[i].split(" ");
 					resultArr.addAll(Arrays.asList(temp));
 				} else {
 					resultArr.add(argsArray[i]);
@@ -97,6 +97,7 @@ public class CallCommand implements Command {
 			argsArray = new String[resultArr.size()];
 			for (int i=0; i<resultArr.size(); i++){
 				argsArray[i] = resultArr.get(i);
+				System.out.println("x: "+argsArray[i]);
 			}
 		}
 
