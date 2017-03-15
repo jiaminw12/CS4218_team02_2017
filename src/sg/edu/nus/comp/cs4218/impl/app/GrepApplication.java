@@ -165,8 +165,24 @@ public class GrepApplication implements Application, Grep {
 		String fileContent = "";
 		Pattern pattern = Pattern.compile(args);
 		String input = readFromInputStream(stdin);
-		System.out.println(input);
 		int lineCount = 0;
+		String[] inputArray = input.split("\\r?\\n");
+		
+		Matcher matcher;
+		
+		System.out.println("testing");
+		for (int i=0; i<inputArray.length; i++) {
+			System.out.println("Input Array" + inputArray[i] + " ");
+			matcher = pattern.matcher(inputArray[i]);
+			if (matcher.find()) {
+				if (lineCount > 0) {
+					fileContent = fileContent + System.lineSeparator() + line;
+				} else {
+					fileContent = fileContent + line;
+				}	
+				lineCount++;
+			}
+		}
 		
 		if(lineCount == 0) {
 			fileContent = "Pattern Not Found In Stdin!";
