@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.cmd;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -76,23 +77,27 @@ public class CallCommand implements Command {
 
 		InputStream inputStream;
 		OutputStream outputStream;
+		ArrayList<String> resultArr = new ArrayList<String>();
 
 		if(processBq) {
 			argsArray = ShellImpl.processBQ(argsArray);
 		}
 		
 		if(globbing){
-			String [] allGlobs = new String[argsArray.length];
-			int j=0;
+			
 			for (int i = 0; i < argsArray.length; i++) {
 				if (argsArray[i].contains("*")) {
-					String path = argsArray[i].substring(0, argsArray[i].length()-2);
-					argsArray[i] = ShellImpl.evaluateGlob(argsArray[i]);
+					argsArray[i] = ShellImpl.processGlob(argsArray[0]+ " "+ argsArray[i]);
+					String[] temp = argsArray[i].split(", ");
+					resultArr.addAll(Arrays.asList(temp));
+				} else {
+					resultArr.add(argsArray[i]);
 				}
-				allGlobs[j] = argsArray[i];
-				j++;
 			}
-			argsArray = allGlobs;
+			argsArray = new String[resultArr.size()];
+			for (int i=0; i<resultArr.size(); i++){
+				argsArray[i] = resultArr.get(i);
+			}
 		}
 
 		if (("").equals(inputStreamS)) {// empty
