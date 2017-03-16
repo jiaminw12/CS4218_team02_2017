@@ -2,15 +2,10 @@ package sg.edu.nus.comp.cs4218.impl.ef1;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import sg.edu.nus.comp.cs4218.exception.GrepException;
@@ -56,23 +51,6 @@ public class GrepApplicationTest {
 						.getBytes());
 		String actualResult = grepApp.grepFromStdin("134", in);
 		String expectedResult = "134Lorem 678ipsum 8900dolor sit amet, consectetuer adi 97543piscing elit.";
-		assertEquals(expectedResult, actualResult);
-	}
-
-	@Test
-	public void testGrepFromOneFile() {
-		String actualResult = grepApp.grepFromOneFile("Fox test/sg/edu/nus/comp/cs4218/impl/app/01.txt");
-		String expectedResult = "Fox nymphs grab quick-jived waltz.";
-		assertEquals(expectedResult, actualResult);
-	}
-
-	@Test
-	public void testGrepFromMultipleFiles() {
-		String actualResult = grepApp
-				.grepFromMultipleFiles("grab test/sg/edu/nus/comp/cs4218/impl/app/01.txt test/sg/edu/nus/comp/cs4218/impl/app/02.txt");
-		String expectedResult = "grab 4567" + System.lineSeparator() + "Fox nymphs grab quick-jived waltz."
-				+ System.lineSeparator()
-				+ "grab Li nov 346lingua franca va esser 236plu simplic e regulari quam 457li existent Europan lingues.";
 		assertEquals(expectedResult, actualResult);
 	}
 

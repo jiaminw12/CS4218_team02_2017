@@ -1,9 +1,9 @@
 package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +12,26 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.app.Grep;
+import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
+
+/*
+ * Assumptions: 
+ * 1) run function will call the correct functions with the correct inputs in the correct order separated by a space
+ * 2) Run function will take inputs directly from shell unordered
+ * 3) Files are readable and not folder or directory
+ * 4) Files contain no spaces between them
+ * 5) Args for run: unordered consisting of pattern and files
+ * 6) Args for grepFromOneFile: pattern, file
+ * 7) Args for grepFromMultipleFiles: pattern, file, file, ...
+ * 8) Args for grepFromStdin: pattern (Stdin will be parsed from run)
+ */
 
 /**
  * 
@@ -281,14 +291,41 @@ public class GrepApplication implements Application, Grep {
 
 	@Override
 	public String grepInvalidPatternInStdin(String args, InputStream stdin) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] splitArgs = args.split("\\s+");
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		InputStream inputStream = null;
+
+		if (stdin != null) {
+			inputStream = stdin;
+		} else {
+			inputStream = new ByteArrayInputStream(new byte[1]);
+		}
+
+		try {
+			run(splitArgs, inputStream, outputStream);
+		} catch (GrepException e) {
+			e.printStackTrace();
+		}
+		return new String(outputStream.toByteArray());
 	}
 
 	@Override
 	public String grepInvalidPatternInFile(String args) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] splitArgs = args.split("\\s+");
+		OutputStream outputStream = new ByteArrayOutputStream();
+		InputStream inputStream = new ByteArrayInputStream(new byte[1]);
+		String result = "";
+
+		try {
+			run(splitArgs, inputStream, outputStream);
+			ByteArrayOutputStream outByte = (ByteArrayOutputStream) outputStream;
+			byte[] byteArray = outByte.toByteArray();
+			result = new String(byteArray);
+		} catch (AbstractApplicationException e) {
+			return e.getMessage();
+		}
+
+		return result;
 	}
 
 	public String readFromInputStream(InputStream stdin) {
@@ -296,33 +333,18 @@ public class GrepApplication implements Application, Grep {
 		String str = "";
 
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-			
-			while((str = bufferedReader.readLine()) != null) {
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(stdin, "UTF-8"));
+
+			while ((str = bufferedReader.readLine()) != null) {
 				text.append(str);
 				text.append(System.getProperty("line.separator"));
 			}
-			
+
 		} catch (IOException e) {
-			
+			e.printStackTrace();
 		}
-		
-		// try to replace substrings
-		if(text == null || text.toString().isEmpty()) {
-			
-		} 
-
 		return text.toString().trim();
-	}
-
-	public void setData(Object readFromInputStream) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Object readFromFile(String fileName) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
