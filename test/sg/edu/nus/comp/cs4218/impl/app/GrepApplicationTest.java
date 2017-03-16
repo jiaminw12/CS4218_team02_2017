@@ -341,35 +341,6 @@ public class GrepApplicationTest {
 		assertEquals(REGEXMULTIOUT + System.lineSeparator(), baos.toString());
 	}
 
-	@Test
-	public void grepMultiFileDirectoryFromRun() throws GrepException {
-		args = new String[5];
-		args[0] = "grep";
-		args[1] = fileName;
-		args[2] = fileName2;
-		args[3] = REGEXPATTERN;
-		args[4] = fileName3;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-		assertEquals(REGEXMULTIOUT + System.lineSeparator()
-				+ "In mile an form snug were been sell."
-				+ System.lineSeparator()
-				+ "Consider may dwelling old him her surprise finished families graceful."
-				+ System.lineSeparator(), baos.toString());
-	}
-
-	@Test
-	public void grepDirectoryWithFileFromRun() throws GrepException {
-		args = new String[4];
-		args[0] = "grep";
-		args[1] = REGEXPATTERN;
-		args[2] = fileName;
-		args[3] = fileName2;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-		assertEquals(REGEXMULTIOUT + System.lineSeparator(), baos.toString());
-	}
-
 	@Test(expected = GrepException.class)
 	public void grepNoPatternFileFromRun() throws GrepException {
 		args = new String[2];
@@ -393,16 +364,6 @@ public class GrepApplicationTest {
 	public void grepNoPatternStdInFromRun() throws GrepException {
 		args = new String[1];
 		args[0] = "grep";
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-	}
-
-	@Test(expected = GrepException.class)
-	public void grepDirectoryFromRun() throws GrepException {
-		args = new String[3];
-		args[0] = "grep";
-		args[1] = REGEXPATTERN;
-		args[2] = directory;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 	}
