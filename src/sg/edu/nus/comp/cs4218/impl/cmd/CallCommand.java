@@ -83,8 +83,13 @@ public class CallCommand implements Command {
 			argsArray = ShellImpl.processBQ(argsArray);
 		}
 		
+		for (int i = 0; i < argsArray.length; i++) {
+			if(!argsArray[i].contains("*")){
+				globbing = false;
+			}
+		}
+		
 		if(globbing){
-			
 			for (int i = 0; i < argsArray.length; i++) {
 				if (argsArray[i].contains("*")) {
 					argsArray[i] = ShellImpl.processGlob(argsArray[0]+ " "+ argsArray[i]);
@@ -240,6 +245,7 @@ public class CallCommand implements Command {
 					|| substring.trim().startsWith(">")) {
 				break;
 			}
+	
 			for (int i = 0; i < patterns.length; i++) {
 				Pattern pattern = Pattern.compile(patterns[i]);
 				Matcher matcher = pattern.matcher(substring);
