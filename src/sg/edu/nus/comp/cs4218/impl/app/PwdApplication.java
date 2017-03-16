@@ -16,6 +16,10 @@ import sg.edu.nus.comp.cs4218.exception.PwdException;
  * <dl>
  * </dl>
  * </p>
+ * 
+ * Assumptions:
+ * 1) No argument should be provided 
+ * 
  */
 public class PwdApplication implements Application {
 
