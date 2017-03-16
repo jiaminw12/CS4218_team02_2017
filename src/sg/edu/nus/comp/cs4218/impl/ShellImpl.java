@@ -23,6 +23,14 @@ import java.nio.file.*;
  * <b>Command format:</b>
  * <code>&lt;Pipe&gt; | &lt;Sequence&gt; | &lt;Call&gt;</code>
  * </p>
+ * 
+ * 
+ */
+
+/*
+ * Assumptions:
+ * 1) File names do not have space in them
+ * 2) Intentional globing only happens when there is a space character after ‘*’ character
  */
 
 public class ShellImpl implements Shell {
@@ -422,7 +430,6 @@ public class ShellImpl implements Shell {
 
 	@Override
 	public String globWithException(String arg) throws ShellException {
-		
 		try{
 			ShellImpl shell = new ShellImpl();
 			String directory = "";
@@ -437,14 +444,21 @@ public class ShellImpl implements Shell {
 				path = path + temp[i] + " ";
 			}
 			
+			if(argArrayBuffer.contains("//*"))
+				throw new ShellException("Invalid globbing command");
+			
 			int globIdx = argArrayBuffer.indexOf("/*");
 			if (globIdx != argArrayBuffer.length() - 2 || globIdx == -1 || globIdx == 0)
-				throw new ShellException("Invalid globbing scenario");
+				throw new ShellException("Invalid globbing commmand");
+			
 			
 			index = path.indexOf("*");
 			directory = path.substring(0, index - 1);
 			root = directory + "/";
 			File thisDirectory = new File(directory);
+			
+			if (directory.replaceAll("/", "").length() == 0)
+				throw new ShellException("Invalid globbing scenario");
 			
 			if(thisDirectory.isDirectory()) {
 				filesList = thisDirectory.list();
@@ -474,7 +488,6 @@ public class ShellImpl implements Shell {
 						}
 					}
 				} 	
-				
 			} else {
 				String[] currentArg = new String[1];
 				currentArg[0] = directory;
