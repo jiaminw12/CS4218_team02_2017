@@ -88,7 +88,9 @@ public class CallCommand implements Command {
 			for (int i = 0; i < argsArray.length; i++) {
 				if (argsArray[i].contains("*")) {
 					argsArray[i] = ShellImpl.processGlob(argsArray[0]+ " "+ argsArray[i]);
+					System.out.println("y: "+argsArray[i]);
 					String[] temp = argsArray[i].split(" ");
+					System.out.println(temp.length);
 					resultArr.addAll(Arrays.asList(temp));
 				} else {
 					resultArr.add(argsArray[i]);
@@ -96,9 +98,14 @@ public class CallCommand implements Command {
 			}
 			argsArray = new String[resultArr.size()];
 			for (int i=0; i<resultArr.size(); i++){
-				argsArray[i] = resultArr.get(i);
-				System.out.println("x: "+argsArray[i]);
-			}
+				
+				if(resultArr.get(i).contains(".DS_Store")){
+					System.out.println("removed");
+					resultArr.remove(i);
+				}else{
+					argsArray[i] = resultArr.get(i);
+					System.out.println("x: "+argsArray[i]);
+				}	
 		}
 
 		if (("").equals(inputStreamS)) {// empty
@@ -115,7 +122,7 @@ public class CallCommand implements Command {
 		ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 		ShellImpl.closeInputStream(inputStream);
 		ShellImpl.closeOutputStream(outputStream);
-		
+		}
 	}
 
 	/**
