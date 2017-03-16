@@ -509,7 +509,7 @@ public class ShellImpl implements Shell {
 					File thisFile = new File(filesList[j]);
 					
 					if(thisFile.isFile() || thisFile.getName().contains(".txt")){
-						result += "/" + root + globOneFile(thisFile.getName()) + " ";
+						result += root + globOneFile(thisFile.getName()) + " ";
 						if(j == filesList.length-1){
 							String backroot = root.substring(0, root.substring(0,root.length()-1).lastIndexOf("/")+1);
 							root = backroot;
