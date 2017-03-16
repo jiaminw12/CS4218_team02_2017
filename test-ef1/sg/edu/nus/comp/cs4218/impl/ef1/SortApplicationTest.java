@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.ef1;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -17,7 +18,8 @@ import sg.edu.nus.comp.cs4218.exception.SortException;
 import sg.edu.nus.comp.cs4218.impl.app.SortApplication;
 
 public class SortApplicationTest { 
-  
+
+	private static final char FILE_SEPARATOR = File.separatorChar;
     SortApplication ssa;
 	String args[];
 	String fileName;
@@ -27,6 +29,7 @@ public class SortApplicationTest {
 	String numericFile;
 	String testMethodsFile;
 	String emptyFile;
+	String directory;
 	String reorderStr1 = "test.txt";
 	String reorderStr2 = "test1.txt";
 	
@@ -131,13 +134,15 @@ public class SortApplicationTest {
 	public void setUp() throws FileNotFoundException{
 		ssa = new SortApplication();
 		args = new String[2];
-		fileName = "test/sg/edu/nus/comp/cs4218/impl/app/testdoc.txt";
-		stdin = new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/testdoc.txt");
-		numericStdin = new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/TestSortNumeric.txt");
-		numericFile = "test/sg/edu/nus/comp/cs4218/impl/app/TestSortNumeric.txt";
-		testMethodsFile = "test/sg/edu/nus/comp/cs4218/impl/app/TestSortMethods.txt";
-		emptyFile = "test/sg/edu/nus/comp/cs4218/impl/app/emptydoc.txt";
-		emptyStdin =  new FileInputStream("test/sg/edu/nus/comp/cs4218/impl/app/emptydoc.txt");
+		directory = String.format("folder%sGrepAndSortFiles%s", FILE_SEPARATOR,
+				FILE_SEPARATOR);
+		fileName = directory + "testdoc.txt";
+		stdin = new FileInputStream(directory + "testdoc.txt");
+		numericStdin = new FileInputStream(directory + "TestSortNumeric.txt");
+		numericFile = directory + "TestSortNumeric.txt";
+		testMethodsFile = directory + "TestSortMethods.txt";
+		emptyFile = directory + "/emptydoc.txt";
+		emptyStdin =  new FileInputStream(directory + "emptydoc.txt");
 	}
 
 	@Test(expected = SortException.class)
