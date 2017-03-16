@@ -71,6 +71,9 @@ public class CallCommand implements Command {
 	@Override
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
+		
+		String glob = "/*";
+
 		if (error) {
 			throw new ShellException(errorMsg);
 		}
@@ -84,7 +87,9 @@ public class CallCommand implements Command {
 		}
 		
 		for (int j = 0; j < argsArray.length; j++) {
-			if(!(argsArray[j].contains("* "))){
+			String checker = "";
+			checker += argsArray[j].substring(argsArray[j].length()-2, argsArray[j].length());
+			if(!checker.equals(glob)){
 				globbing = false;
 			}
 		}
