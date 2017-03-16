@@ -70,7 +70,8 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testInvalidFile()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "sort `cat " + grepSortFilePath + "Taxsa.txt | tail -n 1`";
+		String cmdLine = "sort `cat " + grepSortFilePath
+				+ "Taxsa.txt | tail -n 1`";
 		expected = shellImpl.performCommandSubstitutionWithException(cmdLine);
 		assertEquals("cat: No such file exists", expected);
 	}
@@ -78,18 +79,21 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testSortCatTail()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "sort `cat " + grepSortFilePath + "TestSortMethods.txt | tail`";
+		String cmdLine = "echo `cat " + grepSortFilePath
+				+ "TestSortMethods.txt | tail`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cat: No such file exists", expected);
+		assertEquals("1aA2Bb+5" + System.lineSeparator(), expected);
 	}
 
 	@Test
 	public void testSortCatHead()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "sort " + grepSortFilePath + "TestSortNumeric.txt"
-				+ "`cat " + grepSortFilePath + "TestSortMethods.txt | head -n 3`";
+		String cmdLine = "echo " + grepSortFilePath + "TestSortNumeric.txt "
+				+ "`cat " + grepSortFilePath
+				+ "TestSortMethods.txt | head -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cat: No such file exists", expected);
+		assertEquals("folder/GrepAndSortFiles/TestSortNumeric.txt 1aA"
+				+ System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -118,11 +122,14 @@ public class ChainOfInteractionCommandSub {
 
 	@Test
 	public void testSortGrepWcSedIORedirection()
-			throws ShellException, AbstractApplicationException {
-		String cmdLine = "sort `grep *ort testdoc.txt | wc -lmw helloworld.txt | "
+			throws ShellException, AbstractApplicationException, IOException {
+		String cmdLine = "echo `grep *ort testdoc.txt | wc -lmw helloworld.txt | "
 				+ "sed s/a/bbbb/ slicing.txt > test1.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cal: Too many patterns found", expected);
+		assertEquals(readFile("test1.txt"),
+				"Progrbbbbm slicing can be used in debugging to locate source of errors more easily."
+						+ System.lineSeparator());
+		assertEquals("" + System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -160,6 +167,14 @@ public class ChainOfInteractionCommandSub {
 	}
 
 	@Test
+	public void testPwd() throws ShellException, AbstractApplicationException {
+		String cmdLine = "echo `pwd; head " + grepSortFilePath + "test.txt`";
+		expected = shellImpl.performCommandSubstitution(cmdLine);
+		assertEquals(Environment.currentDirectory + "Just To Test" + System.lineSeparator(),
+				expected);
+	}
+
+	@Test
 	public void testEchoCatIOdirectionSortCd()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cat < folder/* > test1.txt | sort | cd testLvl01`";
@@ -177,6 +192,37 @@ public class ChainOfInteractionCommandSub {
 	}
 
 	@Test
+	public void testEchoTailIODirection()
+			throws ShellException, AbstractApplicationException {
+		String cmdLine = "echo `tail -n 2  < " + grepSortFilePath
+				+ "TestSortMethods.txt" + "`";
+		expected = shellImpl.performCommandSubstitution(cmdLine);
+		assertEquals("5" + System.lineSeparator(), expected);
+	}
+
+	@Test
+	public void testEchoCd()
+			throws ShellException, AbstractApplicationException {
+		String currentPath = Environment.currentDirectory;
+		String cmdLine = "echo `cd folder; cat farfaraway.txt`";
+		expected = shellImpl.performCommandSubstitution(cmdLine);
+		assertEquals(currentPath + File.separatorChar + "folder",
+				Environment.currentDirectory);
+		assertEquals(
+				"Far far away, behind the word mountains, far from the countries Vokalia"
+						+ " and Consonantia, there live the blind texts.Separated they live in "
+						+ "Bookmarksgrove right at the coast of the Semantics, a large language "
+						+ "ocean.A small river named Duden flows by their place and supplies it "
+						+ "with the necessary regelialia.It is a paradisematic country, in which"
+						+ " roasted parts of sentences fly into your mouth.At vero eos et accusamus"
+						+ " et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum"
+						+ " deleniti atque corrupti quos dolores et quas molestias excepturi sint."
+						+ System.lineSeparator(),
+				expected);
+		Environment.currentDirectory = currentPath;
+	}
+
+	@Test
 	public void testTwoCmdSub01()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo \"this is a test `date`\"; echo \"this is another test `cat "
@@ -191,14 +237,13 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testTwoCmdSub02()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo \"this is a test `grep *F* " + grepSortFilePath
+		String cmdLine = "echo \"this is a test `grep F " + grepSortFilePath
 				+ "greptestdoc2.txt`\"; echo \"this is another test `sort "
 				+ grepSortFilePath + "TestSortMethods.txt`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		System.out.println(cmdLine);
-		assertEquals("this is a test Pattern Not Found In File!"
-				+ System.lineSeparator() + "this is another test +125ABab"
-				+ System.lineSeparator(), expected);
+		assertEquals("this is a test DEFFGH" + System.lineSeparator()
+				+ "this is another test +125ABab" + System.lineSeparator(),
+				expected);
 
 	}
 
@@ -207,36 +252,40 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt` | echo \"this is another test `wc -l "
-				+ sedWcFilePath + "singleWord.txt`\" | grep e*";
-		// echo `cat folder/GrepAndSortFiles/greptestdoc.txt` | echo "this is another test `wc -l folder/SedAndWCFiles/singleWord.txt`" | grep e*
+				+ sedWcFilePath + "wcTestFiles" + File.separatorChar
+				+ "singleWord.txt`\" | grep e*";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("shell: Invalid globbing scenario", expected);
+		assertEquals(
+				"this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt"
+						+ System.lineSeparator(),
+				expected);
 	}
 
 	@Test
 	public void testTwoCmdSub04()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "cat `sort " + grepSortFilePath
-				+ "greptestdoc.txt` | grep e* | echo \"this is `echo \"this is test\"`\"; ``; \"\"; '' ";
+		String cmdLine = "echo `sort " + grepSortFilePath
+				+ "greptestdoc.txt`; grep e* | echo \"this is `echo \"this is test\"`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		// cat `sort folder/GrepAndSortFiles/greptestdoc.txt` | grep e* | echo "this is `echo "this is test"`"; ``; ""; '' 
-		assertEquals("cat: No such file exists", expected);
+		assertEquals(
+				"ABC HelloABCDEFGHIHeliHello HelloHi" + System.lineSeparator()
+						+ "this is this is test" + System.lineSeparator(),
+				expected);
 	}
 
 	@Test
 	public void testMoreThanTwoCmdSub01()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo \"this is a test `sed s/e/a/ " + sedWcFilePath
+		String cmdLine = "echo \"this is a test `sed s&e&a& " + sedWcFilePath
 				+ "helloworld.txt`\"; echo \"this is another test `wc -l "
 				+ sedWcFilePath + "wcTestFiles" + File.separatorChar
-				+ "singleWord.txt`\"; sort `cat " + grepSortFilePath
+				+ "singleWord.txt`\"; echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt`";
-		// echo "this is a test `sed s/e/a/ folder/SedAndWCFiles/helloworld.txt`"; echo "this is another test `wc -l folder/SedAndWCFiles/wcTestFiles/singleWord.txt`"; sort `cat folder/GrepAndSortFiles/greptestdoc.txt`
-
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals(
-				"sed: Invalid Replacement Rule: Missing separator at the end: Extra arguments",
-				expected);
+		assertEquals("this is a test hallo world" + System.lineSeparator()
+				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt"
+				+ System.lineSeparator() + "HiHello HelloABC HelloABCDEFGHIHeli"
+				+ System.lineSeparator(), expected);
 	}
 
 	@Test
