@@ -11,19 +11,6 @@ import org.junit.Test;
 import sg.edu.nus.comp.cs4218.exception.CalException;
 import sg.edu.nus.comp.cs4218.impl.app.CalApplication;
 
-/* Assumption: 
- * 1) run function will call the correct functions with the correct inputs in the correct order separated by a space
- * 2) Assume year starts from 1000
- * 3) run function will take inputs directly from shell unordered
- * 4) Args for run: unordered consisting of -m, month and year
- * 5) Args for printCall: null
- * 6) Args for printCalWithMondayFirst: -m
- * 7) Args for printCalForYear: year
- * 8) Args for printCalForYearMondayFirst: -m year
- * 9) Args for printCalForMonthYear: month year
- * 10) Args for printCalForMonthYearMondayFirst: -m month year
- */
-
 public class CalApplicationTest {
 
 	private static final String MARCHSUNOUTPUT = "      March 2017\nSu Mo Tu We Th Fr Sa\n         1  2  3  4 "

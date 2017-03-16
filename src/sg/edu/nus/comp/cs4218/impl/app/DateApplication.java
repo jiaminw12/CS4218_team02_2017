@@ -10,6 +10,14 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.app.Date;
 import sg.edu.nus.comp.cs4218.exception.DateException;
 
+/* 
+ * Assumption: 
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Args for run: ordered consisting of date
+ * 
+ */
+
 /**
  * The date command print the current date and time.
  * 

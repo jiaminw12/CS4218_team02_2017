@@ -12,7 +12,12 @@ import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 
 /*
  * Assumptions:
- * 1) A valid file path will always be provided
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered or unordered
+ * 3) Path of files and the file name must not contain any spaces
+ * 4) Args for run: ordered consisting of cd and a valid file path
+ * 
  */
 
 /**

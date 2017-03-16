@@ -17,15 +17,21 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
 /*
  * Assumptions:
- * 1) Allow multiple pipe operators as long as they are within single or double quotes
+ * 1) run function will call the correct functions with the correct
+ * inputs in the correct order separated by a space 
+ * 2) Folders and Files's name contain no space 
+ * 3) Run function will take inputs directly from shell ordered
+ * 4) Files only contain ASCII characters and are not folder or directory
+ * 5) Path of files and the file name must not contain any spaces
+ * 6) Allow multiple pipe operators as long as they are within single or double quotes
  * 		For example,
  * 			echo ‘hello ||||’
  * 			echo “hello ||||”
- * 2) If pipe operator is the first or last character, it is invalid
+ * 7) If pipe operator is the first or last character, it is invalid
  * 		For example,
  * 			Invalid: | cat test.txt | sed s/one/two
  * 			Invalid: cat test.txt | sed s/one/two |
- * 3) If it is empty (or just spaces) between at least two pipe operators, it is invalid
+ * 8) If it is empty (or just spaces) between at least two pipe operators, it is invalid
  * 		For example,
  * 			Invalid: cat test.txt | | sed s/one/two 
  */

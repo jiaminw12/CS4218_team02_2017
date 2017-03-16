@@ -11,6 +11,22 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.app.Cal;
 import sg.edu.nus.comp.cs4218.exception.CalException;
 
+/* 
+ * Assumption: 
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Assume year starts from 1000
+ * 3) Run function will take inputs directly from shell ordered or unordered
+ * 4) Args for run: cal with ordered or unordered consisting of -m, month and year
+ * 5) Args for printCal: cal
+ * 6) Args for printCalWithMondayFirst: cal -m
+ * 7) Args for printCalForYear: cal year
+ * 8) Args for printCalForYearMondayFirst: cal -m year
+ * 9) Args for printCalForMonthYear: cal month year
+ * 10) Args for printCalForMonthYearMondayFirst: cal -m month year
+ * 
+ */
+
 /**
  * The cal command prints the calendar of the current month. If neither month
  * nor year are specified, print calendar for the current month.
@@ -220,40 +236,40 @@ public class CalApplication implements Application, Cal {
 		for (int i = 0; i < 12; i++) {
 			switch (i) {
 			case 0:
-				jan = printCalendar(1, year).split("\n");
+				jan = printCalendar(1, year).split(System.lineSeparator());
 				break;
 			case 1:
-				feb = printCalendar(2, year).split("\n");
+				feb = printCalendar(2, year).split(System.lineSeparator());
 				break;
 			case 2:
-				mar = printCalendar(3, year).split("\n");
+				mar = printCalendar(3, year).split(System.lineSeparator());
 				break;
 			case 3:
-				apr = printCalendar(4, year).split("\n");
+				apr = printCalendar(4, year).split(System.lineSeparator());
 				break;
 			case 4:
-				may = printCalendar(5, year).split("\n");
+				may = printCalendar(5, year).split(System.lineSeparator());
 				break;
 			case 5:
-				jun = printCalendar(6, year).split("\n");
+				jun = printCalendar(6, year).split(System.lineSeparator());
 				break;
 			case 6:
-				jul = printCalendar(7, year).split("\n");
+				jul = printCalendar(7, year).split(System.lineSeparator());
 				break;
 			case 7:
-				aug = printCalendar(8, year).split("\n");
+				aug = printCalendar(8, year).split(System.lineSeparator());
 				break;
 			case 8:
-				sep = printCalendar(9, year).split("\n");
+				sep = printCalendar(9, year).split(System.lineSeparator());
 				break;
 			case 9:
-				oct = printCalendar(10, year).split("\n");
+				oct = printCalendar(10, year).split(System.lineSeparator());
 				break;
 			case 10:
-				nov = printCalendar(11, year).split("\n");
+				nov = printCalendar(11, year).split(System.lineSeparator());
 				break;
 			case 11:
-				dec = printCalendar(12, year).split("\n");
+				dec = printCalendar(12, year).split(System.lineSeparator());
 				break;
 			}
 		}

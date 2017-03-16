@@ -28,9 +28,41 @@ import java.nio.file.*;
  */
 
 /*
- * Assumptions:
- * 1) File names do not have space in them
- * 2) Intentional globing only happens when there is a space character after ‘*’ character
+ * Assumptions (CommandSub, Globbing, IO Redirection, Pipe):
+ * 1) run function will call the correct functions with the correct
+ * inputs in the correct order separated by a space 
+ * 2) Folders and Files's name contain no space 
+ * 3) Run function will take inputs directly from shell ordered
+ * 4) Files only contain ASCII characters and are not folder or directory
+ * 5) Path of files and the file name must not contain any spaces
+ * 
+ * Assumptions(Globbing) : 
+ * 1) Intentional globing only happens when there is a space character after ‘*’ character
+ * 2) Args for globNoPaths: command
+ * 3) Args for globOneFile: command
+ * 4) Args for globFilesDirectories: command
+ * 5) Args for globWithException: command 
+ * 
+ * 
+ * Assumption (Pipe)
+ * 1) Args for pipeTwoCommands: command | command
+ * 2) Args for pipeMultipleCommands: command | command | command
+ * 3) Args for pipeWithException: command
+ * 
+ * 
+ * Assumption (IO Redirection)
+ * 1) Args for redirectInput: command < file
+ * 2) Args for redirectOutput: command > file
+ * 3) Args for redirectInputWithNoFile: command <
+ * 4) Args for redirectOutputWithNoFile: command >
+ * 5) Args for redirectInputWithException: command << file
+ * 6) Args for redirectOutputWithException: command >> file
+ * 
+ * 
+ * Assumption (CommandSub)
+ * 1) Args for performCommandSubstitution: command `command`
+ * 2) Args for performCommandSubstitutionWithException: command `command`
+ * 
  */
 
 public class ShellImpl implements Shell {
@@ -82,7 +114,7 @@ public class ShellImpl implements Shell {
 				String bqStr = matcherBQ.group(1);
 				// cmdVector.add(bqStr.trim());
 				// process back quote
-				// System.out.println("backquote : " + bqStr);
+				//System.out.println("backquote : " + bqStr);
 				OutputStream bqOutputStream = new ByteArrayOutputStream();
 				ShellImpl shell = new ShellImpl();
 				shell.parseAndEvaluate(bqStr, bqOutputStream);
@@ -333,7 +365,7 @@ public class ShellImpl implements Shell {
 	@Override
 	public String pipeTwoCommands(String args) {
 		String[] splitArgs = args.replaceAll("\\s{2,}", " ").trim()
-				.split("\\|"); // TODO Change this split method
+				.split("\\|");
 		OutputStream stdout = new ByteArrayOutputStream();
 		String result = "";
 

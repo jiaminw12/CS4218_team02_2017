@@ -24,6 +24,26 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
+/*
+ * Assumptions: 
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered
+ * 3) Files only contain ASCII characters and are not folder or directory
+ * 4) Path of files and the file name must not contain any spaces
+ * 5) Valid file must be provided.
+ * 1) Disallow “|” and “;” separators in replacement rule
+ * 7) Args for run: sed with ordered consisting of replacement and files
+ * 8) Args for replaceFirstSubStringInFile: sed, replacement rule, file
+ * 9) Args for replaceAllSubstringsInFile: sed, replacement rule, file
+ * 10) Args for replaceFirstSubStringFromStdin: pattern (stdin will be parsed from run)
+ * 11) Args for replaceAllSubstringsInStdin: sed, pattern (stdin will be parsed from run)
+ * 12) Arg for replaceSubstringWithInvalidRule: sed, grep, pattern, file
+ * 13) Args for replaceSubstringWithInvalidReplacement:sed, pattern, file
+ * 14) Args for replaceSubstringWithInvalidRegex: grep, pattern, file
+ * 
+ */
+
 /**
  * The sed command copies input file (or input stream) to stdout performing string
  * replacement. For each line containing a match to a specified pattern, replaces
@@ -42,11 +62,6 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * <dd>the name of the file. If not specified, use stdin.</dd>
  * </dl>
  * </p>
- * 
- * 
- * 
- * Assumptions:
- * 1) Disallow “|” and “;” separators in replacement rule 
  * 
  * 
  */

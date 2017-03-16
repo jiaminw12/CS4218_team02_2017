@@ -9,7 +9,10 @@ import sg.edu.nus.comp.cs4218.exception.EchoException;
 
 /*
  * Assumptions:
- * 1) At the end of the output, there should be a newline
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) At the end of the output, there should be a newline
+ * 
  */
 
 /**

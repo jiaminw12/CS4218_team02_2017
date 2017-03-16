@@ -19,6 +19,30 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.WcException;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
+/*
+ * Assumption: 
+ * 1) run function will call the correct functions with the correct
+ * inputs in the correct order separated by a space 
+ * 2) Folders and Files's name contain no space 
+ * 3) Run function will take inputs directly from shell ordered
+ * 4) Files only contain ASCII characters and are not folder or directory
+ * 5) Path of files and the file name must not contain any spaces
+ * 6) In order to print all counts, need to specific "-lmw" or "-l -m -w" in 
+ * 7) order or without any option
+ * 8) Args for printCharacterCountInFile: wc -m [FILE] 
+ * 9) Args for printWordCountInFile: wc -w [FILE] 
+ * 10) Args for printNewlineCountInFile: wc -l [FILE] 
+ * 11) Args for printAllCountsInFile: wc -lmw [FILE] / wc -l -m -w [FILE] 
+ * 12) Args for printCharacterCountInStdin: wc -m 
+ * 13) Args for printWordCountInStdin: wc -w
+ * 14) Args for printNewlineCountInStdin: wc -l 
+ * 15) Args for printAllCountsInStdin: wc -lmw / wc -l -m -w
+ * 16) For example, wc -m text1.txt text2.txt
+			3     4     5     text1.txt + System.lineSeparator +
+            3     4     5    text2.txt + System.lineSeparator +
+            6     8    10 tital
+ */
+
 /**
  * The wc command prints the number of bytes, words, and lines in given files
  * (followed by a newline).
@@ -34,22 +58,6 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * <dd>the file(s), when no file is present, use stdin.</dd>
  * </dl>
  * </p>
- */
-
-/*
- * Assumption: 
- * 1) run function will call the correct functions with the correct
- * inputs in the correct order separated by a space 
- * 2) Folders and Files's name contain no space 
- * 3) In order to print all counts, need to specific "-lmw" or "-l -m -w" in any order or without any option
- * 4) Args for printCharacterCountInFile: wc -m [FILE] 
- * 5) Args for printWordCountInFile: wc -w [FILE] 
- * 6) Args for printNewlineCountInFile: wc -l [FILE] 
- * 7) Args for printAllCountsInFile: wc -lmw [FILE] / wc -l -m -w [FILE] 
- * 8) Args for printCharacterCountInStdin: wc -m 
- * 9) Args for printWordCountInStdin: wc -w
- * 10) Args for printNewlineCountInStdin: wc -l 
- * 11) Args for printAllCountsInStdin: wc -lmw / wc -l -m -w
  */
 
 public class WcApplication implements Application, Wc {

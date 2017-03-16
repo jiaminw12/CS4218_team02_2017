@@ -19,10 +19,16 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /*
  * Assumptions:
- * 1) -n 2 is equivalent to -n2
- * 2) When -n 0, print nothing
- * 3) When the option is more than the total number of lines of file, will print all the lines of the file
- * 4) Allow multiple options, but overwrites when there is a new option
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered
+ * 3) Files only contain ASCII characters and are not folder or directory
+ * 4) Path of files and the file name must not contain any spaces
+ * 5) -n 2 is equivalent to -n2
+ * 6) When -n 0, print nothing
+ * 7) When the option is more than the total number of lines of file, 
+ * will print all the lines of the file
+ * 8) Allow multiple options, but overwrites when there is a new option
  * 			For example, head -n4 -n 3 -n2 prints first two lines
  */
 
@@ -92,6 +98,14 @@ public class HeadApplication implements Application {
 		}
 	}
 
+	/**
+	 * Parse args.
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private String[] parseHead(String[] args) throws HeadException {
 
 		if (args.length == 1
@@ -121,6 +135,14 @@ public class HeadApplication implements Application {
 		return new String[] { args[0], options };
 	}
 
+	/**
+	 * Get Option of Arguments
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private String getOptionArguments(String[] args) {
 
 		String cmdline = "";
@@ -134,6 +156,14 @@ public class HeadApplication implements Application {
 		return cmdline;
 	}
 
+	/**
+	 * Check whether last argument is file
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private boolean isLastArgumentFile(String[] args) {
 
 		boolean isLastArgFile = false;
@@ -149,6 +179,21 @@ public class HeadApplication implements Application {
 		return isLastArgFile;
 	}
 
+	/**
+	 * Print the line
+	 *
+	 * @param numberOfLines
+	 *            Integer. The number of lines
+	 * @param file
+	 * 			  File.
+	 * @param stdin
+	 * 			  An InputStream. The input for the command is read from this
+	 *            InputStream if no files are specified.           
+	 * @param stdout
+	 * 			  An OutputStream. Elements of args will be output to stdout,
+	 *            separated by a space character.           
+	 *            
+	 */
 	private void printLine(int numberOfLines, File file, InputStream stdin,
 			OutputStream stdout) throws HeadException {
 
@@ -172,6 +217,13 @@ public class HeadApplication implements Application {
 		}
 	}
 
+	/**
+	 * Check validity the file
+	 *
+	 * @param file
+	 * 			  File.           
+	 *            
+	 */
 	private boolean isFileValid(File file) {
 
 		Path filePath = file.toPath();
@@ -188,6 +240,13 @@ public class HeadApplication implements Application {
 		return isValid;
 	}
 
+	/**
+	 * Check validity the file by throwing exception
+	 *
+	 * @param file
+	 * 			  File.           
+	 *            
+	 */
 	public boolean checkValidFile(File file) throws HeadException {
 
 		Path filePath = file.toPath();
@@ -213,27 +272,29 @@ public class HeadApplication implements Application {
 	 *            An InputStream. The input for the command is read from this
 	 *            InputStream if no files are specified.
 	 */
-	private String readFromStdin(String[] args, InputStream stdin) throws HeadException {
+	private String readFromStdin(String[] args, InputStream stdin)
+			throws HeadException {
 
 		StringBuffer text = new StringBuffer();
 		String str = "";
 
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-			
-			while((str = bufferedReader.readLine()) != null) {
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(stdin, "UTF-8"));
+
+			while ((str = bufferedReader.readLine()) != null) {
 				text.append(str);
 				text.append(System.getProperty("line.separator"));
 			}
-			
+
 		} catch (IOException e) {
 			throw new HeadException("Could not read input");
 		}
-		
+
 		// try to replace substrings
-		if(text == null || text.toString().isEmpty()) {
+		if (text == null || text.toString().isEmpty()) {
 			throw new HeadException("Invalid Input");
-		} 
+		}
 
 		return text.toString().trim();
 	}

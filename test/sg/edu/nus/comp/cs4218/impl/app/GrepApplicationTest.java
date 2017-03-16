@@ -403,7 +403,7 @@ public class GrepApplicationTest {
 	public void invalidPatternInStdin() throws GrepException {
 		args = new String[2];
 		args[0] = "grep";
-		args[1] = "[";
+		args[1] = "[---";
 		ByteArrayInputStream in = new ByteArrayInputStream(fileName.getBytes());
 		grepApp.run(args, in, System.out);
 		System.out.flush();

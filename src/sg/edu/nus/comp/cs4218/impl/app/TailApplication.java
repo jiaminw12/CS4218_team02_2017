@@ -18,6 +18,21 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.exception.TailException;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
+/*
+ * Assumptions:
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered
+ * 3) Files only contain ASCII characters and are not folder or directory
+ * 4) Path of files and the file name must not contain any spaces
+ * 5) -n 2 is equivalent to -n2
+ * 6) When -n 0, print nothing
+ * 7) When the option is more than the total number of lines of file, 
+ * will print all the lines of the file
+ * 8) Allow multiple options, but overwrites when there is a new option
+ * 			For example, tail -n4 -n 3 -n2 prints first two lines
+ */
+
 /**
  * The cat command concatenates the content of given files and prints on the
  * standard output.
@@ -32,16 +47,7 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * <dd>the name of the file. If not specified, use stdin.</dd>
  * </dl>
  * </p>
- * 
- * 
- * Assumption:
- * 1) -n 2 is equivalent to -n2
- * 2) When -n 0, print nothing
- * 3) When the option is more than the total number of lines of file, will print all the lines of the file
- * 4) Allow multiple options, but overwrites when there is a new option
- * 5) For example, tail -n4 -n 3 -n2 prints last two lines
- * 
- * 
+ *  
  */
 public class TailApplication implements Application {
 
@@ -95,6 +101,14 @@ public class TailApplication implements Application {
 		}
 	}
 
+	/**
+	 * Parse args.
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private String[] parseTail(String[] args) throws TailException {
 
 		if (args.length == 1
@@ -124,6 +138,14 @@ public class TailApplication implements Application {
 		return new String[] { args[0], options };
 	}
 
+	/**
+	 * Get Option of Arguments
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private String getOptionArguments(String[] args) {
 
 		String cmdline = "";
@@ -137,6 +159,14 @@ public class TailApplication implements Application {
 		return cmdline;
 	}
 
+	/**
+	 * Check whether last argument is file
+	 *
+	 * @param args
+	 *            Array of arguments for the application. Each array element is
+	 *            the path to a file. If no files are specified stdin is used.
+	 *            
+	 */
 	private boolean isLastArgumentFile(String[] args) {
 
 		boolean isLastArgFile = false;
@@ -152,6 +182,21 @@ public class TailApplication implements Application {
 		return isLastArgFile;
 	}
 
+	/**
+	 * Print the line
+	 *
+	 * @param numberOfLines
+	 *            Integer. The number of lines
+	 * @param file
+	 * 			  File.
+	 * @param stdin
+	 * 			  An InputStream. The input for the command is read from this
+	 *            InputStream if no files are specified.           
+	 * @param stdout
+	 * 			  An OutputStream. Elements of args will be output to stdout,
+	 *            separated by a space character.           
+	 *            
+	 */
 	private void printLine(int numberOfLines, File file, InputStream stdin,
 			OutputStream stdout) throws TailException {
 
@@ -195,6 +240,13 @@ public class TailApplication implements Application {
 
 	}
 
+	/**
+	 * Check validity the file
+	 *
+	 * @param file
+	 * 			  File.           
+	 *            
+	 */
 	private boolean isFileValid(File file) {
 
 		Path filePath = file.toPath();
@@ -211,6 +263,13 @@ public class TailApplication implements Application {
 		return isValid;
 	}
 
+	/**
+	 * Check validity the file by throwing exception
+	 *
+	 * @param file
+	 * 			  File.           
+	 *            
+	 */
 	public boolean checkValidFile(File file) throws TailException {
 
 		Path filePath = file.toPath();

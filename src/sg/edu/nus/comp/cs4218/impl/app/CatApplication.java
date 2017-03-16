@@ -14,10 +14,17 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
 
-/*
- * Assumptions:
- * 1) If 2 or more files are given, print the output according to sequence of files, separate by newline for each output per file
- * 		For example: cat hello.txt bye.txt
+/* 
+ * Assumption: 
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered
+ * 3) Path of files and the file name must not contain any spaces
+ * 4) Files only contain ASCII characters and are not folder
+ * 4) Args for run: ordered consisting of cat and path of file
+ * 5) If 2 or more files are given, print the output according to sequence of files, 
+ * separate by newline for each output per file. For example: cat hello.txt bye.txt
+ * 
  */
 
 /**
@@ -77,11 +84,9 @@ public class CatApplication implements Application {
 					Path[] filePathArray = new Path[numOfFiles];
 					Path currentDir = Paths.get(Environment.currentDirectory);
 					boolean isFileReadable = false;
-//					System.out.println("currentdir: "+currentDir);
 					
 					for (int i = 1; i < numOfFiles; i++) {
 						filePath = currentDir.resolve(args[i]);
-//						System.out.println("filePath: "+filePath);
 						isFileReadable = checkIfFileIsReadable(filePath);
 						if (isFileReadable) {
 							filePathArray[i] = filePath;
@@ -110,8 +115,7 @@ public class CatApplication implements Application {
 				}
 			}
 		} catch (IOException exIO) {
-			exIO.printStackTrace();
-			//throw new CatException("Exception Caught");
+			throw new CatException("IO Exception Caught");
 		}
 
 	}
@@ -168,7 +172,6 @@ public class CatApplication implements Application {
 		if (Files.exists(filePath) && Files.isReadable(filePath)) {
 			return true;
 		} else if (Files.notExists(filePath)) {
-//			System.out.println(filePath);
 			throw new CatException("No such file exists");
 		} else {
 			throw new CatException("Could not read file");

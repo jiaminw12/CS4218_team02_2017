@@ -18,6 +18,33 @@ import sg.edu.nus.comp.cs4218.app.Sort;
 import sg.edu.nus.comp.cs4218.exception.SedException;
 import sg.edu.nus.comp.cs4218.exception.SortException;
 
+/*
+ * Assumptions: 
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered
+ * 3) Files only contain ASCII characters and are not folder or directory
+ * 4) Path of files and the file name must not contain any spaces
+ * 5) Valid file must be provided.
+ * 7) Args for run: sort with ordered consisting of replacement and files
+ * 8) Args for sortStringsSimple: sort, file
+ * 9) Args for sortStringsCapital: sort, file
+ * 10) Args for sortNumbers: sort, file
+ * 11) Args for sortSpecialChars: sort, file
+ * 12) Arg for sortSimpleCapital: sort, file
+ * 10) Args for sortSimpleNumbers: sort, file
+ * 11) Args for sortSimpleSpecialChars: sort, file
+ *  9) Args for sortCapitalNumbers: sort, file
+ * 10) Args for sortCapitalSpecialChars: sort file
+ * 11) Args for sortNumbersSpecialChars: sort, file
+ * 12) Arg for sortSimpleCapitalNumber: sort, file
+ * 10) Args for sortSimpleCapitalSpecialChars: sort, file
+ * 11) Args for sortSimpleNumbersSpecialChars: sort, file
+ * 10) Args for sortCapitalNumbersSpecialChars: sort, file
+ * 11) Args for sortAll: sort, file
+ * 
+ */
+
 /**
  * 
  * The sort command orders the lines of the specified file or input and prints
@@ -68,13 +95,13 @@ public class SortApplication implements Application, Sort {
 		// Remove sort command
 		String[] removeCommandArgs = removeCommand(args);
 		List<String> arrList = new ArrayList<>();
-		if(removeCommandArgs != null) {
-			for(int i = 0; i < removeCommandArgs.length; i++) {
+		if (removeCommandArgs != null) {
+			for (int i = 0; i < removeCommandArgs.length; i++) {
 				arrList.add(removeCommandArgs[i]);
 			}
 		}
 
-		if(removeCommandArgs != null && removeCommandArgs.length == 0) {
+		if (removeCommandArgs != null && removeCommandArgs.length == 0) {
 			removeCommandArgs = null;
 		}
 
@@ -87,7 +114,8 @@ public class SortApplication implements Application, Sort {
 			}
 			arrList = stringToList(readFromInputStream(stdin));
 			sortedList = bubbleSort(arrList);
-		} else if(removeCommandArgs.length == 1 && removeCommandArgs[0].equals("-n")) {
+		} else if (removeCommandArgs.length == 1
+				&& removeCommandArgs[0].equals("-n")) {
 			// sort -n
 			if (stdin == null) {
 				throw new SortException("InputStream not provided");
@@ -103,7 +131,8 @@ public class SortApplication implements Application, Sort {
 		try {
 			for (int i = 0; i < sortedList.size(); i++) {
 				stdout.write(sortedList.get(i).getBytes("UTF-8"));
-				if(!(sortedList.size() == 1 && sortedList.get(i).trim().isEmpty())) {
+				if (!(sortedList.size() == 1
+						&& sortedList.get(i).trim().isEmpty())) {
 					stdout.write(System.lineSeparator().getBytes("UTF-8"));
 				}
 			}
@@ -119,12 +148,12 @@ public class SortApplication implements Application, Sort {
 	 *            Array of arguments for the application.
 	 */
 	String[] removeCommand(String[] args) {
-		if(args != null) {
+		if (args != null) {
 			String[] temp = new String[args.length - 1];
 
-			if(args[0].equals("sort")) {
-				for(int i = 1; i < args.length; i++) {
-					temp[i - 1] = args[i]; 
+			if (args[0].equals("sort")) {
+				for (int i = 1; i < args.length; i++) {
+					temp[i - 1] = args[i];
 				}
 
 				return temp;
@@ -139,17 +168,17 @@ public class SortApplication implements Application, Sort {
 	 * 
 	 * @param args
 	 *            Array of arguments for the application.
-	 *            
+	 * 
 	 * @throws SortException
-	 *            If argument is invalid
+	 *             If argument is invalid
 	 */
 	public void validate(String[] args) throws SortException {
 		boolean hasOption = false;
 
-		if(args != null) {
-			for(int i = 0; i < args.length; i++) {
-				if(args[i].equals("-n")) {
-					if(hasOption) {
+		if (args != null) {
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].equals("-n")) {
+					if (hasOption) {
 						throw new SortException("Too many -n");
 					} else {
 						hasOption = true;
@@ -164,22 +193,22 @@ public class SortApplication implements Application, Sort {
 	 * 
 	 * @param args
 	 *            Array of arguments for the application.
-	 *           
+	 * 
 	 */
 	public String[] reOrder(String[] args) {
 		String[] sortedList = new String[args.length];
 
-		if(args[0].equals("-n")) {
+		if (args[0].equals("-n")) {
 			return args;
-		} else if(args[args.length - 1].equals("-n")) {
-			for(int i = args.length - 1; i >= 0; i--) {
+		} else if (args[args.length - 1].equals("-n")) {
+			for (int i = args.length - 1; i >= 0; i--) {
 				sortedList[Math.abs(args.length - 1 - i)] = args[i];
 			}
 		} else {
 			sortedList[0] = "-n";
 			int index = 1;
-			for(int i = 0; i < args.length; i++) {
-				if(!args[i].equals("-n")) {
+			for (int i = 0; i < args.length; i++) {
+				if (!args[i].equals("-n")) {
 					sortedList[index] = args[i];
 					index++;
 				}
@@ -207,17 +236,18 @@ public class SortApplication implements Application, Sort {
 		String str = "";
 
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-			
-			while((str = bufferedReader.readLine()) != null) {
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(stdin, "UTF-8"));
+
+			while ((str = bufferedReader.readLine()) != null) {
 				text.append(str);
 				text.append(System.getProperty("line.separator"));
 			}
-			
+
 		} catch (IOException e) {
 			throw new SortException("Could not read input");
 		}
-		
+
 		return text.toString().trim();
 	}
 
@@ -237,8 +267,9 @@ public class SortApplication implements Application, Sort {
 		List<String> args;
 
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(filePath.toString()), "UTF-8"));
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(
+							new FileInputStream(filePath.toString()), "UTF-8"));
 
 			while ((str = bufferedReader.readLine()) != null) {
 				text.add(str);
@@ -250,7 +281,7 @@ public class SortApplication implements Application, Sort {
 		}
 
 		args = new ArrayList<>();
-		for(int i = 0; i < text.size(); i++) {
+		for (int i = 0; i < text.size(); i++) {
 			args.add(text.get(i));
 		}
 
@@ -262,9 +293,9 @@ public class SortApplication implements Application, Sort {
 	 * 
 	 * @param filePath
 	 *            File path of the file provided by the user.
-	 *            
+	 * 
 	 * @throws SortException
-	 *            If the file is not readable
+	 *             If the file is not readable
 	 */
 	boolean checkIfFileIsReadable(Path filePath) throws SortException {
 
@@ -299,7 +330,8 @@ public class SortApplication implements Application, Sort {
 			if (checkIfFileIsReadable(filePath)) {
 				sortedList = bubbleSort(readFromFile(filePath));
 			}
-		} else if (args.length == 2 && args[0].equals("-n") && args[1] != null && !args[1].isEmpty()) {
+		} else if (args.length == 2 && args[0].equals("-n") && args[1] != null
+				&& !args[1].isEmpty()) {
 			// sort -n [FILE]
 			filePath = currentDir.resolve(args[1]);
 			if (checkIfFileIsReadable(filePath)) {
@@ -317,7 +349,7 @@ public class SortApplication implements Application, Sort {
 				}
 
 				sortedList = numericBubbleSort(text);
-			} 
+			}
 		}
 
 		return sortedList;
@@ -327,15 +359,15 @@ public class SortApplication implements Application, Sort {
 	 * Convert an array of strings to string
 	 * 
 	 * @param args
-	 *            Array of arguments for the application. 
+	 *            Array of arguments for the application.
 	 *
 	 */
 	public String arrToString(String[] args) {
 		String text = "";
 
-		for(int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			text += args[i];
-			if(i != args.length - 1) {
+			if (i != args.length - 1) {
 				text += " ";
 			}
 		}
@@ -347,13 +379,13 @@ public class SortApplication implements Application, Sort {
 	 * Convert list of strings to string
 	 * 
 	 * @param args
-	 *            Array of arguments for the application. 
+	 *            Array of arguments for the application.
 	 *
 	 */
 	public String listToString(List<String> args) {
 		String text = "";
 
-		for(int i = 0; i < args.size(); i++) {
+		for (int i = 0; i < args.size(); i++) {
 			text += args.get(i) + "\n";
 		}
 
@@ -364,14 +396,14 @@ public class SortApplication implements Application, Sort {
 	 * Convert list of strings to string
 	 * 
 	 * @param args
-	 *            Array of arguments for the application. 
+	 *            Array of arguments for the application.
 	 *
 	 */
 	public List<String> stringToList(String text) {
 		List<String> args = new ArrayList<>();
 
 		String[] splitArgs = text.split("\n");
-		for(int i = 0; i < splitArgs.length; i++) {
+		for (int i = 0; i < splitArgs.length; i++) {
 			args.add(splitArgs[i].trim());
 		}
 
@@ -382,7 +414,7 @@ public class SortApplication implements Application, Sort {
 	 * Convert string to array
 	 * 
 	 * @param args
-	 *            Array of arguments for the application. 
+	 *            Array of arguments for the application.
 	 *
 	 */
 	public String[] stringToArr(String text) {
@@ -452,12 +484,11 @@ public class SortApplication implements Application, Sort {
 	 * Checks if both strings are numbers.
 	 * 
 	 * @param num1
-	 *          First string
+	 *            First string
 	 * @param num2
-	 *          Second string
+	 *            Second string
 	 * 
-	 * @return boolean 
-	 * 			true if both are numbers.
+	 * @return boolean true if both are numbers.
 	 * 
 	 */
 	boolean isNumbers(String num1, String num2) {

@@ -8,6 +8,10 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.PwdException;
 
+/* Assumptions:
+* 1) No argument should be provided 
+*/
+
 /**
  * The pwd command reports the current working directory followed by a newline.
  * 
@@ -16,9 +20,6 @@ import sg.edu.nus.comp.cs4218.exception.PwdException;
  * <dl>
  * </dl>
  * </p>
- * 
- * Assumptions:
- * 1) No argument should be provided 
  * 
  */
 public class PwdApplication implements Application {

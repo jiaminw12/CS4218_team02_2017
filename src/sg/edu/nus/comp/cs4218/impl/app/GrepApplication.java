@@ -23,17 +23,20 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
 
 /*
  * Assumptions: 
- * 1) run function will call the correct functions with the correct inputs in the correct order separated by a space
- * 2) Run function will take inputs directly from shell unordered
- * 3) Files are readable and not folder or directory
- * 4) Files contain no spaces between them
- * 5) Args for run: unordered consisting of pattern and files
- * 6) Args for grepFromOneFile: pattern, file
- * 7) Args for grepFromMultipleFiles: pattern, file, file, ...
- * 8) Args for grepFromStdin: pattern (Stdin will be parsed from run)
- * 9) Valid file must be provided. Otherwise, it will be treated as a Regex Pattern.
- * 10) Regex pattern and file can be keyed in a an disordered manner.
- * 11) Does not support providing directory and filename in 2 separate arguments
+ * 1) run function will call the correct functions with the correct inputs in the 
+ * correct order separated by a space
+ * 2) Run function will take inputs directly from shell ordered or unordered
+ * 3) Files only contain ASCII characters and are not folder or directory
+ * 4) Path of files and the file name must not contain any spaces
+ * 5) Valid file must be provided. Otherwise, it will be treated as a Regex Pattern.
+ * 6) Does not support providing directory and filename in 2 separate arguments
+ * 7) Args for run: grep with ordered or unordered consisting of pattern and files
+ * 8) Args for grepFromOneFile: pattern, file
+ * 9) Args for grepFromMultipleFiles: pattern, file, file, ...
+ * 10) Args for grepFromStdin: pattern (tdin will be parsed from run)
+ * 11) Args for grepInvalidPatternInStdin: grep, pattern (Stdin will be parsed from run)
+ * 12) Arg for grepInvalidPatternInFile: grep, pattern, file
+ * 
  */
 
 /**
@@ -331,6 +334,13 @@ public class GrepApplication implements Application, Grep {
 		return result;
 	}
 
+	/**
+	 * Read from input stream
+	 *
+	 * @param stdin
+	 *            Input Stream. Read the input stream
+	 *            
+	 */
 	public String readFromInputStream(InputStream stdin) {
 		StringBuffer text = new StringBuffer();
 		String str = "";
