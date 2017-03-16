@@ -162,7 +162,7 @@ public class CatApplication implements Application {
 			return true;
 		} else if (Files.notExists(filePath)) {
 //			System.out.println(filePath);
-			throw new CatException("No such file exists: "+filePath);
+			throw new CatException("No such file exists");
 		} else {
 			throw new CatException("Could not read file");
 		}

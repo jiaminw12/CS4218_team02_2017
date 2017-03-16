@@ -18,7 +18,7 @@ public class ChainOfInteractionPiping {
 
 	private static final char FILE_SEPARATOR = File.separatorChar;
 	private static final String TEST_FILE_GREP_SORT = String.format(
-			"folder%sGrepAndSortFiles%swcTestFiles%s", FILE_SEPARATOR,
+			"folder%sGrepAndSortFiles%stest.txt", FILE_SEPARATOR,
 			FILE_SEPARATOR, FILE_SEPARATOR);
 	private static final String TEST_FILE_SINGLE_WORD = String.format(
 			"folder%sSedAndWCFiles%swcTestFiles%ssingleWord.txt",
@@ -43,19 +43,20 @@ public class ChainOfInteractionPiping {
 	}
 
 	@Test
-	public void testPipeWithEchoGrep()
+	public void testPipeWithEchoSort()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl
-				.pipeTwoCommands("echo hello apple pineapple pen | grep *ed* "
+				.pipeTwoCommands("echo hello apple pineapple pen | sort "
 						+ TEST_FILE_SLICING);
-		assertEquals("", expected);
+		assertEquals("Program slicing can be used in debugging to locate source of errors more easily."
+				+ LINE_SEPARATOR, expected);
 	}
 
 	@Test
 	public void testPipeWithEchoHead()
 			throws AbstractApplicationException, ShellException {
-		expected = shellImpl.pipeTwoCommands("echo Lord/lalala/h&&&H | head ");
-		assertEquals("", expected);
+		expected = shellImpl.pipeTwoCommands("echo Lord/lalala/h&&&H | head -n5");
+		assertEquals("Lord/lalala/h&&&H" + LINE_SEPARATOR, expected);
 	}
 
 	@Test
@@ -63,7 +64,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands(
 				"cat " + TEST_FILE_SINGLE_WORD + "| tail -n 100 ");
-		assertEquals(expected, stdout.toString());
+		assertEquals("Hello\n", expected);
 	}
 
 	@Test
@@ -71,14 +72,15 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands("grep Lord " + TEST_FILE_TITLES
 				+ " | cat < " + TEST_FILE_SLICING);
-		assertEquals("", expected);
+		assertEquals("Program slicing can be used in debugging to locate source of errors more easily."
+				+ System.getProperty("line.separator"), expected);
 	}
 
 	@Test
 	public void testPipeWithCalGrep()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands("cal | grep 12");
-		assertEquals("", expected);
+		assertEquals("12 13 14 15 16 17 18" + System.getProperty("line.separator"), expected);
 	}
 
 	@Test
@@ -86,7 +88,12 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		String currentPath = Environment.currentDirectory;
 		expected = shellImpl.pipeTwoCommands("cd folder | cat farfaraway.txt");
-		assertEquals("", expected);
+		assertEquals("Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts." + System.getProperty("line.separator")
+			+ "Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean." + System.getProperty("line.separator")
+			+ "A small river named Duden flows by their place and supplies it with the necessary regelialia." + System.getProperty("line.separator")
+			+ "It is a paradisematic country, in which roasted parts of sentences fly into your mouth." + System.getProperty("line.separator")
+			+ "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti "
+			+ "atque corrupti quos dolores et quas molestias excepturi sint."  + System.getProperty("line.separator"), expected);
 
 		Environment.currentDirectory = currentPath;
 	}
@@ -95,8 +102,9 @@ public class ChainOfInteractionPiping {
 	public void testPipeWithCatSed()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands(
-				"sed s/e/fff " + TEST_FILE_SLICING + " > test01.txt | cat");
-		assertEquals("", expected);
+				"sed s/e/fff/ " + TEST_FILE_SLICING + " | cat");
+		assertEquals("Program slicing can bfff used in debugging to locate source of errors more easily."
+				+ System.getProperty("line.separator"), expected);
 	}
 
 	@Test
@@ -104,23 +112,36 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl
 				.pipeTwoCommands("echo 'I---m going to Paris!!!@@## ' | date");
-		assertEquals("", expected);
+		java.util.Date now = new java.util.Date();
+		String actualResult = now.toString() + System.getProperty("line.separator");
+		assertEquals(actualResult, expected);
 	}
 
 	@Test
-	public void testPipeWithSortEcho()
+	public void testPipeWithSortCat()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands(
-				"sort " + TEST_FILE_GREP_SORT + "greptestdoc.txt | echo");
-		assertEquals("", expected);
+				"sort folder/GrepAndSortFiles/greptestdoc2.txt | cat");
+		assertEquals("123" + System.getProperty("line.separator")
+			+ "CBA" + System.getProperty("line.separator")
+			+ "DEF" + System.getProperty("line.separator")
+			+ "FGH" + System.getProperty("line.separator")
+			+ "His" + System.getProperty("line.separator")
+			+ "ello milo" + System.getProperty("line.separator"), expected);
 	}
 
 	@Test
 	public void testPipeWithGrepSort()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands(
-				"grep h* " + TEST_FILE_GREP_SORT + "greptestdoc2.txt | sort");
-		assertEquals("", expected);
+				"grep h* " + TEST_FILE_GREP_SORT + " folder/GrepAndSortFiles/greptestdoc2.txt | sort");
+		assertEquals("123" + System.getProperty("line.separator")
+				+ "CBA" + System.getProperty("line.separator")
+				+ "DEF" + System.getProperty("line.separator")
+				+ "FGH" + System.getProperty("line.separator")
+				+ "His" + System.getProperty("line.separator")
+				+ "Just To Test" + System.getProperty("line.separator")
+				+ "ello milo" + System.getProperty("line.separator"), expected);
 	}
 
 	@Test
@@ -128,7 +149,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl
 				.pipeTwoCommands("cat " + TEST_FILE_TITLES + " | wc -lmw");
-		assertEquals("", expected);
+		assertEquals("    4128     717       0 " + LINE_SEPARATOR, expected);
 	}
 
 	@Test
@@ -136,7 +157,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeMultipleCommands(
 				"cat " + TEST_FILE_TITLES + " | sort | wc -lmw");
-		assertEquals("", expected);
+		assertEquals("    4128     717       0 " + LINE_SEPARATOR, expected);
 	}
 	
 	@Test
@@ -152,15 +173,16 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeMultipleCommands(
 				"cat farfaraway.txt | head -n 1 | tail -n 1");
-		assertEquals("", expected);
+		assertEquals("Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts."
+				+ System.getProperty("line.separator"), expected);
 	}
 	
 	@Test
 	public void testPipeWithHeadWcGrep()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeMultipleCommands(
-				"head -n 3 farfaraway.txt | wc -w | grep lia*");
-		assertEquals("", expected);
+				"head -n 3 farfaraway.txt | grep lia | wc -w");
+		assertEquals("      35 " + LINE_SEPARATOR , expected);
 	}
 	
 	@Test
@@ -168,7 +190,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeWithException(
 				"head -n 3 nosuchfile.txt | wc -w | grep lia*");
-		assertEquals("", expected);
+		assertEquals("head: Invalid arguments", expected);
 	}
 	
 	@Test
@@ -176,7 +198,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeWithException(
 				"head -n 3 farfaraway.txt | wc -w | | grep lia*");
-		assertEquals("", expected);
+		assertEquals("shell: : Invalid app.", expected);
 	}
 	
 	
