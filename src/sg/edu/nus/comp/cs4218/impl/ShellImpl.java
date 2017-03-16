@@ -396,6 +396,7 @@ public class ShellImpl implements Shell {
 		ShellImpl shell = new ShellImpl();
 		result = "";
 		root = "";
+		System.out.println("entered : "+args);
 		return shell.globWithException(args);
 	}
 
@@ -417,6 +418,10 @@ public class ShellImpl implements Shell {
 	@Override
 	public String globFilesDirectories(String[] args) {
 		String[] resultArr = new String[args.length];
+		
+		if(args.length == 1){
+			return "";
+		}
 
 		for (int i = 1; i < args.length; i++) {
 			if (i != args.length - 1) {
