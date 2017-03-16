@@ -396,7 +396,6 @@ public class ShellImpl implements Shell {
 		ShellImpl shell = new ShellImpl();
 		result = "";
 		root = "";
-		System.out.println("entered : "+args);
 		return shell.globWithException(args);
 	}
 
