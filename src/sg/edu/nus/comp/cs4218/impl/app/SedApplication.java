@@ -42,6 +42,13 @@ import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
  * <dd>the name of the file. If not specified, use stdin.</dd>
  * </dl>
  * </p>
+ * 
+ * 
+ * 
+ * Assumptions:
+ * 1) Disallow “|” and “;” separators in replacement rule 
+ * 
+ * 
  */
 public class SedApplication implements Application, Sed {
 	
