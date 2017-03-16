@@ -115,22 +115,9 @@ public class CallCommand implements Command {
 				}	
 			}
 			
-		switch(argsArray[0]){
-						
-					case "sed" :
-						argsArray[1] = resultArr.get(1);
-					
-					case "head" :
-						argsArray[1] = resultArr.get(1);
-							
-					case "tail" :
-						argsArray[1] = resultArr.get(resultArr.size()-1);
-						
-					default:
-						argsArray = new String[resultArr.size()];
-						for (int i=0; i<resultArr.size(); i++){
-							argsArray[i] = resultArr.get(i);	
-						}
+			argsArray = new String[resultArr.size()];
+			for (int i=0; i<resultArr.size(); i++){
+				argsArray[i] = resultArr.get(i);	
 			}
 		}
 

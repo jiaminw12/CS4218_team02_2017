@@ -80,9 +80,9 @@ public class ChainOfInteractionCommandSub {
 	public void testSortCatTail()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cat " + grepSortFilePath
-				+ "TestSortMethods.txt | tail`";
+				+ "TestSortMethods.txt | tail -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("1aA2Bb+5" + System.lineSeparator(), expected);
+		assertEquals("+5" + System.lineSeparator(), expected);
 	}
 
 	@Test

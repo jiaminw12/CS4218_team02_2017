@@ -63,7 +63,7 @@ public class ChainOfInteractionPiping {
 	public void testPipeWithCatTail()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands(
-				"cat " + TEST_FILE_SINGLE_WORD + "| tail -n 100 ");
+				"cat " + TEST_FILE_SINGLE_WORD + "| tail -n 9");
 		assertEquals("Hello\n", expected);
 	}
 
