@@ -2,8 +2,10 @@ package sg.edu.nus.comp.cs4218.impl.ef1;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -16,15 +18,16 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 public class GlobbingTest {
 
 	private static ShellImpl shell;
-	private static OutputStream stdout;
 	private static String test_folder_name = "test_globbing";
 	private static final String[] FILE_NAMES = { "testGlobe.txt",
 			"testGlobe.py", "testGlobe.cpp", "testGlobe.html", "testGlobe.css",
 			"testGlobe.js", "testGlobe.xml" };
+	private String expected;
+	ByteArrayOutputStream stdout;
+	PrintStream print;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		stdout = System.out;
 		
 		new File(test_folder_name).mkdir();
 		for (int i = 0; i < FILE_NAMES.length; i++) {
@@ -58,6 +61,8 @@ public class GlobbingTest {
 	@Before
 	public void setUp() throws Exception {
 		shell = new ShellImpl();
+		stdout = new ByteArrayOutputStream();
+		print = new PrintStream(stdout);
 	}
 
 	@After
@@ -69,14 +74,14 @@ public class GlobbingTest {
 	public void testInvalidPath()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + test_folder_name + "/*/invalid";
-		shell.parseAndEvaluate(cmdLine, stdout);
+		shell.globWithException(cmdLine);
 	}
 	
 	@Test(expected = Exception.class)
 	public void testInvalidSlash()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + test_folder_name + "//*";
-		shell.parseAndEvaluate(cmdLine, stdout);
+		shell.globWithException(cmdLine);
 	}
 
 	@Test
@@ -99,7 +104,7 @@ public class GlobbingTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo what*here";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "what*here" + System.lineSeparator();
+		expected = "what*here" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
@@ -108,7 +113,7 @@ public class GlobbingTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo crayfish1886/*/dolphin8976";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "crayfish1886/*/dolphin8976" + System.lineSeparator();
+		expected = "crayfish1886/*/dolphin8976" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 
@@ -117,7 +122,7 @@ public class GlobbingTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo *";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "*" + System.lineSeparator();
+		expected = "*" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
 	
@@ -126,9 +131,29 @@ public class GlobbingTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "wc -m *.txt";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = "47\t" + System.lineSeparator() + "304\t"
+		expected = "47\t" + System.lineSeparator() + "304\t"
 				+ System.lineSeparator() + "351";
 		Assert.assertEquals(expected, stdout.toString());
 	}
-
+	
+	@Test
+	public void testGlobNoPaths(){
+		String[] args = {""};
+		expected = shell.globNoPaths(args);
+		assertEquals("", expected);
+	}
+	
+	@Test
+	public void testGlobOneFile(){
+		String args = "";
+		expected = shell.globOneFile(args);
+		assertEquals("", expected);
+	}
+	
+	@Test
+	public void testGlobFilesDirectories(){
+		String[] args = {""};
+		expected = shell.globFilesDirectories(args);
+		assertEquals("", expected);
+	}
 }

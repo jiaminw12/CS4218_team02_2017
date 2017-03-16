@@ -70,7 +70,7 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testInvalidFile()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "sort `cat" + grepSortFilePath + "Taxsa.txt | tail -n 1`";
+		String cmdLine = "sort `cat " + grepSortFilePath + "Taxsa.txt | tail -n 1`";
 		expected = shellImpl.performCommandSubstitutionWithException(cmdLine);
 		assertEquals("cat: No such file exists", expected);
 	}
@@ -120,7 +120,7 @@ public class ChainOfInteractionCommandSub {
 	public void testSortGrepWcSedIORedirection()
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "sort `grep *ort testdoc.txt | wc -lmw helloworld.txt | "
-				+ "sed s/a/bbbb slicing.txt > test1.txt`";
+				+ "sed s/a/bbbb/ slicing.txt > test1.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("cal: Too many patterns found", expected);
 	}
@@ -195,6 +195,7 @@ public class ChainOfInteractionCommandSub {
 				+ "greptestdoc2.txt`\"; echo \"this is another test `sort "
 				+ grepSortFilePath + "TestSortMethods.txt`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
+		System.out.println(cmdLine);
 		assertEquals("this is a test Pattern Not Found In File!"
 				+ System.lineSeparator() + "this is another test +125ABab"
 				+ System.lineSeparator(), expected);
@@ -207,6 +208,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt` | echo \"this is another test `wc -l "
 				+ sedWcFilePath + "singleWord.txt`\" | grep e*";
+		// echo `cat folder/GrepAndSortFiles/greptestdoc.txt` | echo "this is another test `wc -l folder/SedAndWCFiles/singleWord.txt`" | grep e*
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("shell: Invalid globbing scenario", expected);
 	}
@@ -217,6 +219,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "cat `sort " + grepSortFilePath
 				+ "greptestdoc.txt` | grep e* | echo \"this is `echo \"this is test\"`\"; ``; \"\"; '' ";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
+		// cat `sort folder/GrepAndSortFiles/greptestdoc.txt` | grep e* | echo "this is `echo "this is test"`"; ``; ""; '' 
 		assertEquals("cat: No such file exists", expected);
 	}
 
@@ -228,6 +231,8 @@ public class ChainOfInteractionCommandSub {
 				+ sedWcFilePath + "wcTestFiles" + File.separatorChar
 				+ "singleWord.txt`\"; sort `cat " + grepSortFilePath
 				+ "greptestdoc.txt`";
+		// echo "this is a test `sed s/e/a/ folder/SedAndWCFiles/helloworld.txt`"; echo "this is another test `wc -l folder/SedAndWCFiles/wcTestFiles/singleWord.txt`"; sort `cat folder/GrepAndSortFiles/greptestdoc.txt`
+
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
 				"sed: Invalid Replacement Rule: Missing separator at the end: Extra arguments",
