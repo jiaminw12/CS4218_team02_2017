@@ -88,11 +88,13 @@ public class CallCommand implements Command {
 		
 			for (int j = 0; j < argsArray.length; j++) {
 				String checker = "";
-				if(argsArray[j].length() >2){
+				if(argsArray[j].length() <2){
+					globbing = false;
+				} else {
 					checker += argsArray[j].substring(argsArray[j].length()-2, argsArray[j].length());
 					if(argsArray[j].contains("*") && !checker.equals(glob)){
 						globbing = false;
-					}
+					}	
 				}
 			}
 		
