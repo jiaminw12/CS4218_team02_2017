@@ -130,26 +130,27 @@ public class SedApplication implements Application, Sed {
 	 */
 	private String readFromStdin(String[] args, InputStream stdin) throws SedException {
 
-		String input = new String();
-		
-		if(PipeCommand.isPipe) {
-			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
-		} else {
-			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-				input = bufferedReader.readLine();
-			} catch (IOException e) {
-				throw new SedException("Cannot Read From Stdin");
-			} 
+		StringBuffer text = new StringBuffer();
+		String str = "";
+
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
+			
+			while((str = bufferedReader.readLine()) != null) {
+				text.append(str);
+				text.append(System.getProperty("line.separator"));
+			}
+			
+		} catch (IOException e) {
+			throw new SedException("Could not read input");
 		}
 		
 		// try to replace substrings
-		if(input == null || input.isEmpty()) {
+		if(text == null || text.toString().isEmpty()) {
 			throw new SedException("Invalid Input");
 		} 
 
-		return input;
+		return text.toString().trim();
 	}
 
 	/**
