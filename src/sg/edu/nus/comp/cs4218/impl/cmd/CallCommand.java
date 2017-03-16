@@ -94,31 +94,46 @@ public class CallCommand implements Command {
 					resultArr.add(argsArray[i]);
 				}
 			}
-			argsArray = new String[resultArr.size()];
+			
 			for (int i=0; i<resultArr.size(); i++){
-				
 				if(resultArr.get(i).contains(".DS_Store")){
 					resultArr.remove(i);
-				}else{
-					argsArray[i] = resultArr.get(i);
 				}	
-		}
+			}
+			
+		switch(argsArray[0]){
+						
+					case "sed" :
+						argsArray[1] = resultArr.get(1);
+					
+					case "head" :
+						argsArray[1] = resultArr.get(1);
+							
+					case "tail" :
+						argsArray[1] = resultArr.get(resultArr.size()-1);
+						
+					default:
+						argsArray = new String[resultArr.size()];
+						for (int i=0; i<resultArr.size(); i++){
+							argsArray[i] = resultArr.get(i);	
+						}
+			}
 
-		if (("").equals(inputStreamS)) {// empty
-			inputStream = stdin;
-		} else { // not empty
-			inputStream = ShellImpl.openInputRedir(inputStreamS);
-		}
-		if (("").equals(outputStreamS)) { // empty
-			outputStream = stdout;
-		} else {
-			outputStream = ShellImpl.openOutputRedir(outputStreamS);
-		}
-		
-		ShellImpl.runApp(app, argsArray, inputStream, outputStream);
-		ShellImpl.closeInputStream(inputStream);
-		ShellImpl.closeOutputStream(outputStream);
-		}
+			if (("").equals(inputStreamS)) {// empty
+				inputStream = stdin;
+			} else { // not empty
+				inputStream = ShellImpl.openInputRedir(inputStreamS);
+			}
+			if (("").equals(outputStreamS)) { // empty
+				outputStream = stdout;
+			} else {
+				outputStream = ShellImpl.openOutputRedir(outputStreamS);
+			}
+			
+			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
+			ShellImpl.closeInputStream(inputStream);
+			ShellImpl.closeOutputStream(outputStream);
+			}
 	}
 
 	/**
