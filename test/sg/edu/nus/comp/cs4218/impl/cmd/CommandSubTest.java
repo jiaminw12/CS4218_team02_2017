@@ -136,7 +136,7 @@ public class CommandSubTest {
 
 	@Test
 	public void testCommandSubWithPipeHeadWithNoOptions() throws Exception {
-		String cmdLine = "echo `cat farfaraway.txt | head`";
+		String cmdLine = "echo `cat farfaraway.txt | head -n9`";
 		String result = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
 				"Far far away, behind the word mountains, far from the countries "
