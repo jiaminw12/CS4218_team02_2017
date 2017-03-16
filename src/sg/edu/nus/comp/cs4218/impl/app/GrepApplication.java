@@ -292,36 +292,27 @@ public class GrepApplication implements Application, Grep {
 	}
 
 	public String readFromInputStream(InputStream stdin) {
-		String input = "";
-		String line;
-		int lineCount = 0;
-		if (PipeCommand.isPipe) {
-			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors
-							.joining(System.getProperty("line.separator")));
-		} else {
-			try {
-				BufferedReader bufferedReader = new BufferedReader(
-						new InputStreamReader(stdin));
-				line = bufferedReader.readLine();
-				while (line != null) {
-					if (lineCount == 0) {
-						input = line;
-					} else {
-						input = input + System.lineSeparator() + line;
-					}
-					lineCount++;
-					line = bufferedReader.readLine();
-				}
-			} catch (IOException e) {
+		StringBuffer text = new StringBuffer();
+		String str = "";
+
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
+			
+			while((str = bufferedReader.readLine()) != null) {
+				text.append(str);
+				text.append(System.getProperty("line.separator"));
 			}
+			
+		} catch (IOException e) {
+			
 		}
-
+		
 		// try to replace substrings
-		if (input == null || input.isEmpty()) {
-		}
+		if(text == null || text.toString().isEmpty()) {
+			
+		} 
 
-		return input;
+		return text.toString().trim();
 	}
 
 	public void setData(Object readFromInputStream) {
