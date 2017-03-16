@@ -86,13 +86,15 @@ public class CallCommand implements Command {
 			argsArray = ShellImpl.processBQ(argsArray);
 		}
 		
-		for (int j = 0; j < argsArray.length; j++) {
-			String checker = "";
-			checker += argsArray[j].substring(argsArray[j].length()-2, argsArray[j].length());
-			if(argsArray[j].contains("*") && !checker.equals(glob)){
-				globbing = false;
+			for (int j = 0; j < argsArray.length; j++) {
+				String checker = "";
+				if(argsArray[j].length() >2){
+					checker += argsArray[j].substring(argsArray[j].length()-2, argsArray[j].length());
+					if(argsArray[j].contains("*") && !checker.equals(glob)){
+						globbing = false;
+					}
+				}
 			}
-		}
 		
 		if(globbing){
 			for (int i = 0; i < argsArray.length; i++) {

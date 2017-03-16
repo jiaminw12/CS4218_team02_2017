@@ -18,7 +18,9 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 public class GlobbingTest {
 
 	private static ShellImpl shell;
-	private static String test_folder_name = "test_globbing";
+	private static String test_folder_name = "folder/SedAndWCFiles";
+	private static String test_folder_name_2 = "folder/SedAndWCFiles/sedTestFiles"; 
+	private static String test_file_name = "/wcTestFiles";
 	private static final String[] FILE_NAMES = { "testGlobe.txt",
 			"testGlobe.py", "testGlobe.cpp", "testGlobe.html", "testGlobe.css",
 			"testGlobe.js", "testGlobe.xml" };
@@ -87,16 +89,22 @@ public class GlobbingTest {
 	@Test
 	public void testGlobbingWithOneLevel()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name + "/*";
+		String cmdLine = "cat " + test_folder_name_2 + "/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		assertEquals("Test Test Test Test Test Test Test Test", stdout.toString());
+		
+		String expected = System.lineSeparator() +"0123456789"+ System.lineSeparator() + "Hey, good to know <you>!" + 
+				System.lineSeparator() + "This is a small file consists of {1+1+0} lines."+ 
+				System.lineSeparator() + "/* Hope this helps */ # no new line here" + System.lineSeparator();
+		
+		assertEquals(expected, stdout.toString());
 	}
 
 	@Test
 	public void testGlobbingMultiLevel() throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name + "/testSubSubDir/*";
+		String cmdLine = "cat " + test_folder_name + test_file_name + "/*";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		assertEquals("Test", stdout.toString());
+		String expected = System.lineSeparator() +"Hello"+ System.lineSeparator() + "";
+		assertEquals(expected, stdout.toString());
 	}
 
 	@Test
