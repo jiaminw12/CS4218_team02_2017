@@ -85,7 +85,7 @@ public class PipeCommandTest {
 	public void testPipeTwoCommandsExceptionInFirstCommand() {
 		args = "cat test.txt | cat test1.txt";
 		result = shellImpl.pipeTwoCommands(args);
-		assertEquals("cat: Exception Caught", result);
+		assertEquals("cat: No such file exists", result);
 	}
 	
 	@Test

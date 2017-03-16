@@ -3,6 +3,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ public class SedApplicationTest {
 	@Before
 	public void setup() {
 		sedApplication = new SedApplication();
+		stdout = new ByteArrayOutputStream();
 		
 		try {
 			Path file1 = Paths.get("test1.txt");
@@ -76,7 +78,6 @@ public class SedApplicationTest {
 	public void testSedInsufficientArgs() throws SedException {
 		String[] args = new String[] { "sed" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -84,7 +85,6 @@ public class SedApplicationTest {
 	public void testExtraArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/", "test1.txt", "test2.txt" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -92,7 +92,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleExtraSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi//bye/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -100,7 +99,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleExtraSeparators() throws SedException {
 		String[] args = new String[] { "sed", "s/hi///g" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -108,7 +106,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleExtraSpace() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/ /bye/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -116,7 +113,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleInsufficientArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/g/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -124,7 +120,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleExtraArgs() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/test/bye/g" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -132,7 +127,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleMissingSeparatorBehind() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -140,7 +134,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleS() throws SedException {
 		String[] args = new String[] { "sed", "g/hi/bye/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -148,7 +141,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleG() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/s" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -156,7 +148,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleLongS() throws SedException {
 		String[] args = new String[] { "sed", "sss/hi/bye/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -164,7 +155,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleLongG() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/ggg" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -172,7 +162,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleMissingSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -180,7 +169,6 @@ public class SedApplicationTest {
 	public void testInvalidReplacementRuleRedundantSeparator() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/g/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	
@@ -188,7 +176,6 @@ public class SedApplicationTest {
 	public void testReplaceFirstSubStringFromStdinFromRun() {
 		String[] args = { "sed", "s/the/to-her/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -201,7 +188,6 @@ public class SedApplicationTest {
 	public void testReplaceFirstSubStringFromStdinRepeatedWordsFromRun() {
 		String[] args = { "sed", "s/lol/yea/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -214,7 +200,6 @@ public class SedApplicationTest {
 	public void testReplaceAllSubStringInStdinFromRun() {
 		String[] args = { "sed", "s/the/to-her/g" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -227,7 +212,6 @@ public class SedApplicationTest {
 	public void testReplaceAllSubStringInStdinRepeatedWordsFromRun() {
 		String[] args = { "sed", "s/lol/~yea~/" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -240,7 +224,6 @@ public class SedApplicationTest {
 	public void testReplaceFirstSubStringInFileFromRun() {
 		String[] args = { "sed", "s/the/to-her/", "test1.txt" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -253,7 +236,6 @@ public class SedApplicationTest {
 	public void testReplaceFirstSubStringInFileRepeatedWordsFromRun() {
 		String[] args = { "sed", "s/lol/yea!/", "test2.txt" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -266,7 +248,6 @@ public class SedApplicationTest {
 	public void testReplaceAllSubStringsInFileFromRun() {
 		String[] args = { "sed", "s/the/to-her/g", "test1.txt" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -279,7 +260,6 @@ public class SedApplicationTest {
 	public void testReplaceAllSubStringsInFileRepeatedWordsFromRun() {
 		String[] args = { "sed", "s/lol/~yea~/g", "test2.txt" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		
 		try {
 			sedApplication.run(args, stdin, stdout);
@@ -292,7 +272,6 @@ public class SedApplicationTest {
 	public void testInvalidFileName() throws SedException {
 		String args = "sed s/hi/bye/g hello.txt" ;
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		String result = sedApplication.replaceFirstSubStringInFile(args);
 		assertEquals("sed: Could not read file", result);
 	}
@@ -301,7 +280,6 @@ public class SedApplicationTest {
 	public void testInvalidFileNameGivenDirectory() throws SedException {
 		String[] args = new String[] { "sed", "s/hi/bye/g/", "folder" };
 		stdin = new ByteArrayInputStream(TEXT1.getBytes());
-		stdout = System.out;
 		sedApplication.run(args, stdin, stdout);
 	}
 	

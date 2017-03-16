@@ -76,7 +76,8 @@ public class SedApplication implements Application, Sed {
 		} else if(args.length > 3) {
 			throw new SedException("Invalid Arguments");
 		} else {
-			String text = new String();
+			String text;
+			text = "";
 			for(int i = 0; i < args.length; i++) {
 				text += args[i] + " ";
 			}
@@ -130,26 +131,27 @@ public class SedApplication implements Application, Sed {
 	 */
 	private String readFromStdin(String[] args, InputStream stdin) throws SedException {
 
-		String input = new String();
-		
-		if(PipeCommand.isPipe) {
-			input = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
-		} else {
-			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin));
-				input = bufferedReader.readLine();
-			} catch (IOException e) {
-				throw new SedException("Cannot Read From Stdin");
-			} 
+		StringBuffer text = new StringBuffer();
+		String str = "";
+
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
+			
+			while((str = bufferedReader.readLine()) != null) {
+				text.append(str);
+				text.append(System.getProperty("line.separator"));
+			}
+			
+		} catch (IOException e) {
+			throw new SedException("Could not read input");
 		}
 		
 		// try to replace substrings
-		if(input == null || input.isEmpty()) {
+		if(text == null || text.toString().isEmpty()) {
 			throw new SedException("Invalid Input");
 		} 
 
-		return input;
+		return text.toString().trim();
 	}
 
 	/**
@@ -227,7 +229,7 @@ public class SedApplication implements Application, Sed {
 	 *             If the file(s) specified do not exist or are unreadable.
 	 */
 	String[] getReplacementRule(String[] args) throws SedException {
-		String cmdline = new String();
+		String cmdline = "";
 		for(int i = 0; i < args.length; i++) {
 			cmdline += args[i] + " ";
 		}
@@ -274,11 +276,12 @@ public class SedApplication implements Application, Sed {
 		String[] splitLine = text.split(System.getProperty("line.separator"));
 		String[] replacementRule = getReplacementRule(args);
 		Pattern pattern;
+		String finalText = "";
 
 		if(replacementRule != null) {
 			String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
 			String replacement = replacementRule[2].replaceAll("\"", "").replaceAll("'", ""); 
-			text = new String();
+
 			
 			try {
 				pattern = Pattern.compile(regexp);
@@ -289,18 +292,18 @@ public class SedApplication implements Application, Sed {
 			for(int i = 0; i < splitLine.length; i++) {
 				try {
 					Matcher matcher = pattern.matcher(splitLine[i]);
-					text += matcher.replaceFirst(replacement);
+					finalText += matcher.replaceFirst(replacement);
 				} catch (PatternSyntaxException e) {
 					throw new SedException(replaceSubstringWithInvalidReplacement(text));
 				}
 				
 				if(i < splitLine.length - 1) {
-					text += System.getProperty("line.separator");
+					finalText += System.getProperty("line.separator");
 				}
 			}
 		}
 
-		return text;
+		return finalText;
 	}
 
 	/**
@@ -319,6 +322,7 @@ public class SedApplication implements Application, Sed {
 
 		String[] replacementRule = getReplacementRule(args);
 		Pattern pattern;
+		String finalText = "";
 
 		if(replacementRule != null) {
 			String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
@@ -332,13 +336,13 @@ public class SedApplication implements Application, Sed {
 			
 			try {
 				Matcher matcher = pattern.matcher(text);
-				text = matcher.replaceAll(replacement);
+				finalText = matcher.replaceAll(replacement);
 			} catch (PatternSyntaxException e) {
 				throw new SedException(replaceSubstringWithInvalidReplacement(text));
 			}
 		} 
 
-		return text;
+		return finalText;
 	}
 	
 	/**
@@ -383,7 +387,7 @@ public class SedApplication implements Application, Sed {
 	public String replaceFirstSubStringInFile(String args) {
 		
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
-		String text = new String();
+		String text;
 
 		try {
 			text = readFromFile(splitArgs);
@@ -399,7 +403,7 @@ public class SedApplication implements Application, Sed {
 	public String replaceAllSubstringsInFile(String args) {
 
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
-		String text = new String();
+		String text = "";
 
 		try {
 			text = readFromFile(splitArgs);
@@ -415,7 +419,7 @@ public class SedApplication implements Application, Sed {
 	public String replaceFirstSubStringFromStdin(String args, InputStream stdin) {
 		
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
-		String text = new String();
+		String text;
 		try {
 			text = readFromStdin(splitArgs, stdin);
 			text = replaceFirstSubString(text, splitArgs);
@@ -430,7 +434,7 @@ public class SedApplication implements Application, Sed {
 	public String replaceAllSubstringsInStdin(String args, InputStream stdin) {
 		
 		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
-		String text = new String();
+		String text;
 
 		try {
 			text = readFromStdin(splitArgs, stdin);

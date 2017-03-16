@@ -60,7 +60,6 @@ public class IORedirectionTest {
 		assertEquals("shell: Invalid syntax encountered.", result);
 	}
 	
-	// FAIL??? USING NULL VALUE?
 	@Test(expected = ShellException.class)
 	public void testOutputRedirectionWithEmtpyFileFromShell() throws Exception {
 		String cmdLine = "cat > ";

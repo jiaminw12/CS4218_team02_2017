@@ -226,30 +226,28 @@ public class TailApplication implements Application {
 	 *            An InputStream. The input for the command is read from this
 	 *            InputStream if no files are specified.
 	 */
-	private String readFromStdin(String[] args, InputStream stdin)
-			throws TailException {
+	private String readFromStdin(String[] args, InputStream stdin) throws TailException {
 
-		String userInput = "";
+		StringBuffer text = new StringBuffer();
+		String str = "";
 
-		if (PipeCommand.isPipe) {
-			userInput = new BufferedReader(new InputStreamReader(stdin)).lines()
-					.parallel().collect(Collectors
-							.joining(System.getProperty("line.separator")));
-		} else {
-			try {
-				BufferedReader bufferedReader = new BufferedReader(
-						new InputStreamReader(stdin));
-				userInput = bufferedReader.readLine();
-			} catch (IOException e) {
-				throw new TailException("Cannot Read From Stdin");
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
+			
+			while((str = bufferedReader.readLine()) != null) {
+				text.append(str);
+				text.append(System.getProperty("line.separator"));
 			}
+			
+		} catch (IOException e) {
+			throw new TailException("Could not read input");
 		}
-
+		
 		// try to replace substrings
-		if (userInput == null || userInput.isEmpty()) {
+		if(text == null || text.toString().isEmpty()) {
 			throw new TailException("Invalid Input");
-		}
+		} 
 
-		return userInput;
+		return text.toString().trim();
 	}
 }

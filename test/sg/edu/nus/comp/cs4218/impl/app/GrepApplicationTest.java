@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -15,17 +16,8 @@ import org.junit.Test;
 import sg.edu.nus.comp.cs4218.exception.GrepException;
 import sg.edu.nus.comp.cs4218.impl.app.GrepApplication;
 
-/*
- * Assumptions: 
- * 1) run function will call the correct functions with the correct inputs in the correct order separated by a space
- * 2) Run function will take inputs directly from shell unordered
- * 3) Args for run: unordered consisting of pattern and files
- * 4) Args for grepFromOneFile: pattern, file
- * 5) Args for grepFromMultipleFiles: pattern, file, file, ...
- * 6) Args for grepFromStdin: pattern (Stdin will be parsed from run)
- */
-
 public class GrepApplicationTest {
+	private static final char FILE_SEPARATOR = File.separatorChar;
 	private static final String REGEXMULTIOUT = "Hello Hello\nABC Hello\nello milo";
 	private static final String NOMATCHFILE = "Pattern Not Found In File!";
 	private static final String REGEXPATTERNOUT = "Hello Hello\nABC Hello";
@@ -48,7 +40,8 @@ public class GrepApplicationTest {
 	@Before
 	public void setUp() throws FileNotFoundException {
 		grepApp = new GrepApplication();
-		directory = "test/sg/edu/nus/comp/cs4218/impl/app/";
+		directory = String.format("folder%sGrepAndSortFiles%s", FILE_SEPARATOR,
+				FILE_SEPARATOR);
 		stdin = new FileInputStream(directory + "greptestdoc.txt");
 		fileName = directory + "greptestdoc.txt";
 		fileName2 = directory + "greptestdoc2.txt";
@@ -66,7 +59,7 @@ public class GrepApplicationTest {
 		args[1] = HIEPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(NOMATCHSTDIN + "\n", baos.toString());
+		assertEquals(NOMATCHSTDIN + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
@@ -84,7 +77,8 @@ public class GrepApplicationTest {
 		args[1] = ABCPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(ABCSINGLEFILEOUT + "\n", baos.toString());
+		assertEquals(ABCSINGLEFILEOUT + System.lineSeparator(),
+				baos.toString());
 	}
 
 	@Test
@@ -92,7 +86,8 @@ public class GrepApplicationTest {
 		args = new String[2];
 		args[0] = "grep";
 		args[1] = ABCPATTERN;
-		ByteArrayInputStream in = new ByteArrayInputStream(ABCSINGLEFILEOUT.getBytes());
+		ByteArrayInputStream in = new ByteArrayInputStream(
+				ABCSINGLEFILEOUT.getBytes());
 		assertEquals(ABCSINGLEFILEOUT, grepApp.grepFromStdin(args[1], in));
 	}
 
@@ -103,7 +98,7 @@ public class GrepApplicationTest {
 		args[1] = REGEXPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(REGEXPATTERNOUT + "\n", baos.toString());
+		assertEquals(REGEXPATTERNOUT + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
@@ -121,50 +116,84 @@ public class GrepApplicationTest {
 		args[2] = fileName;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(NOMATCHFILE + "\n", baos.toString());
+		assertEquals(NOMATCHFILE + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
-	public void grepSingleFileMultipleMatchesInALineFromRun() throws GrepException {
+	public void grepSingleFileMultipleMatchesInALineFromRun()
+			throws GrepException {
 		args = new String[3];
 		args[0] = "grep";
 		args[1] = "h";
 		args[2] = fileName3;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals("Boisterous he on understood attachment as entreaties ye devonshire.\n"
-				+ "Extremely ham any his departure for contained curiosity defective.\n"
-				+ "Way now instrument had eat diminution melancholy expression sentiments stimulated.\n"
-				+ "Mrs interested now his affronting inquietude contrasted cultivated.\n"
-				+ "Lasting showing expense greater on colonel no.\n"
-				+ "Prepared do an dissuade be so whatever steepest.\n"
-				+ "Yet her beyond looked either day wished nay.\n"
-				+ "Now curiosity you explained immediate why behaviour.\n"
-				+ "An dispatched impossible of of melancholy favourable.\n"
-				+ "Our quiet not heart along scale sense timed.\n"
-				+ "Consider may dwelling old him her surprise finished families graceful.\n"
-				+ "Is at purse tried jokes china ready decay an.\n" + "Small its shy way had woody downs power.\n"
-				+ "Procured shutters mr it feelings.\n" + "To or three offer house begin taken am at.\n"
-				+ "As dissuade cheerful overcame so of friendly he indulged unpacked.\n"
-				+ "An seeing feebly stairs am branch income me unable.\n"
-				+ "Celebrated contrasted discretion him sympathize her collecting occasional.\n"
-				+ "Do answered bachelor occasion in of offended no concerns.\n"
-				+ "Supply worthy warmth branch of no ye.\n" + "Though wished merits or be.\n"
-				+ "Alone visit use these smart rooms ham.\n" + "Course sir people worthy horses add entire suffer.\n"
-				+ "Strictly numerous outlived kindness whatever on we no on addition.\n"
-				+ "Are sentiments apartments decisively the especially alteration.\n"
-				+ "Thrown shy denote ten ladies though ask saw.\n" + "Or by to he going think order event music.\n"
-				+ "Led income months itself and houses you. After nor you leave might share court balls.\n",
+		assertEquals(
+				"Boisterous he on understood attachment as entreaties ye devonshire."
+						+ System.lineSeparator()
+						+ "Extremely ham any his departure for contained curiosity defective."
+						+ System.lineSeparator()
+						+ "Way now instrument had eat diminution melancholy expression sentiments stimulated."
+						+ System.lineSeparator()
+						+ "Mrs interested now his affronting inquietude contrasted cultivated."
+						+ System.lineSeparator()
+						+ "Lasting showing expense greater on colonel no."
+						+ System.lineSeparator()
+						+ "Prepared do an dissuade be so whatever steepest."
+						+ System.lineSeparator()
+						+ "Yet her beyond looked either day wished nay."
+						+ System.lineSeparator()
+						+ "Now curiosity you explained immediate why behaviour."
+						+ System.lineSeparator()
+						+ "An dispatched impossible of of melancholy favourable."
+						+ System.lineSeparator()
+						+ "Our quiet not heart along scale sense timed."
+						+ System.lineSeparator()
+						+ "Consider may dwelling old him her surprise finished families graceful."
+						+ System.lineSeparator()
+						+ "Is at purse tried jokes china ready decay an."
+						+ System.lineSeparator()
+						+ "Small its shy way had woody downs power."
+						+ System.lineSeparator()
+						+ "Procured shutters mr it feelings."
+						+ System.lineSeparator()
+						+ "To or three offer house begin taken am at."
+						+ System.lineSeparator()
+						+ "As dissuade cheerful overcame so of friendly he indulged unpacked."
+						+ System.lineSeparator()
+						+ "An seeing feebly stairs am branch income me unable."
+						+ System.lineSeparator()
+						+ "Celebrated contrasted discretion him sympathize her collecting occasional."
+						+ System.lineSeparator()
+						+ "Do answered bachelor occasion in of offended no concerns."
+						+ System.lineSeparator()
+						+ "Supply worthy warmth branch of no ye."
+						+ System.lineSeparator() + "Though wished merits or be."
+						+ System.lineSeparator()
+						+ "Alone visit use these smart rooms ham."
+						+ System.lineSeparator()
+						+ "Course sir people worthy horses add entire suffer."
+						+ System.lineSeparator()
+						+ "Strictly numerous outlived kindness whatever on we no on addition."
+						+ System.lineSeparator()
+						+ "Are sentiments apartments decisively the especially alteration."
+						+ System.lineSeparator()
+						+ "Thrown shy denote ten ladies though ask saw."
+						+ System.lineSeparator()
+						+ "Or by to he going think order event music."
+						+ System.lineSeparator()
+						+ "Led income months itself and houses you. After nor you leave might share court balls."
+						+ System.lineSeparator(),
 				baos.toString());
 	}
 
 	@Test
 	public void grepSingleFileNoMatches() throws GrepException {
 		args = new String[2];
-		grepApp.setData(grepApp.readFromFile(fileName));
 		args[0] = HIEPATTERN;
 		args[1] = fileName;
-		assertEquals(NOMATCHFILE, grepApp.grepFromOneFile(args[0] + " " + args[1]));
+		assertEquals(NOMATCHFILE,
+				grepApp.grepFromOneFile(args[0] + " " + args[1]));
 	}
 
 	@Test
@@ -175,36 +204,37 @@ public class GrepApplicationTest {
 		args[2] = fileName;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(ABCSINGLEFILEOUT + "\n", baos.toString());
+		assertEquals(ABCSINGLEFILEOUT + System.lineSeparator(),
+				baos.toString());
 	}
 
 	@Test
 	public void grepSingleFileMatches() throws GrepException {
 		args = new String[2];
-		grepApp.setData(grepApp.readFromFile(fileName));
 		args[0] = ABCPATTERN;
 		args[1] = fileName;
-		assertEquals(ABCSINGLEFILEOUT, grepApp.grepFromOneFile(args[0] + " " + args[1]));
+		assertEquals(ABCSINGLEFILEOUT,
+				grepApp.grepFromOneFile(args[0] + " " + args[1]));
 	}
 
 	@Test
 	public void grepSingleFileRegexMatchesFromRun() throws GrepException {
 		args = new String[3];
-		args[0] = "grep"; 
+		args[0] = "grep";
 		args[1] = REGEXPATTERN;
 		args[2] = fileName;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(REGEXPATTERNOUT + "\n", baos.toString());
+		assertEquals(REGEXPATTERNOUT + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
 	public void grepSingleFileRegexMatches() throws GrepException {
 		args = new String[2];
-		grepApp.setData(grepApp.readFromFile(fileName));
 		args[0] = REGEXPATTERN;
 		args[1] = fileName;
-		assertEquals(REGEXPATTERNOUT, grepApp.grepFromOneFile(args[0] + " " + args[1]));
+		assertEquals(REGEXPATTERNOUT,
+				grepApp.grepFromOneFile(args[0] + " " + args[1]));
 	}
 
 	@Test
@@ -216,17 +246,17 @@ public class GrepApplicationTest {
 		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(NOMATCHFILE + "\n", baos.toString());
+		assertEquals(NOMATCHFILE + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
 	public void grepMultipleFileNoMatches() throws GrepException {
 		args = new String[3];
-		grepApp.setData(grepApp.readFromFile(fileName) + "\n" + grepApp.readFromFile(fileName2));
 		args[0] = HIEPATTERN;
 		args[1] = fileName;
 		args[2] = fileName2;
-		assertEquals(NOMATCHFILE, grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals(NOMATCHFILE, grepApp.grepFromMultipleFiles(
+				args[0] + " " + args[1] + " " + args[2]));
 	}
 
 	@Test
@@ -238,28 +268,31 @@ public class GrepApplicationTest {
 		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals("ABCDEFGHI\nDEF" + "\n", baos.toString());
+		assertEquals("ABCDEFGHI" + System.lineSeparator() + "DEF"
+				+ System.lineSeparator(), baos.toString());
 	}
 
 	@Test
 	public void grepMultipleFileMatches() throws GrepException {
 		args = new String[3];
-		grepApp.setData(grepApp.readFromFile(fileName) + "\n" + grepApp.readFromFile(fileName2));
 		args[0] = "DEF";
 		args[1] = fileName;
 		args[2] = fileName2;
-		assertEquals("ABCDEFGHI\nDEF", grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals("ABCDEFGHI" + System.lineSeparator() + "DEF",
+				grepApp.grepFromMultipleFiles(
+						args[0] + " " + args[1] + " " + args[2]));
 	}
 
 	@Test
 	public void grepMultipleFileInvalidMatches() throws GrepException {
 		args = new String[4];
-		grepApp.setData(grepApp.readFromFile(fileName) + "\n" + grepApp.readFromFile(fileName2));
 		args[0] = "DEF";
 		args[1] = invalidFile;
 		args[2] = fileName2;
 		args[3] = fileName;
-		assertEquals("DEF\nABCDEFGHI", grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " " + args[2] + " " + args[3] ));
+		assertEquals("DEF" + System.lineSeparator() + "ABCDEFGHI",
+				grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " "
+						+ args[2] + " " + args[3]));
 	}
 
 	@Test
@@ -271,17 +304,17 @@ public class GrepApplicationTest {
 		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(REGEXMULTIOUT + "\n", baos.toString());
+		assertEquals(REGEXMULTIOUT + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
 	public void grepMultipleFileRegexMatches() throws GrepException {
 		args = new String[3];
-		grepApp.setData(grepApp.readFromFile(fileName) + "\n" + grepApp.readFromFile(fileName2));
 		args[0] = REGEXPATTERN;
 		args[1] = fileName;
 		args[2] = fileName2;
-		assertEquals(REGEXMULTIOUT, grepApp.grepFromMultipleFiles(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals(REGEXMULTIOUT, grepApp.grepFromMultipleFiles(
+				args[0] + " " + args[1] + " " + args[2]));
 	}
 
 	@Test
@@ -293,7 +326,7 @@ public class GrepApplicationTest {
 		args[3] = fileName2;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(REGEXMULTIOUT + "\n", baos.toString());
+		assertEquals(REGEXMULTIOUT + System.lineSeparator(), baos.toString());
 	}
 
 	@Test
@@ -305,32 +338,7 @@ public class GrepApplicationTest {
 		args[3] = REGEXPATTERN;
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
-		assertEquals(REGEXMULTIOUT + "\n", baos.toString());
-	}
-
-	@Test
-	public void grepMultiFileDirectoryFromRun() throws GrepException {
-		args = new String[5];
-		args[0] = "grep";
-		args[1] = fileName;
-		args[2] = fileName2;
-		args[3] = REGEXPATTERN;
-		args[4] = directory;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-		assertEquals(REGEXMULTIOUT + "\n", baos.toString());
-	}
-
-	@Test
-	public void grepDirectoryWithFileFromRun() throws GrepException {
-		args = new String[4];
-		args[0] = "grep";
-		args[1] = REGEXPATTERN;
-		args[2] = fileName;
-		args[3] = directory;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-		assertEquals(REGEXPATTERNOUT + "\n", baos.toString());
+		assertEquals(REGEXMULTIOUT + System.lineSeparator(), baos.toString());
 	}
 
 	@Test(expected = GrepException.class)
@@ -361,16 +369,6 @@ public class GrepApplicationTest {
 	}
 
 	@Test(expected = GrepException.class)
-	public void grepDirectoryFromRun() throws GrepException {
-		args = new String[3];
-		args[0] = "grep";
-		args[1] = REGEXPATTERN;
-		args[2] = directory;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-	}
-
-	@Test(expected = GrepException.class)
 	public void grepMultiplePatternFromRun() throws GrepException {
 		args = new String[4];
 		args[0] = "grep";
@@ -380,18 +378,7 @@ public class GrepApplicationTest {
 		grepApp.run(args, stdin, System.out);
 		System.out.flush();
 	}
-
-	@Test(expected = GrepException.class)
-	public void invalidRegexFromRun() throws GrepException {
-		args = new String[4];
-		args[0] = "grep";
-		args[1] = "[";
-		args[2] = fileName2;
-		args[3] = fileName;
-		grepApp.run(args, stdin, System.out);
-		System.out.flush();
-	}
-
+	
 	@Test(expected = GrepException.class)
 	public void invalidRegexFileFromRun() throws GrepException {
 		args = new String[4];
@@ -400,6 +387,25 @@ public class GrepApplicationTest {
 		args[2] = fileName2;
 		args[3] = fileName;
 		grepApp.run(args, stdin, System.out);
+		System.out.flush();
+	}
+	
+	@Test
+	public void invalidPatternInFile() throws GrepException {
+		args = new String[3];
+		args[0] = "grep";
+		args[1] = "[";
+		args[2] = fileName2;
+		assertEquals("grep: No pattern detected", grepApp.grepInvalidPatternInFile(args[0] + " " + args[1] + " " + args[2]));
+	}
+	
+	@Test(expected = GrepException.class)
+	public void invalidPatternInStdin() throws GrepException {
+		args = new String[2];
+		args[0] = "grep";
+		args[1] = "[";
+		ByteArrayInputStream in = new ByteArrayInputStream(fileName.getBytes());
+		grepApp.run(args, in, System.out);
 		System.out.flush();
 	}
 
