@@ -83,8 +83,8 @@ public class CallCommand implements Command {
 			argsArray = ShellImpl.processBQ(argsArray);
 		}
 		
-		for (int i = 0; i < argsArray.length; i++) {
-			if(!argsArray[i].contains("*")){
+		for (int j = 0; j < argsArray.length; j++) {
+			if(!(argsArray[j].contains("* "))){
 				globbing = false;
 			}
 		}
@@ -123,6 +123,7 @@ public class CallCommand implements Command {
 							argsArray[i] = resultArr.get(i);	
 						}
 			}
+		}
 
 			if (("").equals(inputStreamS)) {// empty
 				inputStream = stdin;
@@ -138,7 +139,6 @@ public class CallCommand implements Command {
 			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 			ShellImpl.closeInputStream(inputStream);
 			ShellImpl.closeOutputStream(outputStream);
-			}
 	}
 
 	/**
