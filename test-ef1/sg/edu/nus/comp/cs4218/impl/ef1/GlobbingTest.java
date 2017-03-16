@@ -65,7 +65,7 @@ public class GlobbingTest {
 
 	}
 	
-	@Test(expected = ShellException.class)
+	@Test(expected = Exception.class)
 	public void testInvalidPath()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + test_folder_name + "/*/invalid";
