@@ -391,14 +391,35 @@ public class ShellImpl implements Shell {
 
 		return result;
 	}
-
+	
+	/**
+	 * Main method accessed to process globbing command.
+	 * 
+	 * @param args
+	 *            String of entire globbing command
+	 * 
+	 * @return result
+	 * 			  String returns path of all files separated by a space character.
+	 * 
+	 * @throws ShellException
+	 *             If exception is thrown due to invalid command.
+	 */
 	public static String processGlob(String args) throws ShellException {
 		ShellImpl shell = new ShellImpl();
 		result = "";
 		root = "";
 		return shell.globWithException(args);
 	}
-
+	
+	/**
+	 * Processes command if there is no globbing path
+	 * 
+	 * @param String[]
+	 *            command separated into separate arguments
+	 * 
+	 * @return String is empty to indicate no path.
+	 * 
+	 */
 	@Override
 	public String globNoPaths(String[] args) {
 		if (!args[0].equals("*")) {
@@ -408,12 +429,30 @@ public class ShellImpl implements Shell {
 		}
 	}
 
+	/**
+	 * Processes file found in globbing path
+	 * 
+	 * @param String
+	 *            file name
+	 * 
+	 * @return String file name.
+	 * 
+	 */
 	@Override
 	public String globOneFile(String args) {
 		String result = args;
 		return result;
 	}
-
+	
+	/**
+	 * Processes directory name which appeared in globbing path
+	 * 
+	 * @param String[]
+	 *            command separated into separate arguments
+	 * 
+	 * @return String is empty if no directory path, if not it contains directory path.
+	 * 
+	 */
 	@Override
 	public String globFilesDirectories(String[] args) {
 		String[] resultArr = new String[args.length];
@@ -432,6 +471,18 @@ public class ShellImpl implements Shell {
 		return result;
 	}
 
+	/**
+	 * Processes globbing command entirely.
+	 * 
+	 * @param args
+	 *            String of entire globbing command
+	 * 
+	 * @return result
+	 * 			  String returns path of all files separated by a space character.
+	 * 
+	 * @throws ShellException
+	 *             If exception is thrown due to invalid command.
+	 */
 	@Override
 	public String globWithException(String arg) throws ShellException {
 		try{
