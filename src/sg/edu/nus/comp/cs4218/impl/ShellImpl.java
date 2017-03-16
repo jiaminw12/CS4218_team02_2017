@@ -442,7 +442,6 @@ public class ShellImpl implements Shell {
 		ShellImpl shell = new ShellImpl();
 		result = "";
 		root = "";
-		System.out.println(shell.globWithException(args));
 		return shell.globWithException(args);
 	}
 
@@ -477,6 +476,7 @@ public class ShellImpl implements Shell {
 
 	@Override
 	public String globWithException(String arg) throws ShellException {
+		
 		try{
 			ShellImpl shell = new ShellImpl();
 			String directory = "";
@@ -507,7 +507,8 @@ public class ShellImpl implements Shell {
 				for (int j = 0; j < filesList.length; j++) {
 					
 					File thisFile = new File(filesList[j]);
-					if((thisFile.isFile() || thisFile.getName().contains(".txt")) && !(thisFile.getName().equals(".DS_Store"))){
+					
+					if(thisFile.isFile() || thisFile.getName().contains(".txt")){
 						result += "/" + root + globOneFile(thisFile.getName()) + " ";
 						if(j == filesList.length-1){
 							String backroot = root.substring(0, root.substring(0,root.length()-1).lastIndexOf("/")+1);
