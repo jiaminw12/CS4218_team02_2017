@@ -66,28 +66,28 @@ public class SortApplication implements Application, Sort {
 		}
 
 		// Remove sort command
-		args = removeCommand(args);
+		String[] removeCommandArgs = removeCommand(args);
 		List<String> arrList = new ArrayList<>();
-		if(args != null) {
-			for(int i = 0; i < args.length; i++) {
-				arrList.add(args[i]);
+		if(removeCommandArgs != null) {
+			for(int i = 0; i < removeCommandArgs.length; i++) {
+				arrList.add(removeCommandArgs[i]);
 			}
 		}
 
-		if(args != null && args.length == 0) {
-			args = null;
+		if(removeCommandArgs != null && removeCommandArgs.length == 0) {
+			removeCommandArgs = null;
 		}
 
 		validate(args);
 
-		if (args == null || args.length == 0) {
+		if (removeCommandArgs == null || removeCommandArgs.length == 0) {
 			// sort
 			if (stdin == null) {
 				throw new SortException("InputStream not provided");
 			}
 			arrList = stringToList(readFromInputStream(stdin));
 			sortedList = bubbleSort(arrList);
-		} else if(args.length == 1 && args[0].equals("-n")) {
+		} else if(removeCommandArgs.length == 1 && removeCommandArgs[0].equals("-n")) {
 			// sort -n
 			if (stdin == null) {
 				throw new SortException("InputStream not provided");
@@ -97,7 +97,7 @@ public class SortApplication implements Application, Sort {
 		} else {
 			// sort [FILE]
 			// sort -n [FILE]
-			sortedList = readFromFile(args);
+			sortedList = readFromFile(removeCommandArgs);
 		}
 
 		try {
@@ -233,7 +233,7 @@ public class SortApplication implements Application, Sort {
 	 */
 	public List<String> readFromFile(Path filePath) throws SortException {
 		ArrayList<String> text = new ArrayList<String>();
-		String str = new String();
+		String str = "";
 		List<String> args;
 
 		try {
@@ -306,11 +306,11 @@ public class SortApplication implements Application, Sort {
 				sortedList = numericBubbleSort(readFromFile(filePath));
 			}
 		} else {
-			args = reOrder(args);
+			String[] reOrderArgs = reOrder(args);
 			List<String> text = new ArrayList<>();
-			if (args[0].equals("-n") && args.length > 1) {
-				for (int i = 1; i < args.length; i++) {
-					filePath = currentDir.resolve(args[i]);
+			if (reOrderArgs[0].equals("-n") && reOrderArgs.length > 1) {
+				for (int i = 1; i < reOrderArgs.length; i++) {
+					filePath = currentDir.resolve(reOrderArgs[i]);
 					if (checkIfFileIsReadable(filePath)) {
 						text.addAll(readFromFile(filePath));
 					}
@@ -331,7 +331,7 @@ public class SortApplication implements Application, Sort {
 	 *
 	 */
 	public String arrToString(String[] args) {
-		String text = new String();
+		String text = "";
 
 		for(int i = 0; i < args.length; i++) {
 			text += args[i];
@@ -351,7 +351,7 @@ public class SortApplication implements Application, Sort {
 	 *
 	 */
 	public String listToString(List<String> args) {
-		String text = new String();
+		String text = "";
 
 		for(int i = 0; i < args.size(); i++) {
 			text += args.get(i) + "\n";
