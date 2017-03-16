@@ -72,7 +72,7 @@ public class GlobbingTest {
 		shell.parseAndEvaluate(cmdLine, stdout);
 	}
 	
-	@Test(expected = ShellException.class)
+	@Test(expected = Exception.class)
 	public void testInvalidSlash()
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "cat " + test_folder_name + "//*";
