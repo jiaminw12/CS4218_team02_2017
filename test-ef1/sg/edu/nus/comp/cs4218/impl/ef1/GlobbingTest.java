@@ -135,16 +135,6 @@ public class GlobbingTest {
 	}
 	
 	@Test
-	public void testArgWhenWcGlobbing()
-			throws AbstractApplicationException, ShellException {
-		String cmdLine = "wc -m *.txt";
-		shell.parseAndEvaluate(cmdLine, stdout);
-		expected = "47\t" + System.lineSeparator() + "304\t"
-				+ System.lineSeparator() + "351";
-		Assert.assertEquals(expected, stdout.toString());
-	}
-	
-	@Test
 	public void testGlobNoPaths(){
 		String[] args = {""};
 		expected = shell.globNoPaths(args);
