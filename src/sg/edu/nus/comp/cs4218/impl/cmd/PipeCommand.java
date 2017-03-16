@@ -22,6 +22,7 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
  * concurrently. If an exception occurred in any of these parts, the execution 
  * of the other part must be terminated.
  * 
+ * 
  * <p>
  * <b>Command format:</b> <code>&lt;call&gt; “|” &lt;call&gt; | &lt;pipe&gt; “|” <call></code>
  * </p>
@@ -55,18 +56,19 @@ public class PipeCommand implements Command {
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 
+		InputStream input = stdin;
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 		if(argsArray.size() == 1) {
 			CallCommand callCmd = new CallCommand(argsArray.get(0));
 			callCmd.parse();
-			callCmd.evaluate(stdin, stdout);
+			callCmd.evaluate(input, stdout);
 		} else {
 			for (int i = 0; i < argsArray.size(); i++) {
 				String result = "";
 
 				if(i > 0) {
-					result = new BufferedReader(new InputStreamReader(stdin)).lines()
+					result = new BufferedReader(new InputStreamReader(input)).lines()
 							.parallel().collect(Collectors.joining(System.getProperty("line.separator")));
 				}
 
@@ -76,7 +78,7 @@ public class PipeCommand implements Command {
 				callCmd.evaluate(inputStream, outputStream);
 
 				if(i != argsArray.size() - 1) {
-					stdin = ShellImpl.outputStreamToInputStream(outputStream);
+					input = ShellImpl.outputStreamToInputStream(outputStream);
 					outputStream = new ByteArrayOutputStream();
 				} else {
 					// Final command
