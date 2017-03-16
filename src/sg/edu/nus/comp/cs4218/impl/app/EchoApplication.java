@@ -7,6 +7,11 @@ import java.io.OutputStream;
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.EchoException;
 
+/*
+ * Assumptions:
+ * 1) At the end of the output, there should be a newline
+ */
+
 /**
  * The echo command writes its arguments separated by spaces and terminates by a
  * newline on the standard output.

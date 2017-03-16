@@ -15,6 +15,21 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
+/*
+ * Assumptions:
+ * 1) Allow multiple pipe operators as long as they are within single or double quotes
+ * 		For example,
+ * 			echo ‘hello ||||’
+ * 			echo “hello ||||”
+ * 2) If pipe operator is the first or last character, it is invalid
+ * 		For example,
+ * 			Invalid: | cat test.txt | sed s/one/two
+ * 			Invalid: cat test.txt | sed s/one/two |
+ * 3) If it is empty (or just spaces) between at least two pipe operators, it is invalid
+ * 		For example,
+ * 			Invalid: cat test.txt | | sed s/one/two 
+ */
+
 /**
  * A Pipe Command is a left-associative operator that can be used to bind 
  * a set of call commands into a chain. Each pipe operator binds the output of 

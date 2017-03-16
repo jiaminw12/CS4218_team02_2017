@@ -17,6 +17,15 @@ import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
 import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
+/*
+ * Assumptions:
+ * 1) -n 2 is equivalent to -n2
+ * 2) When -n 0, print nothing
+ * 3) When the option is more than the total number of lines of file, will print all the lines of the file
+ * 4) Allow multiple options, but overwrites when there is a new option
+ * 			For example, head -n4 -n 3 -n2 prints first two lines
+ */
+
 /**
  * The cat command concatenates the content of given files and prints on the
  * standard output.

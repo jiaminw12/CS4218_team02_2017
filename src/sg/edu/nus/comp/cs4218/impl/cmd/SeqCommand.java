@@ -9,6 +9,14 @@ import sg.edu.nus.comp.cs4218.Command;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 
+/*
+ * Assumptions: 
+ * 1) Allow multiple semi-colons as long as they are within single or double quotes
+ * 		For example,
+ * 			echo 'hello;;;;;'
+ * 			echo "hello;;;;;"
+ */
+
 /**
  * A Sequence Command is a sub-command consisting of at least one non-keyword and
  * quoted (if any).

@@ -14,6 +14,12 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.CatException;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
 
+/*
+ * Assumptions:
+ * 1) If 2 or more files are given, print the output according to sequence of files, separate by newline for each output per file
+ * 		For example: cat hello.txt bye.txt
+ */
+
 /**
  * The cat command concatenates the content of given files and prints on the
  * standard output.
@@ -25,6 +31,7 @@ import sg.edu.nus.comp.cs4218.exception.HeadException;
  * <dd>the name of the file(s). If no files are specified, use stdin.</dd>
  * </dl>
  * </p>
+ * 
  */
 public class CatApplication implements Application {
 

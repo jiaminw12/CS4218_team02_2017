@@ -13,6 +13,12 @@ import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 
+/*
+ * Assumptions (Globbing) :
+ * 1) File names do not have space in them
+ * 2) Intentional globbing only happens when there is a space character after '*' character
+ */
+
 /**
  * A Call Command is a sub-command consisting of at least one non-keyword and
  * quoted (if any).

@@ -10,6 +10,11 @@ import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
 
+/*
+ * Assumptions:
+ * 1) A valid file path will always be provided
+ */
+
 /**
  * The cd command changes the current working directory.
  * 
@@ -20,6 +25,7 @@ import sg.edu.nus.comp.cs4218.exception.DirectoryNotFoundException;
  * <dd>relative directory path</dd>
  * </dl>
  * </p>
+ * 
  */
 public class CdApplication implements Application {
 

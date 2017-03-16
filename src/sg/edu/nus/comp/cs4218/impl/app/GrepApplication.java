@@ -31,6 +31,9 @@ import sg.edu.nus.comp.cs4218.exception.GrepException;
  * 6) Args for grepFromOneFile: pattern, file
  * 7) Args for grepFromMultipleFiles: pattern, file, file, ...
  * 8) Args for grepFromStdin: pattern (Stdin will be parsed from run)
+ * 9) Valid file must be provided. Otherwise, it will be treated as a Regex Pattern.
+ * 10) Regex pattern and file can be keyed in a an disordered manner.
+ * 11) Does not support providing directory and filename in 2 separate arguments
  */
 
 /**
