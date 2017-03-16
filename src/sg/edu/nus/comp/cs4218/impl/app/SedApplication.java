@@ -235,7 +235,14 @@ public class SedApplication implements Application, Sed {
 		}
 
 		String replacementRule = args[1];
-		String separator = replacementRule.substring(1, 2);	
+		String separator;
+		
+		try {
+			separator = replacementRule.substring(1, 2);
+		} catch(NullPointerException e) {
+			throw new SedException("Error in replacement rule");
+		}
+		
 		String[] splitReplacementRule = null;
 		
 		try {
@@ -273,34 +280,39 @@ public class SedApplication implements Application, Sed {
 	 */
 	String replaceFirstSubString(String text, String[] args) throws SedException {
 
-		String[] splitLine = text.split(System.getProperty("line.separator"));
-		String[] replacementRule = getReplacementRule(args);
-		Pattern pattern;
 		String finalText = "";
-
-		if(replacementRule != null) {
-			String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
-			String replacement = replacementRule[2].replaceAll("\"", "").replaceAll("'", ""); 
-
-			
-			try {
-				pattern = Pattern.compile(regexp);
-			} catch (PatternSyntaxException e) {
-				throw new SedException(replaceSubstringWithInvalidRegex(text));
-			}
-			
-			for(int i = 0; i < splitLine.length; i++) {
+		
+		try {
+			String[] splitLine = text.split(System.getProperty("line.separator"));
+			String[] replacementRule = getReplacementRule(args);
+			Pattern pattern;
+	
+			if(replacementRule != null) {
+				String regexp = replacementRule[1].replaceAll("\"", "").replaceAll("'", ""); 
+				String replacement = replacementRule[2].replaceAll("\"", "").replaceAll("'", ""); 
+	
+				
 				try {
-					Matcher matcher = pattern.matcher(splitLine[i]);
-					finalText += matcher.replaceFirst(replacement);
+					pattern = Pattern.compile(regexp);
 				} catch (PatternSyntaxException e) {
-					throw new SedException(replaceSubstringWithInvalidReplacement(text));
+					throw new SedException(replaceSubstringWithInvalidRegex(text));
 				}
 				
-				if(i < splitLine.length - 1) {
-					finalText += System.getProperty("line.separator");
+				for(int i = 0; i < splitLine.length; i++) {
+					try {
+						Matcher matcher = pattern.matcher(splitLine[i]);
+						finalText += matcher.replaceFirst(replacement);
+					} catch (IllegalArgumentException e) {
+						throw new SedException(replaceSubstringWithInvalidReplacement(text));
+					}
+					
+					if(i < splitLine.length - 1) {
+						finalText += System.getProperty("line.separator");
+					}
 				}
-			}
+		}
+		} catch(NullPointerException e) {
+			throw new SedException("Null Pointer Exception");
 		}
 
 		return finalText;
@@ -361,22 +373,38 @@ public class SedApplication implements Application, Sed {
 		
 		String separator = args.split(" ")[1].substring(1, 2);
 		String[] splitArgs = new String[inputType];
+		int index = args.indexOf("s" + separator);
 		
 		if(inputType == TYPE_STDIN) {
-			splitArgs[0] = args.substring(0, args.indexOf("s" + separator)).trim();	
-			splitArgs[1] = args.substring(args.indexOf("s" + separator), args.length()).trim();
+			if(index > 0) {
+				splitArgs[0] = args.substring(0, index).trim();	
+				splitArgs[1] = args.substring(index, args.length()).trim();
+			}
 		} else if(inputType == TYPE_FILE) {
-			splitArgs[0] = args.substring(0, args.indexOf("s" + separator)).trim();
+			if(index > 0) {
+				splitArgs[0] = args.substring(0, index).trim();
+			}
 			
 			if(args.contains(separator + "g ")) {
-				splitArgs[1] = args.substring(args.indexOf("s" + separator), args.indexOf(separator + "g ") + 2).trim();
-				splitArgs[2] = args.substring(args.indexOf(separator + "g ") + 2, args.length()).trim();
+				if(index > 0) {
+					splitArgs[1] = args.substring(index, args.indexOf(separator + "g ") + 2).trim();
+				}
+				
+				index = args.indexOf(separator + "g ") + 2;
+				if(index < args.length()) {
+					splitArgs[2] = args.substring(index, args.length()).trim();
+				}
 			} else {
 				String reverseString = new StringBuilder(args).reverse().toString();
-				splitArgs[2] = reverseString.substring(0, reverseString.indexOf(" " + separator)).trim();
-				splitArgs[2] = new StringBuilder(splitArgs[2]).reverse().toString();
-				splitArgs[1] = reverseString.substring(reverseString.indexOf(" " + separator), reverseString.indexOf(separator + "s") + 2).trim();
-				splitArgs[1] = new StringBuilder(splitArgs[1]).reverse().toString();
+				index = reverseString.indexOf(" " + separator);
+				int separatorIndex = reverseString.indexOf(separator + "s") + 2;
+				
+				if(index > 0 && index < reverseString.length() && separatorIndex < reverseString.length()) {
+					splitArgs[2] = reverseString.substring(0, index).trim();
+					splitArgs[2] = new StringBuilder(splitArgs[2]).reverse().toString();
+					splitArgs[1] = reverseString.substring(index, separatorIndex).trim();
+					splitArgs[1] = new StringBuilder(splitArgs[1]).reverse().toString();
+				}
 			}
 		}
 		
