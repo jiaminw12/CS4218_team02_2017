@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -138,6 +140,12 @@ public class CdApplicationTest {
 				+ File.separatorChar + "depth1" + File.separatorChar
 				+ "depth2" + File.separatorChar + "depth3",
 				Environment.currentDirectory);
+	}
+	
+	@Test(expected = DirectoryNotFoundException.class)
+	public void testCdDirectoryUnspecifiedException() throws DirectoryNotFoundException, AbstractApplicationException {
+		String[] args = {"cd",};
+		cdApp.setDirectory(args);
 	}
 
 }
