@@ -56,7 +56,6 @@ public class CdApplication implements Application {
 		if (args == null) {
 			throw new DirectoryNotFoundException("Invalid Arguments.");
 		} else if (args.length == 1) {
-			System.out.println("Length = 1");
 			throw new DirectoryNotFoundException("Insufficient Argument: Input directory required.");
 		} else if (args.length > 2) {
 			throw new DirectoryNotFoundException("Too many Arguments.");
