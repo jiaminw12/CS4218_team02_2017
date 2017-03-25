@@ -89,4 +89,11 @@ public class GrepApplicationTest {
 		String expectedResult = "Pattern Not Found In File!";
 		assertEquals(expectedResult, actualResult);
 	}
+	
+	@Test(expected = GrepException.class)
+	public void testRunNullStdin() throws GrepException, IOException {
+		String pattern = "some";
+		String[] args = { "grep", pattern };
+		grepApp.run(args, null, System.out);
+	}
 }

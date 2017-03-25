@@ -74,6 +74,10 @@ public class GrepApplication implements Application, Grep {
 	 */
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws GrepException {
+		
+		if (stdin == null) {
+			throw new GrepException("Input Stream should not be null");
+		}
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("grep")) {
 			throw new GrepException("Null arguments");
