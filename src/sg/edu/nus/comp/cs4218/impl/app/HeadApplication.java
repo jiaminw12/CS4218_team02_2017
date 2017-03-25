@@ -63,9 +63,19 @@ public class HeadApplication implements Application {
 			try {
 				if (afterParseHead.length == 1
 						&& afterParseHead[0].toLowerCase().equals("head")) {
-					String input = readFromStdin(afterParseHead, stdin);
-					stdout.write(input.getBytes());
-					stdout.write(System.lineSeparator().getBytes());
+					String[] input = readFromStdin(afterParseHead, stdin)
+							.split("\n");
+					int toPrint;
+					if (input.length > 10) {
+						toPrint = 10;
+					} else {
+						toPrint = input.length;
+					}
+					
+					for (int i = 0; i < toPrint; i++) {
+						stdout.write(input[i].getBytes());
+						stdout.write(System.lineSeparator().getBytes());
+					}
 				} else if (afterParseHead.length == 2) {
 					file = new File(afterParseHead[1]);
 					if (isFileValid(file)) {

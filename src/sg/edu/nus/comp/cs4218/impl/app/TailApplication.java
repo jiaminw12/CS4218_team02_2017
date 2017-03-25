@@ -65,9 +65,21 @@ public class TailApplication implements Application {
 			try {
 				if (afterParseTail.length == 1
 						&& afterParseTail[0].toLowerCase().equals("tail")) {
-					String input = readFromStdin(afterParseTail, stdin);
-					stdout.write(input.getBytes());
-					stdout.write(System.lineSeparator().getBytes());
+					String[] input = readFromStdin(afterParseTail, stdin)
+							.split("\n");
+					if (input.length < 10) {
+						for (int i = 0; i < input.length; i++) {
+							stdout.write(input[i].getBytes());
+							stdout.write(System.lineSeparator().getBytes());
+						}
+					} else {
+						for (int i = input.length-10; i < input.length; i++) {
+							stdout.write(input[i].getBytes());
+							stdout.write(System.lineSeparator().getBytes());
+						}
+					}
+
+					
 				} else if (afterParseTail.length == 2) {
 					file = new File(afterParseTail[1]);
 					if (isFileValid(file)) {

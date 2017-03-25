@@ -19,7 +19,15 @@ public class HeadApplicationTest {
 
 	static HeadApplication headApp;
 	private ByteArrayOutputStream outContent;
+	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	private final static String TEST_STRING_11_LINES = "1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3"
+			+ LINE_SEPARATOR + "4" + LINE_SEPARATOR + "5" + LINE_SEPARATOR + "6" + LINE_SEPARATOR + "7" + LINE_SEPARATOR
+			+ "8" + LINE_SEPARATOR + "9" + LINE_SEPARATOR + "10" + LINE_SEPARATOR + "11" + LINE_SEPARATOR;
 
+	private final static String TEST_STRING_10_LINES = "1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3"
+			+ LINE_SEPARATOR + "4" + LINE_SEPARATOR + "5" + LINE_SEPARATOR + "6" + LINE_SEPARATOR + "7" + LINE_SEPARATOR
+			+ "8" + LINE_SEPARATOR + "9" + LINE_SEPARATOR + "10" + LINE_SEPARATOR;
+	
 	@BeforeClass
 	public static void setUpOnce() {
 
@@ -171,4 +179,15 @@ public class HeadApplicationTest {
 				outContent.toString());
 	}
 
+	//Instead of default 10 lines from stdin, all lines are printed.
+		@Test
+		public void testPrintFromStdinWith1Arg() throws HeadException {
+			String[] arg = { "head" };
+			String testStdinInput = TEST_STRING_11_LINES;
+			String expectedOutput = TEST_STRING_10_LINES;
+			ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
+			System.setIn(in);
+			headApp.run(arg, System.in, System.out);
+			assertEquals(expectedOutput, outContent.toString());
+		}
 }

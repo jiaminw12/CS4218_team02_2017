@@ -19,7 +19,14 @@ public class TailApplicationTest {
 
 	static TailApplication tailApp;
 	private ByteArrayOutputStream outContent;
+	private final static String LINE_SEPARATOR = System.getProperty("line.separator");
+	private final static String TESTSTRING11LINES = "1" + LINE_SEPARATOR + "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR
+			+ "4" + LINE_SEPARATOR + "5" + LINE_SEPARATOR + "6" + LINE_SEPARATOR + "7" + LINE_SEPARATOR + "8"
+			+ LINE_SEPARATOR + "9" + LINE_SEPARATOR + "10" + LINE_SEPARATOR + "11" + LINE_SEPARATOR;
 
+	private final static String TESTSTRING10LINES = "2" + LINE_SEPARATOR + "3" + LINE_SEPARATOR + "4" + LINE_SEPARATOR
+			+ "5" + LINE_SEPARATOR + "6" + LINE_SEPARATOR + "7" + LINE_SEPARATOR + "8" + LINE_SEPARATOR + "9"
+			+ LINE_SEPARATOR + "10" + LINE_SEPARATOR + "11" + LINE_SEPARATOR;
 	@BeforeClass
 	public static void setUpOnce() {
 
@@ -166,5 +173,18 @@ public class TailApplicationTest {
 						+ System.lineSeparator(),
 				outContent.toString());
 	}
-
+	
+	// Test application print from stdin behaviour
+	
+		//Should print default 10 lines from stdin instead of everything if no options specified, refer to project specification
+		@Test
+		public void testPrintFromStdinWithEmptyArg() throws TailException {
+			String[] arg = {"tail"};
+			String testStdinInput = TESTSTRING11LINES;
+			String expectedOutput = TESTSTRING10LINES;
+			ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
+			System.setIn(in);
+			tailApp.run(arg, System.in, System.out);
+			assertEquals(expectedOutput, outContent.toString());
+		}
 }
