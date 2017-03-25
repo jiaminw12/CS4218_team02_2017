@@ -52,7 +52,11 @@ public class HeadApplication implements Application {
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws HeadException {
-
+		
+		if (stdin == null || stdout == null) {
+			throw new HeadException("Null Pointer Exception");
+		}
+		
 		File file;
 
 		if (args.length == 0) {
@@ -207,9 +211,6 @@ public class HeadApplication implements Application {
 	private void printLine(int numberOfLines, File file, InputStream stdin,
 			OutputStream stdout) throws HeadException {
 
-		if (stdin == null || stdout == null) {
-			throw new HeadException("Null Pointer Exception");
-		}
 		try {
 			int linesOfNumber = numberOfLines;
 			BufferedReader reader = new BufferedReader(new FileReader(file));

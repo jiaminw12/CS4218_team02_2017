@@ -54,7 +54,11 @@ public class TailApplication implements Application {
 	@Override
 	public void run(String[] args, InputStream stdin, OutputStream stdout)
 			throws TailException {
-
+		
+		if (stdin == null || stdout == null) {
+			throw new TailException("Null Pointer Exception");
+		}
+		
 		File file;
 
 		if (args.length == 0) {
@@ -211,10 +215,6 @@ public class TailApplication implements Application {
 	 */
 	private void printLine(int numberOfLines, File file, InputStream stdin,
 			OutputStream stdout) throws TailException {
-
-		if (stdin == null || stdout == null) {
-			throw new TailException("Null Pointer Exception");
-		}
 
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));

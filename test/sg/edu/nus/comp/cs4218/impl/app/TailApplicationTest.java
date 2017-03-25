@@ -176,15 +176,21 @@ public class TailApplicationTest {
 	
 	// Test application print from stdin behaviour
 	
-		//Should print default 10 lines from stdin instead of everything if no options specified, refer to project specification
-		@Test
-		public void testPrintFromStdinWithEmptyArg() throws TailException {
-			String[] arg = {"tail"};
-			String testStdinInput = TESTSTRING11LINES;
-			String expectedOutput = TESTSTRING10LINES;
-			ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
-			System.setIn(in);
-			tailApp.run(arg, System.in, System.out);
-			assertEquals(expectedOutput, outContent.toString());
-		}
+	//Should print default 10 lines from stdin instead of everything if no options specified, refer to project specification
+	@Test
+	public void testPrintFromStdinWithEmptyArg() throws TailException {
+		String[] arg = {"tail"};
+		String testStdinInput = TESTSTRING11LINES;
+		String expectedOutput = TESTSTRING10LINES;
+		ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
+		System.setIn(in);
+		tailApp.run(arg, System.in, System.out);
+		assertEquals(expectedOutput, outContent.toString());
+	}
+	
+	@Test(expected=TailException.class)
+	public void testEmptyStdoutWith1ArgException() throws TailException {
+		String[] arg = {"tail"};
+		tailApp.run(arg, System.in, null);
+	}
 }

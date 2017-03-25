@@ -180,14 +180,20 @@ public class HeadApplicationTest {
 	}
 
 	//Instead of default 10 lines from stdin, all lines are printed.
-		@Test
-		public void testPrintFromStdinWith1Arg() throws HeadException {
-			String[] arg = { "head" };
-			String testStdinInput = TEST_STRING_11_LINES;
-			String expectedOutput = TEST_STRING_10_LINES;
-			ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
-			System.setIn(in);
-			headApp.run(arg, System.in, System.out);
-			assertEquals(expectedOutput, outContent.toString());
-		}
+	@Test
+	public void testPrintFromStdinWith1Arg() throws HeadException {
+		String[] arg = { "head" };
+		String testStdinInput = TEST_STRING_11_LINES;
+		String expectedOutput = TEST_STRING_10_LINES;
+		ByteArrayInputStream in = new ByteArrayInputStream(testStdinInput.getBytes());
+		System.setIn(in);
+		headApp.run(arg, System.in, System.out);
+		assertEquals(expectedOutput, outContent.toString());
+	}
+
+	@Test(expected=HeadException.class)
+	public void testEmptyStdoutWithNullStdoutException() throws HeadException {
+		String[] arg = {"head"};
+		headApp.run(arg, System.in, null);
+	}
 }
