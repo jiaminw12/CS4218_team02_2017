@@ -98,7 +98,6 @@ public class CalApplication implements Application, Cal {
 			Calendar cal = Calendar.getInstance();
 			month = cal.get(Calendar.MONTH) + 1;
 			year = cal.get(Calendar.YEAR);
-
 			for (int i = 1; i < args.length; i++) {
 				if (args[i].equals("-m")) {
 					if (!mondayFirst) {
@@ -130,6 +129,9 @@ public class CalApplication implements Application, Cal {
 							|| checkValidMonthString(args[i]) == 0) {
 						if (!monthOnly) {
 							month = checkValidMonthString(args[i]);
+							if (month == -1){
+								throw new CalException(EXP_ARG);
+							}
 							monthOnly = true;
 						} else {
 							throw new CalException(EXP_ARG);
