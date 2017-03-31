@@ -79,7 +79,7 @@ public class SeqCommand implements Command {
 	 */
 	public void parse() throws ShellException {
 		
-		cmdline = cmdline.replace(System.lineSeparator(), "");
+		cmdline = cmdline.replace(System.lineSeparator(), " ");
 		
 		int countSQ = 0;
 		int countDQ = 0;
