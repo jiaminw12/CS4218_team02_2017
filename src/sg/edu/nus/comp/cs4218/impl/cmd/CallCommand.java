@@ -49,7 +49,7 @@ public class CallCommand implements Command {
 	String errorMsg;
 
 	public CallCommand(String cmdline) {
-		this.cmdline = cmdline.trim();
+		this.cmdline = cmdline;
 		app = inputStreamS = outputStreamS = "";
 		error = false;
 		processBq = true;
@@ -146,7 +146,7 @@ public class CallCommand implements Command {
 			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 			ShellImpl.closeInputStream(inputStream);
 			ShellImpl.closeOutputStream(outputStream);
-		} catch (Exception e) {
+		} catch (NullPointerException e) {
 			throw new ShellException("cannot be null.");
 		}
 	}
