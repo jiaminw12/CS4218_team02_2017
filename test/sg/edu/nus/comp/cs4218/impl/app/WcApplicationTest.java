@@ -150,7 +150,7 @@ public class WcApplicationTest {
 		ByteArrayInputStream in = new ByteArrayInputStream(
 				"a\n".getBytes());
 		String actualResult = wcApp.printCharacterCountInStdin("wc -m", in);
-		assertEquals("       1 " + System.lineSeparator(), actualResult);
+		assertEquals("       2 " + System.lineSeparator(), actualResult);
 	}
 
 	@Test
@@ -164,21 +164,21 @@ public class WcApplicationTest {
 	public void testPrintNewlineCountInStdin() throws WcException {
 		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
 		String actualResult = wcApp.printNewlineCountInStdin("wc -l", in);
-		assertEquals("       0 " + System.lineSeparator(), actualResult);
+		assertEquals("       1 " + System.lineSeparator(), actualResult);
 	}
 
 	@Test
 	public void testPrintAllCountsInStdin() throws WcException {
 		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
 		String actualResult = wcApp.printAllCountsInStdin("wc -m -w -l", in);
-		assertEquals("       1       1       0 " + System.lineSeparator(), actualResult);
+		assertEquals("       2       1       1 " + System.lineSeparator(), actualResult);
 	}
 	
 	@Test
 	public void testPrintAllCountsInStdinAllOptionsStickTogether() throws WcException {
 		ByteArrayInputStream in = new ByteArrayInputStream("a\n".getBytes());
 		String actualResult = wcApp.printAllCountsInStdin("wc -mwl", in);
-		assertEquals("       1       1       0 " + System.lineSeparator(), actualResult);
+		assertEquals("       2       1       1 " + System.lineSeparator(), actualResult);
 	}
 
 	@After

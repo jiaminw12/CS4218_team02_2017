@@ -189,22 +189,13 @@ public class WcApplication implements Application, Wc {
 						stringBuilder.append((char) currentChar);
 						currentChar = br.read();
 					}
-					lineCount = processNewLineCount(stringBuilder.toString());
-
-					br = new BufferedReader(new FileReader(file));
-					if (file.length() == 0) {
-						lineCount = 0;
-						charCount = 0;
-						wordCount = 0;
-					} else {
-						while ((line = br.readLine()) != null) {
-							charCount += line.length();
-							wordCount += line.trim().split("\\s+").length;
-						}
-						br.close();
+					
+					if(stringBuilder.length() > 0){
+						lineCount = processNewLineCount(stringBuilder.toString());
+						charCount = stringBuilder.length();
+						wordCount = stringBuilder.toString().split("\\s+").length;
 					}
 
-					charCount += lineCount;
 					printResult(fileNameList.get(i), stdout);
 					totalLineCount += lineCount;
 					totalWordCount += wordCount;
@@ -267,29 +258,23 @@ public class WcApplication implements Application, Wc {
 		}
 
 		try {
-			StringBuffer text = new StringBuffer();
-			String str = "";
-
 			try {
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
-				
-				while((str = bufferedReader.readLine()) != null) {
-					text.append(str);
-					text.append(System.getProperty("line.separator"));
+				BufferedReader br = new BufferedReader(new InputStreamReader(stdin, "UTF-8"));
+				StringBuilder stringBuilder = new StringBuilder();
+				int currentChar = br.read();
+				while (currentChar != -1) {
+					stringBuilder.append((char) currentChar);
+					currentChar = br.read();
 				}
+				if(stringBuilder.length() > 0){
+					lineCount = processNewLineCount(stringBuilder.toString());
+					charCount = stringBuilder.length();
+					wordCount = stringBuilder.toString().split("\\s+").length;
+				}
+				
 			} catch (IOException e) {
 				throw new WcException("Could not read input");
 			}
-
-			String userInput = text.toString().trim();
-				
-			// try to replace substrings
-			if(text == null || text.toString().isEmpty()) {
-				throw new WcException("Invalid Input");
-			} 
-		
-			charCount += userInput.length() + lineCount;
-			wordCount += userInput.trim().split("\\s+").length;
 
 			printResult("", stdout);
 			lineCount = 0;

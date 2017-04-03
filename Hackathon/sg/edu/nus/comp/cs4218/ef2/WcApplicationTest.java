@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.AfterClass;
@@ -49,17 +50,29 @@ public class WcApplicationTest {
 
 	@Test
 	public void testPrintAllCountsInStdin() {
-		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				(RELATIVE_TEST_DIRECTORY + "text1").getBytes());
-		assertEquals("    3576     592      71",
-				wcApp.printAllCountsInStdin("wc -lmw", stdin));
+		InputStream stdin;
+		try {
+			stdin = new ByteArrayInputStream(Files.readAllBytes(
+					Paths.get(RELATIVE_TEST_DIRECTORY +  "text1")));
+			assertEquals("    3647     592      71 " + System.lineSeparator(),
+					wcApp.printAllCountsInStdin("wc -lmw", stdin));
+		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	public void testRunPrintCharacterCountInStdin() {
-		ByteArrayInputStream stdin = new ByteArrayInputStream(
-				(RELATIVE_TEST_DIRECTORY + "textblank").getBytes());
-		assertEquals("      99 " + LINE_SEPARATOR,
-				wcApp.printCharacterCountInStdin("wc -m", stdin));
+		InputStream stdin;
+		try {
+			stdin = new ByteArrayInputStream(Files.readAllBytes(
+					Paths.get(RELATIVE_TEST_DIRECTORY + "textblank")));
+			assertEquals("     198 " + LINE_SEPARATOR,
+					wcApp.printCharacterCountInStdin("wc -m", stdin));
+		} catch (IOException e) {
+			fail();
+			e.printStackTrace();
+		}
 	}
 }
