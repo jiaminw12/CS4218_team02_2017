@@ -293,7 +293,6 @@ public class CalApplication implements Application, Cal {
 		lines += "      October               November              December        "
 				+ System.lineSeparator();
 		lines += datesLine(oct, nov, dec);
-		lines += System.lineSeparator();
 		return lines;
 	}
 
@@ -510,7 +509,7 @@ public class CalApplication implements Application, Cal {
 			e.printStackTrace();
 		}
 		String result = new String(outputStream.toByteArray());
-		return result.substring(0, result.length() - 1);
+		return result;
 	}
 
 	@Override
