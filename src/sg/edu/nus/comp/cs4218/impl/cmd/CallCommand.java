@@ -57,9 +57,9 @@ public class CallCommand implements Command {
 		errorMsg = "";
 		argsArray = new String[0];
 	}
-	
+
 	public CallCommand() {
-		
+
 	}
 
 	/**
@@ -80,54 +80,57 @@ public class CallCommand implements Command {
 	public void evaluate(InputStream stdin, OutputStream stdout)
 			throws AbstractApplicationException, ShellException {
 		
-		String glob = "/*";
+		try {
+			String glob = "/*";
 
-		if (error) {
-			throw new ShellException(errorMsg);
-		}
-
-		InputStream inputStream;
-		OutputStream outputStream;
-		ArrayList<String> resultArr = new ArrayList<String>();
-
-		if(processBq) {
-			argsArray = ShellImpl.processBQ(argsArray);
-		}
-		
-		for (int j = 0; j < argsArray.length; j++) {
-			String checker = "";
-			if(argsArray[j].length() <2){
-				globbing = false;
-			} else {
-				checker += argsArray[j].substring(argsArray[j].length()-2, argsArray[j].length());
-				if(argsArray[j].contains("*") && !checker.equals(glob)){
-					globbing = false;
-				}	
+			if (error) {
+				throw new ShellException(errorMsg);
 			}
-		}
-		
-		if(globbing){
-			for (int i = 0; i < argsArray.length; i++) {
-				if (argsArray[i].contains("*")) {
-					argsArray[i] = ShellImpl.processGlob(argsArray[0]+ " "+ argsArray[i]);
-					String[] temp = argsArray[i].split(" ");
-					resultArr.addAll(Arrays.asList(temp));
+
+			InputStream inputStream;
+			OutputStream outputStream;
+			ArrayList<String> resultArr = new ArrayList<String>();
+
+			if (processBq) {
+				argsArray = ShellImpl.processBQ(argsArray);
+			}
+
+			for (int j = 0; j < argsArray.length; j++) {
+				String checker = "";
+				if (argsArray[j].length() < 2) {
+					globbing = false;
 				} else {
-					resultArr.add(argsArray[i]);
+					checker += argsArray[j].substring(argsArray[j].length() - 2,
+							argsArray[j].length());
+					if (argsArray[j].contains("*") && !checker.equals(glob)) {
+						globbing = false;
+					}
 				}
 			}
-			
-			for (int i=0; i<resultArr.size(); i++){
-				if(resultArr.get(i).contains(".DS_Store")){
-					resultArr.remove(i);
-				}	
+
+			if (globbing) {
+				for (int i = 0; i < argsArray.length; i++) {
+					if (argsArray[i].contains("*")) {
+						argsArray[i] = ShellImpl
+								.processGlob(argsArray[0] + " " + argsArray[i]);
+						String[] temp = argsArray[i].split(" ");
+						resultArr.addAll(Arrays.asList(temp));
+					} else {
+						resultArr.add(argsArray[i]);
+					}
+				}
+
+				for (int i = 0; i < resultArr.size(); i++) {
+					if (resultArr.get(i).contains(".DS_Store")) {
+						resultArr.remove(i);
+					}
+				}
+
+				argsArray = new String[resultArr.size()];
+				for (int i = 0; i < resultArr.size(); i++) {
+					argsArray[i] = resultArr.get(i);
+				}
 			}
-			
-			argsArray = new String[resultArr.size()];
-			for (int i=0; i<resultArr.size(); i++){
-				argsArray[i] = resultArr.get(i);	
-			}
-		}
 
 			if (("").equals(inputStreamS)) {// empty
 				inputStream = stdin;
@@ -139,10 +142,13 @@ public class CallCommand implements Command {
 			} else {
 				outputStream = ShellImpl.openOutputRedir(outputStreamS);
 			}
-			
+
 			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 			ShellImpl.closeInputStream(inputStream);
 			ShellImpl.closeOutputStream(outputStream);
+		} catch (Exception e) {
+			throw new ShellException("cannot be null.");
+		}
 	}
 
 	/**
@@ -167,7 +173,7 @@ public class CallCommand implements Command {
 			cmdVector.add(""); // reserved for output redir
 			endIdx = extractInputRedir(str, cmdVector, endIdx);
 			endIdx = extractOutputRedir(str, cmdVector, endIdx);
-//			 System.out.println(cmdVector.toString());
+			// System.out.println(cmdVector.toString());
 		} catch (ShellException e) {
 			result = false;
 		}
@@ -228,7 +234,8 @@ public class CallCommand implements Command {
 	 *             If an error in the syntax of the command is detected while
 	 *             parsing.
 	 */
-	int extractArgs(String str, Vector<String> cmdVector) throws ShellException {
+	int extractArgs(String str, Vector<String> cmdVector)
+			throws ShellException {
 		String patternDash = "[\\s]+(-[A-Za-z]*)[\\s]";
 		String patternUQ = "[\\s]+([^\\s\"'`\\n;|<>]*)[\\s]";
 		String patternDQ = "[\\s]+\"([^\\n\"`]*)\"[\\s]";
@@ -236,7 +243,7 @@ public class CallCommand implements Command {
 		String patternBQ = "[\\s]+(`[^\\n`]*`)[\\s]";
 		String patternBQinDQ = "[\\s]+\"([^\\n\"`]*`[^\\n]*`[^\\n\"`]*)\"[\\s]";
 		String patternBQinSQ = "[\\s]+\'([^\\n\'`]*`[^\\n]*`[^\\n\'`]*)\'[\\s]";
-		
+
 		String[] patterns = { patternDash, patternUQ, patternDQ, patternSQ,
 				patternBQ, patternBQinDQ, patternBQinSQ };
 		String substring;
@@ -249,21 +256,21 @@ public class CallCommand implements Command {
 					|| substring.trim().startsWith(">")) {
 				break;
 			}
-	
+
 			for (int i = 0; i < patterns.length; i++) {
 				Pattern pattern = Pattern.compile(patterns[i]);
 				Matcher matcher = pattern.matcher(substring);
-				if (matcher.find()
-						&& (matcher.start() < smallestStartIdx || smallestStartIdx == -1)) {
+				if (matcher.find() && (matcher.start() < smallestStartIdx
+						|| smallestStartIdx == -1)) {
 					smallestPattIdx = i;
 					smallestStartIdx = matcher.start();
 				}
 			}
 			if (smallestPattIdx != -1) { // if a pattern is found
-				if(smallestPattIdx == 3) {
+				if (smallestPattIdx == 3) {
 					processBq = false;
 				}
-				
+
 				Pattern pattern = Pattern.compile(patterns[smallestPattIdx]);
 				Matcher matcher = pattern.matcher(str.substring(newEndIdx));
 				if (matcher.find()) {
@@ -279,7 +286,7 @@ public class CallCommand implements Command {
 				}
 			}
 		} while (smallestPattIdx != -1);
-		
+
 		return newEndIdx;
 	}
 
