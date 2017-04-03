@@ -217,8 +217,11 @@ public class CalApplication implements Application, Cal {
 				}
 				dates += System.lineSeparator();
 			}
+			
+			if (((i + d) % 7 != 0) && (i == days[month])){
+				dates += System.lineSeparator();
+			}
 		}
-		dates += System.lineSeparator();
 
 		return title + header + dates;
 	}

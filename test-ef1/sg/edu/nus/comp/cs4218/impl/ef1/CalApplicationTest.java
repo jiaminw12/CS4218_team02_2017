@@ -109,13 +109,13 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(printMonth() + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarWithoutInputs() {
 		String expectedResult = calendarApp.printCal("cal");
 		assertEquals(printMonth(), expectedResult);
 	}
-	
+
 	@Test
 	public void printCalendarMondayWithoutInputsFromRun() throws CalException {
 		args = new String[2];
@@ -123,17 +123,19 @@ public class CalApplicationTest {
 		args[1] = "-m";
 		calendarApp.run(args, null, System.out);
 		System.out.flush();
-		assertEquals(printMonthMondayFirst() + System.lineSeparator(), baos.toString());
+		assertEquals(printMonthMondayFirst() + System.lineSeparator(),
+				baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMondayWithoutInputs() {
 		args = new String[2];
 		args[0] = "cal";
 		args[1] = "-m";
-		assertEquals(printMonthMondayFirst(), calendarApp.printCalWithMondayFirst(args[0] + " " + args[1]));
+		assertEquals(printMonthMondayFirst(),
+				calendarApp.printCalWithMondayFirst(args[0] + " " + args[1]));
 	}
-	
+
 	@Test
 	public void printCalendarMonthYearFromRun() throws CalException {
 		args = new String[3];
@@ -144,7 +146,7 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCHSUNOUTPUT + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthNameYearFromRun() throws CalException {
 		args = new String[3];
@@ -155,7 +157,7 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCHSUNOUTPUT + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthShortNameYearFromRun() throws CalException {
 		args = new String[3];
@@ -166,7 +168,7 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCHSUNOUTPUT + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthYearFromRunSingleDigit() throws CalException {
 		args = new String[3];
@@ -177,17 +179,17 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCHSUNOUTPUT + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthYear() {
 		args = new String[3];
 		args[0] = "cal";
 		args[1] = "03";
 		args[2] = _2017;
-		assertEquals(MARCHSUNOUTPUT,
-				calendarApp.printCalForMonthYear(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals(MARCHSUNOUTPUT, calendarApp
+				.printCalForMonthYear(args[0] + " " + args[1] + " " + args[2]));
 	}
-	
+
 	@Test
 	public void printCalendarMonthYearMondayFromRun() throws CalException {
 		args = new String[4];
@@ -199,7 +201,7 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCH2017MON + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthYearMondayFromRunSingleDigit()
 			throws CalException {
@@ -212,7 +214,7 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(MARCH2017MON + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarMonthYearMonday() {
 		args = new String[4];
@@ -223,7 +225,7 @@ public class CalApplicationTest {
 		assertEquals(MARCH2017MON, calendarApp.printCalForMonthYearMondayFirst(
 				args[0] + " " + args[1] + " " + args[2] + " " + args[3]));
 	}
-	
+
 	@Test
 	public void printCalendarYearFromRun() throws CalException {
 		args = new String[2];
@@ -233,15 +235,16 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(_2017CAL + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarYear() {
 		args = new String[2];
 		args[0] = "cal";
 		args[1] = _2017;
-		assertEquals(_2017CAL, calendarApp.printCalForYear(args[0] + " " + args[1]));
+		assertEquals(_2017CAL,
+				calendarApp.printCalForYear(args[0] + " " + args[1]));
 	}
-	
+
 	@Test
 	public void printCalendarYearMondayFromRun() throws CalException {
 		args = new String[3];
@@ -252,17 +255,17 @@ public class CalApplicationTest {
 		System.out.flush();
 		assertEquals(_2017CALMON + System.lineSeparator(), baos.toString());
 	}
-	
+
 	@Test
 	public void printCalendarYearMonday() {
 		args = new String[3];
 		args[0] = "cal";
 		args[1] = "-m";
 		args[2] = _2017;
-		assertEquals(_2017CALMON, calendarApp
-				.printCalForYearMondayFirst(args[0] + " " + args[1] + " " + args[2]));
+		assertEquals(_2017CALMON, calendarApp.printCalForYearMondayFirst(
+				args[0] + " " + args[1] + " " + args[2]));
 	}
-	
+
 	@Test(expected = CalException.class)
 	public void multipleMFromRun() throws CalException {
 		args = new String[3];
@@ -276,7 +279,7 @@ public class CalApplicationTest {
 						+ "         1  2  3  4 \n5  6  7  8  9  10 11\n12 13 14 15 16 17 18\n19 20 21 22 23 24 25\n26 27 28 ",
 				baos.toString());
 	}
-	
+
 	@Test(expected = CalException.class)
 	public void multipleYearFromRun() throws CalException {
 		args = new String[3];
@@ -285,7 +288,7 @@ public class CalApplicationTest {
 		args[2] = "2007";
 		calendarApp.run(args, null, System.out);
 	}
-	
+
 	@Test(expected = CalException.class)
 	public void multipleMonthFromRun() throws CalException {
 		args = new String[3];
@@ -304,9 +307,10 @@ public class CalApplicationTest {
 		calendarApp.run(args, null, System.out);
 		System.out.flush();
 	}
-	
+
 	@Test(expected = CalException.class)
-	public void multipleMonthStringInShortFullFormatFromRun() throws CalException {
+	public void multipleMonthStringInShortFullFormatFromRun()
+			throws CalException {
 		args = new String[3];
 		args[0] = "cal";
 		args[1] = "september";
@@ -314,7 +318,7 @@ public class CalApplicationTest {
 		calendarApp.run(args, null, System.out);
 		System.out.flush();
 	}
-	
+
 	@Test(expected = CalException.class)
 	public void invalidMonthFromRun() throws CalException {
 		args = new String[2];
@@ -323,7 +327,7 @@ public class CalApplicationTest {
 		calendarApp.run(args, null, System.out);
 		System.out.flush();
 	}
-	
+
 	@Test(expected = CalException.class)
 	public void invalidYearFromRun() throws CalException {
 		args = new String[2];
@@ -367,8 +371,8 @@ public class CalApplicationTest {
 			expectedResult = MARCHSUNOUTPUT;
 			break;
 		case 4:
-			expectedResult = "   April 2017\n" + "Su Mo Tu We Th Fr Sa\n"
-					+ "                   1 \n" + "2  3  4  5  6  7  8 \n"
+			expectedResult = "      April 2017\n" + "Su Mo Tu We Th Fr Sa\n"
+					+ "                  1 \n" + "2  3  4  5  6  7  8 \n"
 					+ "9  10 11 12 13 14 15\n" + "16 17 18 19 20 21 22\n"
 					+ "23 24 25 26 27 28 29\n" + "30 ";
 			break;
@@ -392,7 +396,7 @@ public class CalApplicationTest {
 			break;
 
 		case 4:
-			expectedResult = "   April 2016\n" + "Mo Tu We Th Fr Sa Su\n"
+			expectedResult = "      April 2017\n" + "Mo Tu We Th Fr Sa Su\n"
 					+ "               1  2 \n" + "3  4  5  6  7  8  9 \n"
 					+ "10 11 12 13 14 15 16\n" + "17 18 19 20 21 22 23\n"
 					+ "24 25 26 27 28 29 30";
