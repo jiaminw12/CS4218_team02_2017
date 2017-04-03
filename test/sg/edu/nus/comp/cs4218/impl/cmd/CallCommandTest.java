@@ -138,7 +138,7 @@ public class CallCommandTest {
 		assertEquals(cmdVector, resultStrVect);
 	}
 	
-	@Test (expected = NullPointerException.class)
+	@Test (expected = ShellException.class)
 	public void testGlobbing() throws AbstractApplicationException, ShellException{
 		inputLine = "cat article/*";
 		stdin = new ByteArrayInputStream(inputLine.getBytes());
