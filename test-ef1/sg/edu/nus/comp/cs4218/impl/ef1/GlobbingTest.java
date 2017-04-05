@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,9 +17,13 @@ import sg.edu.nus.comp.cs4218.impl.ShellImpl;
 public class GlobbingTest {
 
 	private static ShellImpl shell;
-	private static String test_folder_name = "folder/SedAndWCFiles";
-	private static String test_folder_name_2 = "folder/SedAndWCFiles/sedTestFiles"; 
-	private static String test_file_name = "/wcTestFiles";
+	private static final String FILE_SEPARATOR = String.valueOf(File.separatorChar);
+	private static final String TEST_FOLDER_NAME = String
+			.format("folder%sSedAndWCFiles%s", FILE_SEPARATOR, FILE_SEPARATOR);
+	private static final String TEST_FOLDER_NAME_2 = String.format(
+			"folder%sSedAndWCFiles%ssedTestFiles%s", FILE_SEPARATOR,
+			FILE_SEPARATOR, FILE_SEPARATOR);
+	private static final String TEST_FILE_NAME = String.format("wcTestFiles%s", FILE_SEPARATOR);
 	private static final String[] FILE_NAMES = { "testGlobe.txt",
 			"testGlobe.py", "testGlobe.cpp", "testGlobe.html", "testGlobe.css",
 			"testGlobe.js", "testGlobe.xml" };
@@ -30,33 +33,36 @@ public class GlobbingTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
-		new File(test_folder_name).mkdir();
+
+		new File(TEST_FOLDER_NAME).mkdir();
 		for (int i = 0; i < FILE_NAMES.length; i++) {
-			Files.write(Paths.get(test_folder_name + "/" + FILE_NAMES[i]), "Test".getBytes());
+			Files.write(Paths.get(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]),
+					"Test".getBytes());
 		}
-		
-		new File(test_folder_name+"/testSubSubDir").mkdir();
-		Files.write(Paths.get(test_folder_name +"/testSubSubDir/testGlobe.txt"), "Test".getBytes());
+
+		new File(TEST_FOLDER_NAME + "/testSubSubDir").mkdir();
+		Files.write(
+				Paths.get(TEST_FOLDER_NAME + "/testSubSubDir/testGlobe.txt"),
+				"Test".getBytes());
 	}
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		
-		File file = new File(test_folder_name +"/testSubSubDir/testGlobe.txt");
+
+		File file = new File(TEST_FOLDER_NAME + "/testSubSubDir/testGlobe.txt");
 		file.setWritable(true);
 		file.delete();
-		
-		file = new File(test_folder_name+"/testSubSubDir");
+
+		file = new File(TEST_FOLDER_NAME + "/testSubSubDir");
 		file.delete();
-		
+
 		for (int i = 0; i < FILE_NAMES.length; i++) {
-			file = new File(test_folder_name + "/" + FILE_NAMES[i]);
+			file = new File(TEST_FOLDER_NAME + "/" + FILE_NAMES[i]);
 			file.setWritable(true);
 			file.delete();
 		}
 
-		file = new File(test_folder_name);
+		file = new File(TEST_FOLDER_NAME);
 		file.delete();
 	}
 
@@ -71,39 +77,46 @@ public class GlobbingTest {
 	public void tearDown() throws Exception {
 
 	}
-	
+
 	@Test(expected = Exception.class)
 	public void testInvalidPath()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name + "/*/invalid";
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "/*/invalid";
 		shell.globWithException(cmdLine);
 	}
-	
+
 	@Test(expected = Exception.class)
 	public void testInvalidSlash()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name + "//*";
+		String cmdLine = "cat " + TEST_FOLDER_NAME + "*/";
 		shell.globWithException(cmdLine);
 	}
 
 	@Test
 	public void testGlobbingWithOneLevel()
 			throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name_2 + "/*";
+		String cmdLine = "cat " + TEST_FOLDER_NAME_2 + "*";
 		shell.parseAndEvaluate(cmdLine, stdout);
-		
-		String expected = System.lineSeparator() +"0123456789"+ System.lineSeparator() + "Hey, good to know <you>!" + 
-				System.lineSeparator() + "This is a small file consists of {1+1+0} lines."+ 
-				System.lineSeparator() + "/* Hope this helps */ # no new line here" + System.lineSeparator();
-		
+
+		String expected = System.lineSeparator() + "0123456789"
+				+ System.lineSeparator() + "Hey, good to know <you>!"
+				+ System.lineSeparator()
+				+ "This is a small file consists of {1+1+0} lines."
+				+ System.lineSeparator()
+				+ "/* Hope this helps */ # no new line here"
+				+ System.lineSeparator();
+
 		assertEquals(expected, stdout.toString());
 	}
 
 	@Test
-	public void testGlobbingMultiLevel() throws AbstractApplicationException, ShellException {
-		String cmdLine = "cat " + test_folder_name + test_file_name + "/*";
+	public void testGlobbingMultiLevel()
+			throws AbstractApplicationException, ShellException {
+		String cmdLine = "cat " + TEST_FOLDER_NAME + TEST_FILE_NAME + "*";
+		System.out.println(cmdLine);
 		shell.parseAndEvaluate(cmdLine, stdout);
-		String expected = System.lineSeparator() +"Hello"+ System.lineSeparator() + "";
+		String expected = System.lineSeparator() + "Hello"
+				+ System.lineSeparator() + "";
 		assertEquals(expected, stdout.toString());
 	}
 
@@ -133,24 +146,24 @@ public class GlobbingTest {
 		expected = "*" + System.lineSeparator();
 		Assert.assertEquals(expected, stdout.toString());
 	}
-	
+
 	@Test
-	public void testGlobNoPaths(){
-		String[] args = {""};
+	public void testGlobNoPaths() {
+		String[] args = { "" };
 		expected = shell.globNoPaths(args);
 		assertEquals("", expected);
 	}
-	
+
 	@Test
-	public void testGlobOneFile(){
+	public void testGlobOneFile() {
 		String args = "";
 		expected = shell.globOneFile(args);
 		assertEquals("", expected);
 	}
-	
+
 	@Test
-	public void testGlobFilesDirectories(){
-		String[] args = {""};
+	public void testGlobFilesDirectories() {
+		String[] args = { "" };
 		expected = shell.globFilesDirectories(args);
 		assertEquals("", expected);
 	}

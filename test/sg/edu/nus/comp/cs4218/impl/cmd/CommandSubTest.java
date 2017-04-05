@@ -80,7 +80,7 @@ public class CommandSubTest {
 	public void testEchoWithSemicolon() throws Exception {
 		String cmdLine = "echo `echo ABC; echo DEF`";
 		String result = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("ABCDEF", result.trim());
+		assertEquals("ABC DEF", result.trim());
 	}
 
 	@Test
@@ -89,11 +89,11 @@ public class CommandSubTest {
 		String result = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
 				"Far far away, behind the word mountains, far from the countries Vokalia "
-						+ "and Consonantia, there live the blind texts.Separated they live in "
+						+ "and Consonantia, there live the blind texts. Separated they live in "
 						+ "Bookmarksgrove right at the coast of the Semantics, a large language "
-						+ "ocean.A small river named Duden flows by their place and supplies it "
-						+ "with the necessary regelialia.It is a paradisematic country, in which "
-						+ "roasted parts of sentences fly into your mouth.At vero eos et accusamus "
+						+ "ocean. A small river named Duden flows by their place and supplies it "
+						+ "with the necessary regelialia. It is a paradisematic country, in which "
+						+ "roasted parts of sentences fly into your mouth. At vero eos et accusamus "
 						+ "et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum "
 						+ "deleniti atque corrupti quos dolores et quas molestias excepturi sint.",
 				result.trim());
@@ -140,11 +140,11 @@ public class CommandSubTest {
 		String result = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
 				"Far far away, behind the word mountains, far from the countries "
-						+ "Vokalia and Consonantia, there live the blind texts.Separated "
+						+ "Vokalia and Consonantia, there live the blind texts. Separated "
 						+ "they live in Bookmarksgrove right at the coast of the Semantics, "
-						+ "a large language ocean.A small river named Duden flows by their place "
-						+ "and supplies it with the necessary regelialia.It is a paradisematic "
-						+ "country, in which roasted parts of sentences fly into your mouth.At vero"
+						+ "a large language ocean. A small river named Duden flows by their place "
+						+ "and supplies it with the necessary regelialia. It is a paradisematic "
+						+ "country, in which roasted parts of sentences fly into your mouth. At vero"
 						+ " eos et accusamus et iusto odio dignissimos ducimus qui blanditiis "
 						+ "praesentium voluptatum deleniti atque corrupti quos dolores et quas "
 						+ "molestias excepturi sint.",
@@ -168,11 +168,11 @@ public class CommandSubTest {
 		String cmdLine = "echo `cat farfaraway.txt | tail -n 5`";
 		String result = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("Far far away, behind the word mountains, far from the countries "
-				+ "Vokalia and Consonantia, there live the blind texts.Separated "
+				+ "Vokalia and Consonantia, there live the blind texts. Separated "
 				+ "they live in Bookmarksgrove right at the coast of the Semantics, "
-				+ "a large language ocean.A small river named Duden flows by their place "
-				+ "and supplies it with the necessary regelialia.It is a paradisematic "
-				+ "country, in which roasted parts of sentences fly into your mouth.At vero"
+				+ "a large language ocean. A small river named Duden flows by their place "
+				+ "and supplies it with the necessary regelialia. It is a paradisematic "
+				+ "country, in which roasted parts of sentences fly into your mouth. At vero"
 				+ " eos et accusamus et iusto odio dignissimos ducimus qui blanditiis "
 				+ "praesentium voluptatum deleniti atque corrupti quos dolores et quas "
 				+ "molestias excepturi sint.", result.trim());
@@ -209,7 +209,7 @@ public class CommandSubTest {
 		String cmdLine = "echo `cat slicing.txt` ; echo `wc -l farfaraway.txt`";
 		String result = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
-				"Program slicing can be used in debugging to locate source of errors more easily."
+				"Program slicing can be used in debugging to locate source of errors more easily. "
 						+ System.lineSeparator() + "       4 farfaraway.txt",
 				result.trim());
 	}
@@ -229,7 +229,7 @@ public class CommandSubTest {
 			throws AbstractApplicationException, ShellException {
 		String cmdLine = "echo `echo Showing contents of text1.txt cat text1.txt` ; echo yea";
 		String result = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("Showing contents of text1.txt cat text1.txt"
+		assertEquals("Showing contents of text1.txt cat text1.txt "
 				+ System.lineSeparator() + "yea", result.trim());
 	}
 

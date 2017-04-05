@@ -82,7 +82,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `cat " + grepSortFilePath
 				+ "TestSortMethods.txt | tail -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("+5" + System.lineSeparator(), expected);
+		assertEquals("+  5 " + System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -92,7 +92,7 @@ public class ChainOfInteractionCommandSub {
 				+ "`cat " + grepSortFilePath
 				+ "TestSortMethods.txt | head -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("folder/GrepAndSortFiles/TestSortNumeric.txt 1aA"
+		assertEquals("folder/GrepAndSortFiles/TestSortNumeric.txt 1 a A "
 				+ System.lineSeparator(), expected);
 	}
 
@@ -102,7 +102,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `tail -n 1 slicing.txt | head -n 1 | tail -n 1` > test1.txt ";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(
-				"Program slicing can be used in debugging to locate source of errors more easily."
+				"Program slicing can be used in debugging to locate source of errors more easily. "
 						+ System.lineSeparator(),
 				readFile("test1.txt"));
 	}
@@ -112,12 +112,10 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cal -m; echo date`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals(
-				"      March 2017Mo Tu We Th Fr Sa Su      "
-						+ "1  2  3  4  5 6  7  8  9  10 11 12"
-						+ "13 14 15 16 17 18 1920 21 22 23 24 25 26"
-						+ "27 28 29 30 31 date" + System.lineSeparator(),
-				expected);
+		assertEquals("      April 2017 Mo Tu We Th Fr Sa Su                "
+				+ "1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 "
+				+ "18 19 20 21 22 23 24 25 26 27 28 29 30 date "
+				+ System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -137,7 +135,7 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "sort `cat folder/*; cat < test1.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cat: No such file exists", expected);
+		assertEquals("cat: Could not read file", expected.trim());
 	}
 
 	@Test
@@ -145,7 +143,7 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "cat `cat *.txt | grep ed` | grep sd";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cat: No such file exists", expected);
+		assertEquals("cat: No such file exists", expected.trim());
 	}
 
 	@Test
@@ -154,7 +152,8 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `date; cat slicing.txt | grep \"se\" | head -n 1 | wc -l`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		dateNow = now.toString();
-		assertEquals(dateNow + "       0 " + System.lineSeparator(), expected);
+		assertEquals(dateNow + "        0  " + System.lineSeparator(),
+				expected);
 	}
 
 	@Test
@@ -162,7 +161,7 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `sort slicing.txt | pwd | grep \"abc\"`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("Pattern Not Found In Stdin!" + System.lineSeparator(),
+		assertEquals("Pattern Not Found In Stdin! " + System.lineSeparator(),
 				expected);
 	}
 
@@ -170,8 +169,8 @@ public class ChainOfInteractionCommandSub {
 	public void testPwd() throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `pwd; head " + grepSortFilePath + "test.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals(Environment.currentDirectory + "Just To Test" + System.lineSeparator(),
-				expected);
+		assertEquals(Environment.currentDirectory + " Just To Test "
+				+ System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -179,7 +178,8 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cat < folder/* > test1.txt | sort | cd testLvl01`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("shell: folder/* (No such file or directory)", expected);
+		assertEquals("shell: folder/* (No such file or directory)",
+				expected.trim());
 	}
 
 	@Test
@@ -188,7 +188,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `date | cat | cat`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		String actualResult = now.toString();
-		assertEquals(actualResult + System.lineSeparator(), expected);
+		assertEquals(actualResult + " " + System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -197,7 +197,7 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `tail -n 2  < " + grepSortFilePath
 				+ "TestSortMethods.txt" + "`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("5" + System.lineSeparator(), expected);
+		assertEquals("5", expected.trim());
 	}
 
 	@Test
@@ -210,13 +210,13 @@ public class ChainOfInteractionCommandSub {
 				Environment.currentDirectory);
 		assertEquals(
 				"Far far away, behind the word mountains, far from the countries Vokalia"
-						+ " and Consonantia, there live the blind texts.Separated they live in "
+						+ " and Consonantia, there live the blind texts. Separated they live in "
 						+ "Bookmarksgrove right at the coast of the Semantics, a large language "
-						+ "ocean.A small river named Duden flows by their place and supplies it "
-						+ "with the necessary regelialia.It is a paradisematic country, in which"
-						+ " roasted parts of sentences fly into your mouth.At vero eos et accusamus"
+						+ "ocean. A small river named Duden flows by their place and supplies it "
+						+ "with the necessary regelialia. It is a paradisematic country, in which"
+						+ " roasted parts of sentences fly into your mouth. At vero eos et accusamus"
 						+ " et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum"
-						+ " deleniti atque corrupti quos dolores et quas molestias excepturi sint."
+						+ " deleniti atque corrupti quos dolores et quas molestias excepturi sint. "
 						+ System.lineSeparator(),
 				expected);
 		Environment.currentDirectory = currentPath;
@@ -229,8 +229,8 @@ public class ChainOfInteractionCommandSub {
 				+ sedWcFilePath + "helloworld.txt`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		dateNow = now.toString();
-		assertEquals("this is a test " + dateNow + System.lineSeparator()
-				+ "this is another test hello world" + System.lineSeparator(),
+		assertEquals("this is a test " + dateNow + " " + System.lineSeparator()
+				+ "this is another test hello world " + System.lineSeparator(),
 				expected);
 	}
 
@@ -241,9 +241,9 @@ public class ChainOfInteractionCommandSub {
 				+ "greptestdoc2.txt`\"; echo \"this is another test `sort "
 				+ grepSortFilePath + "TestSortMethods.txt`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("this is a test DEFFGH" + System.lineSeparator()
-				+ "this is another test +125ABab" + System.lineSeparator(),
-				expected);
+		assertEquals("this is a test DEF FGH " + System.lineSeparator()
+				+ "this is another test  + 1 2 5 A B a b "
+				+ System.lineSeparator(), expected);
 
 	}
 
@@ -267,10 +267,9 @@ public class ChainOfInteractionCommandSub {
 		String cmdLine = "echo `sort " + grepSortFilePath
 				+ "greptestdoc.txt`; grep e* | echo \"this is `echo \"this is test\"`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals(
-				"ABC HelloABCDEFGHIHeliHello HelloHi" + System.lineSeparator()
-						+ "this is this is test" + System.lineSeparator(),
-				expected);
+		assertEquals("ABC Hello ABCDEFGHI Heli Hello Hello Hi "
+				+ System.lineSeparator() + "this is this is test "
+				+ System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -282,9 +281,10 @@ public class ChainOfInteractionCommandSub {
 				+ "singleWord.txt`\"; echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("this is a test hallo world" + System.lineSeparator()
-				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt"
-				+ System.lineSeparator() + "HiHello HelloABC HelloABCDEFGHIHeli"
+		assertEquals("this is a test hallo world " + System.lineSeparator()
+				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt "
+				+ System.lineSeparator()
+				+ "Hi Hello Hello ABC Hello ABCDEFGHI Heli "
 				+ System.lineSeparator(), expected);
 	}
 
@@ -296,9 +296,9 @@ public class ChainOfInteractionCommandSub {
 				+ sedWcFilePath + "wcTestFiles" + File.separatorChar
 				+ "singleWord.txt`\" ; head -n 1 `echo farfaraway.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("ABC HelloABCDEFGHIHeliHello HelloHi is not a file"
+		assertEquals("ABC Hello ABCDEFGHI Heli Hello Hello Hi  is not a file"
 				+ System.lineSeparator()
-				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt"
+				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt "
 				+ System.lineSeparator()
 				+ "Far far away, behind the word mountains, far from the countries "
 				+ "Vokalia and Consonantia, there live the blind texts."
@@ -310,12 +310,12 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt | grep hello`; echo \"this is another test `wc -l "
-				+ sedWcFilePath
-				+ "singleWord.txt`\" | head -n 5 `echo slicing.txt`; echo `echo \"flower\"`";
+				+ sedWcFilePath + "singleWord.txt`\" "
+				+ "| head -n 5 `echo slicing.txt`; echo `echo \"flower\"`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("Pattern Not Found In Stdin!" + System.lineSeparator()
+		assertEquals("Pattern Not Found In Stdin! " + System.lineSeparator()
 				+ "Program slicing can be used in debugging to locate source of errors more easily."
-				+ System.lineSeparator() + "flower" + System.lineSeparator(),
+				+ System.lineSeparator() + "flower " + System.lineSeparator(),
 				expected);
 	}
 
@@ -327,9 +327,9 @@ public class ChainOfInteractionCommandSub {
 				+ sedWcFilePath + "wcTestFiles" + File.separatorChar
 				+ "singleWord.txt`\"; echo `echo \"hippotamus  \"`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("Hello HelloABC Hello" + System.lineSeparator()
-				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt"
-				+ System.lineSeparator() + "hippotamus  "
+		assertEquals("Hello Hello ABC Hello " + System.lineSeparator()
+				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt "
+				+ System.lineSeparator() + "hippotamus   "
 				+ System.lineSeparator(), expected);
 	}
 

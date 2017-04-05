@@ -11,11 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /*
  * Assumptions:
@@ -81,7 +79,7 @@ public class HeadApplication implements Application {
 						stdout.write(System.lineSeparator().getBytes());
 					}
 				} else if (afterParseHead.length == 2) {
-					file = new File(afterParseHead[1]);
+					file = new File(afterParseHead[1].trim());
 					if (isFileValid(file)) {
 						printLine(10, file, stdin, stdout);
 					} else {
@@ -98,7 +96,7 @@ public class HeadApplication implements Application {
 						}
 					}
 				} else if (afterParseHead.length == 3) {
-					file = new File(afterParseHead[2]);
+					file = new File(afterParseHead[2].trim());
 					if (checkValidFile(file)) {
 						printLine(Integer.parseInt(afterParseHead[1]), file,
 								stdin, stdout);

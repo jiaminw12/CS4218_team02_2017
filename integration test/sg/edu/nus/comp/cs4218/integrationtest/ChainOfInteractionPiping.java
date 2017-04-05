@@ -26,8 +26,6 @@ public class ChainOfInteractionPiping {
 	private static final String TEST_FILE_TITLES = String.format(
 			"folder%sSedAndWCFiles%stitles.txt", FILE_SEPARATOR,
 			FILE_SEPARATOR);
-	private static final File TITLE_FILES = new File(TEST_FILE_TITLES);
-	private static final long TITLE_FILES_TOTAL_BYTES = TITLE_FILES.length();
 	private static final String TEST_FILE_SLICING = "slicing.txt";
 	private static final String LINE_SEPARATOR = System.lineSeparator();
 	String expected;
@@ -80,7 +78,7 @@ public class ChainOfInteractionPiping {
 	public void testPipeWithCalGrep()
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeTwoCommands("cal | grep 12");
-		assertEquals("12 13 14 15 16 17 18" + System.getProperty("line.separator"), expected);
+		assertEquals("9  10 11 12 13 14 15" + System.getProperty("line.separator"), expected);
 	}
 
 	@Test
@@ -149,7 +147,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl
 				.pipeTwoCommands("cat " + TEST_FILE_TITLES + " | wc -lmw");
-		assertEquals("    4128     717       0 " + LINE_SEPARATOR, expected);
+		assertEquals("    4129     717     250 " + LINE_SEPARATOR, expected);
 	}
 
 	@Test
@@ -157,7 +155,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeMultipleCommands(
 				"cat " + TEST_FILE_TITLES + " | sort | wc -lmw");
-		assertEquals("    4128     717       0 " + LINE_SEPARATOR, expected);
+		assertEquals("    4128     717     249 " + LINE_SEPARATOR, expected);
 	}
 	
 	@Test

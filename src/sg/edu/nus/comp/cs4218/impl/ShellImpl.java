@@ -28,40 +28,34 @@ import java.nio.file.*;
  */
 
 /*
- * Assumptions (CommandSub, Globbing, IO Redirection, Pipe):
- * 1) run function will call the correct functions with the correct
- * inputs in the correct order separated by a space 
- * 2) Folders and Files's name contain no space 
- * 3) Run function will take inputs directly from shell ordered
- * 4) Files only contain ASCII characters and are not folder or directory
- * 5) Path of files and the file name must not contain any spaces
+ * Assumptions (CommandSub, Globbing, IO Redirection, Pipe): 1) run function
+ * will call the correct functions with the correct inputs in the correct order
+ * separated by a space 2) Folders and Files's name contain no space 3) Run
+ * function will take inputs directly from shell ordered 4) Files only contain
+ * ASCII characters and are not folder or directory 5) Path of files and the
+ * file name must not contain any spaces
  * 
- * Assumptions(Globbing) : 
- * 1) Intentional globing only happens when there is a space character after ‘*’ character
- * 2) Args for globNoPaths: command
- * 3) Args for globOneFile: command
- * 4) Args for globFilesDirectories: command
- * 5) Args for globWithException: command 
+ * Assumptions(Globbing) : 1) Intentional globing only happens when there is a
+ * space character after ‘*’ character 2) Args for globNoPaths: command 3) Args
+ * for globOneFile: command 4) Args for globFilesDirectories: command 5) Args
+ * for globWithException: command
  * 
  * 
- * Assumption (Pipe)
- * 1) Args for pipeTwoCommands: command | command
- * 2) Args for pipeMultipleCommands: command | command | command
- * 3) Args for pipeWithException: command
+ * Assumption (Pipe) 1) Args for pipeTwoCommands: command | command 2) Args for
+ * pipeMultipleCommands: command | command | command 3) Args for
+ * pipeWithException: command
  * 
  * 
- * Assumption (IO Redirection)
- * 1) Args for redirectInput: command < file
- * 2) Args for redirectOutput: command > file
- * 3) Args for redirectInputWithNoFile: command <
- * 4) Args for redirectOutputWithNoFile: command >
- * 5) Args for redirectInputWithException: command << file
- * 6) Args for redirectOutputWithException: command >> file
+ * Assumption (IO Redirection) 1) Args for redirectInput: command < file 2) Args
+ * for redirectOutput: command > file 3) Args for redirectInputWithNoFile:
+ * command < 4) Args for redirectOutputWithNoFile: command > 5) Args for
+ * redirectInputWithException: command << file 6) Args for
+ * redirectOutputWithException: command >> file
  * 
  * 
- * Assumption (CommandSub)
- * 1) Args for performCommandSubstitution: command `command`
- * 2) Args for performCommandSubstitutionWithException: command `command`
+ * Assumption (CommandSub) 1) Args for performCommandSubstitution: command
+ * `command` 2) Args for performCommandSubstitutionWithException: command
+ * `command`
  * 
  */
 
@@ -79,6 +73,7 @@ public class ShellImpl implements Shell {
 	public static InputStream stdin;
 	public static String result = "";
 	public static String root = "";
+
 	/**
 	 * Searches for and processes the commands enclosed by back quotes for
 	 * command substitution.If no back quotes are found, the argsArray from the
@@ -109,27 +104,44 @@ public class ShellImpl implements Shell {
 		Pattern patternBQp = Pattern.compile(patternBQ);
 
 		for (int i = 0; i < argsArray.length; i++) {
-			Matcher matcherBQ = patternBQp.matcher(argsArray[i]);
-			if (matcherBQ.find()) {// found backquoted
-				String bqStr = matcherBQ.group(1);
-				// cmdVector.add(bqStr.trim());
-				// process back quote
-				//System.out.println("backquote : " + bqStr);
-				OutputStream bqOutputStream = new ByteArrayOutputStream();
-				ShellImpl shell = new ShellImpl();
-				shell.parseAndEvaluate(bqStr, bqOutputStream);
+			
+			int startSQ = argsArray[i].indexOf("'");
+			int startDQ = argsArray[i].indexOf("\"");
+			int startBQ = argsArray[i].indexOf("`");
 
-				ByteArrayOutputStream outByte = (ByteArrayOutputStream) bqOutputStream;
-				byte[] byteArray = outByte.toByteArray();
-				String bqResult = new String(byteArray).replace("\n", " ")
-						.replace("\r", "");
+			if (startSQ != -1) {
+				if (startSQ < startDQ || startSQ < startBQ) {
+					return resultArr;
+				}
+			} else {
+				Matcher matcherBQ = patternBQp.matcher(argsArray[i]);
+				if (matcherBQ.find()) {// found backquoted
+					String bqStr = matcherBQ.group(1);
+					// cmdVector.add(bqStr.trim());
+					// process back quote
+					//System.out.println("backquote : " + bqStr);
 
-				// replace substring of back quote with result
-				String replacedStr = argsArray[i].replace("`" + bqStr + "`",
-						bqResult);
-				resultArr[i] = replacedStr;
+					OutputStream bqOutputStream = new ByteArrayOutputStream();
+					ShellImpl shell = new ShellImpl();
+					shell.parseAndEvaluate(bqStr, bqOutputStream);
+
+					ByteArrayOutputStream outByte = (ByteArrayOutputStream) bqOutputStream;
+					byte[] byteArray = outByte.toByteArray();
+					String bqResult = new String(byteArray).replace("\n", " ")
+							.replace("\r", "");
+
+					// replace substring of back quote with result
+					String replacedStr = argsArray[i].replace("`" + bqStr + "`",
+							bqResult);
+					// System.out.println("replacedStr : " + replacedStr);
+					resultArr[i] = replacedStr;
+					if (replacedStr.contains("`")) {
+						resultArr = processBQ(resultArr);
+					}
+				}
 			}
 		}
+
 		return resultArr;
 	}
 
@@ -423,15 +435,15 @@ public class ShellImpl implements Shell {
 
 		return result;
 	}
-	
+
 	/**
 	 * Main method accessed to process globbing command.
 	 * 
 	 * @param args
 	 *            String of entire globbing command
 	 * 
-	 * @return result
-	 * 			  String returns path of all files separated by a space character.
+	 * @return result String returns path of all files separated by a space
+	 *         character.
 	 * 
 	 * @throws ShellException
 	 *             If exception is thrown due to invalid command.
@@ -442,7 +454,7 @@ public class ShellImpl implements Shell {
 		root = "";
 		return shell.globWithException(args);
 	}
-	
+
 	/**
 	 * Processes command if there is no globbing path
 	 * 
@@ -475,21 +487,22 @@ public class ShellImpl implements Shell {
 		String result = args;
 		return result;
 	}
-	
+
 	/**
 	 * Processes directory name which appeared in globbing path
 	 * 
 	 * @param String[]
 	 *            command separated into separate arguments
 	 * 
-	 * @return String is empty if no directory path, if not it contains directory path.
+	 * @return String is empty if no directory path, if not it contains
+	 *         directory path.
 	 * 
 	 */
 	@Override
 	public String globFilesDirectories(String[] args) {
 		String[] resultArr = new String[args.length];
-		
-		if(args.length == 1){
+
+		if (args.length == 1) {
 			return "";
 		}
 
@@ -509,80 +522,86 @@ public class ShellImpl implements Shell {
 	 * @param args
 	 *            String of entire globbing command
 	 * 
-	 * @return result
-	 * 			  String returns path of all files separated by a space character.
+	 * @return result String returns path of all files separated by a space
+	 *         character.
 	 * 
 	 * @throws ShellException
 	 *             If exception is thrown due to invalid command.
 	 */
 	@Override
 	public String globWithException(String arg) throws ShellException {
-		try{
+		try {
 			ShellImpl shell = new ShellImpl();
 			String directory = "";
 			String[] filesList;
 			int index = 0;
-			
+
 			String argArrayBuffer = arg.replaceAll(", ", "/");
-			String [] temp = argArrayBuffer.split(" ");
-			String path = ""; 
-			
-			for(int i=1; i<temp.length; i++){
+			String[] temp = argArrayBuffer.split(" ");
+			String path = "";
+
+			for (int i = 1; i < temp.length; i++) {
 				path = path + temp[i] + " ";
 			}
-			
-			if(argArrayBuffer.contains("//*"))
+
+			if (argArrayBuffer.contains("//*"))
 				throw new ShellException("Invalid globbing command");
-			
+
 			int globIdx = argArrayBuffer.indexOf("/*");
-			if (globIdx != argArrayBuffer.length() - 2 || globIdx == -1 || globIdx == 0)
+			if (globIdx != argArrayBuffer.length() - 2 || globIdx == -1
+					|| globIdx == 0)
 				throw new ShellException("Invalid globbing commmand");
-			
-			
+
 			index = path.indexOf("*");
 			directory = path.substring(0, index - 1);
 			root = directory + "/";
 			File thisDirectory = new File(directory);
-			
+
 			if (directory.replaceAll("/", "").length() == 0)
 				throw new ShellException("Invalid globbing scenario");
-			
-			if(thisDirectory.isDirectory()) {
+
+			if (thisDirectory.isDirectory()) {
 				filesList = thisDirectory.list();
 				String nextDir = "";
-				
+
 				for (int j = 0; j < filesList.length; j++) {
-					
+
 					File thisFile = new File(filesList[j]);
-					
-					if(thisFile.isFile() || thisFile.getName().contains(".txt")){
+
+					if (thisFile.isFile()
+							|| thisFile.getName().contains(".txt")) {
 						result += root + globOneFile(thisFile.getName()) + " ";
-						if(j == filesList.length-1){
-							String backroot = root.substring(0, root.substring(0,root.length()-1).lastIndexOf("/")+1);
+						if (j == filesList.length - 1) {
+							String backroot = root.substring(0,
+									root.substring(0, root.length() - 1)
+											.lastIndexOf("/") + 1);
 							root = backroot;
-							nextDir = temp[0] + " "+ root + "*";
+							nextDir = temp[0] + " " + root + "*";
 						}
 					} else {
-						
-						if(j != filesList.length-1){
-							nextDir = temp[0] + " "+ root + thisFile.getName() + "/*";
+
+						if (j != filesList.length - 1) {
+							nextDir = temp[0] + " " + root + thisFile.getName()
+									+ "/*";
 							root = root + thisFile.getName() + "/";
-							String x =  shell.globWithException(nextDir);
+							String x = shell.globWithException(nextDir);
 						} else {
 							root = root + thisFile.getName() + "/";
-							nextDir = temp[0] + " "+ root + "*";
-							String x =  shell.globWithException(nextDir);
+							nextDir = temp[0] + " " + root + "*";
+							String x = shell.globWithException(nextDir);
 						}
 					}
-				} 	
+				}
 			} else {
 				String[] currentArg = new String[1];
 				currentArg[0] = directory;
 				return shell.globNoPaths(currentArg);
 			}
-		
-		} catch (NullPointerException e){ e.printStackTrace(); }
-		
+
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+
 		return result;
 	}
 
