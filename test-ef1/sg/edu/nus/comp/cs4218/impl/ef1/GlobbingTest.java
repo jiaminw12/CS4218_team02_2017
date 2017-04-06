@@ -163,8 +163,16 @@ public class GlobbingTest {
 
 	@Test
 	public void testGlobFilesDirectories() {
-		String[] args = { "" };
+		String args = "" ;
 		expected = shell.globFilesDirectories(args);
 		assertEquals("", expected);
+	}
+	
+	@Test
+	public void testGlobAllPaths() throws AbstractApplicationException, ShellException {
+		String cmdLine = "echo folder/GrepAndSortFiles/*";
+		expected = "folder/GrepAndSortFiles/emptydoc.txt folder/GrepAndSortFiles/greptestdoc.txt folder/GrepAndSortFiles/greptestdoc2.txt folder/GrepAndSortFiles/MoreFiles folder/GrepAndSortFiles/MoreFiles/test.txt folder/GrepAndSortFiles/MoreFiles/test2.txt folder/GrepAndSortFiles/MoreFiles/testdoc.txt folder/GrepAndSortFiles/MoreFiles/TestSortMethods.txt folder/GrepAndSortFiles/MoreFiles/TestSortNumeric.txt ";
+		String actual = shell.processGlob(cmdLine);
+		assertEquals(expected, actual);
 	}
 }
