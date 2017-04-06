@@ -499,6 +499,12 @@ public class ShellImpl implements Shell {
 	 * 
 	 */
 	@Override
+	public String globFilesDirectories(String args) {
+		String result = args;
+		return result;
+	}
+	/*
+	@Override
 	public String globFilesDirectories(String[] args) {
 		String[] resultArr = new String[args.length];
 
@@ -515,6 +521,7 @@ public class ShellImpl implements Shell {
 		result = result.substring(1, resultArr.length - 1);
 		return result;
 	}
+	*/
 
 	/**
 	 * Processes globbing command entirely.
@@ -579,6 +586,11 @@ public class ShellImpl implements Shell {
 							nextDir = temp[0] + " " + root + "*";
 						}
 					} else {
+						
+						File checkDir = new File(root+thisFile.getName());
+						if(checkDir.isDirectory()){
+							result += root + globFilesDirectories(thisFile.getName()) + " ";
+						}
 
 						if (j != filesList.length - 1) {
 							nextDir = temp[0] + " " + root + thisFile.getName()

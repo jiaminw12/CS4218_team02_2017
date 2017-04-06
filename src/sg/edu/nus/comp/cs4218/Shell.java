@@ -65,7 +65,7 @@ public interface Shell {
 	 *            String containing the commands, input arguments and the
 	 *            asterisk (globbing operator)
 	 */
-	public String globFilesDirectories(String[] args);
+	public String globFilesDirectories(String args);
 
 	/**
 	 * Evaluate globbing with exception
