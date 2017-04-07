@@ -18,8 +18,8 @@ public class ChainOfInteractionPiping {
 
 	private static final char FILE_SEPARATOR = File.separatorChar;
 	private static final String TEST_FILE_GREP_SORT = String.format(
-			"folder%sGrepAndSortFiles%stest.txt", FILE_SEPARATOR,
-			FILE_SEPARATOR, FILE_SEPARATOR);
+			"folder%sGrepAndSortFiles%sMoreFiles%stest.txt", FILE_SEPARATOR,
+			FILE_SEPARATOR, FILE_SEPARATOR, FILE_SEPARATOR);
 	private static final String TEST_FILE_SINGLE_WORD = String.format(
 			"folder%sSedAndWCFiles%swcTestFiles%ssingleWord.txt",
 			FILE_SEPARATOR, FILE_SEPARATOR, FILE_SEPARATOR);

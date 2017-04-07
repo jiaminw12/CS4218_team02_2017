@@ -137,12 +137,16 @@ public class SortApplicationTest {
 		args = new String[2];
 		directory = String.format("folder%sGrepAndSortFiles%s", FILE_SEPARATOR,
 				FILE_SEPARATOR);
-		fileName = directory + "testdoc.txt";
-		stdin = new FileInputStream(directory + "testdoc.txt");
-		numericStdin = new FileInputStream(directory + "TestSortNumeric.txt");
-		numericFile = directory + "TestSortNumeric.txt";
-		testMethodsFile = directory + "TestSortMethods.txt";
-		emptyFile = directory + "/emptydoc.txt";
+		fileName = directory + FILE_SEPARATOR + "MoreFiles" + FILE_SEPARATOR
+				+ "testdoc.txt";
+		stdin = new FileInputStream(directory + FILE_SEPARATOR + "MoreFiles"
+				+ FILE_SEPARATOR + "testdoc.txt");
+		numericStdin = new FileInputStream(directory + FILE_SEPARATOR
+				+ "MoreFiles" + FILE_SEPARATOR + "TestSortNumeric.txt");
+		numericFile = directory + FILE_SEPARATOR + "MoreFiles" + FILE_SEPARATOR
+				+ "TestSortNumeric.txt";
+		testMethodsFile = directory + FILE_SEPARATOR + "MoreFiles" + FILE_SEPARATOR + "TestSortMethods.txt";
+		emptyFile = directory + "emptydoc.txt";
 		emptyStdin = new FileInputStream(directory + "emptydoc.txt");
 	}
 

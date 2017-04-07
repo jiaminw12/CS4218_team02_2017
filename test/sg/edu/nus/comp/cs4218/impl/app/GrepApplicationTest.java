@@ -45,7 +45,7 @@ public class GrepApplicationTest {
 		stdin = new FileInputStream(directory + "greptestdoc.txt");
 		fileName = directory + "greptestdoc.txt";
 		fileName2 = directory + "greptestdoc2.txt";
-		fileName3 = directory + "testdoc.txt";
+		fileName3 = directory + FILE_SEPARATOR + "MoreFiles" + FILE_SEPARATOR + "testdoc.txt";
 		invalidFile = directory + "abjkcsnakjc.txt";
 		baos = new ByteArrayOutputStream();
 		print = new PrintStream(baos);

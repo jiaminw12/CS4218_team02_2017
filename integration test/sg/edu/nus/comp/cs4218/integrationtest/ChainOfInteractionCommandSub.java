@@ -25,6 +25,8 @@ public class ChainOfInteractionCommandSub {
 	static ShellImpl shellImpl;
 	private String grepSortFilePath = "folder" + File.separatorChar
 			+ "GrepAndSortFiles" + File.separatorChar;
+	private String grepSortMoreFilesFilePath = "folder" + File.separatorChar
+			+ "GrepAndSortFiles" + File.separatorChar + "MoreFiles" + File.separatorChar;
 	private String sedWcFilePath = "folder" + File.separatorChar
 			+ "SedAndWCFiles" + File.separatorChar;
 
@@ -79,7 +81,7 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testSortCatTail()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo `cat " + grepSortFilePath
+		String cmdLine = "echo `cat " + grepSortMoreFilesFilePath
 				+ "TestSortMethods.txt | tail -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("+  5 " + System.lineSeparator(), expected);
@@ -88,11 +90,11 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testSortCatHead()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo " + grepSortFilePath + "TestSortNumeric.txt "
-				+ "`cat " + grepSortFilePath
+		String cmdLine = "echo " + grepSortMoreFilesFilePath + "TestSortNumeric.txt "
+				+ "`cat " + grepSortMoreFilesFilePath
 				+ "TestSortMethods.txt | head -n 3`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("folder/GrepAndSortFiles/TestSortNumeric.txt 1 a A "
+		assertEquals(grepSortMoreFilesFilePath + "TestSortNumeric.txt 1 a A "
 				+ System.lineSeparator(), expected);
 	}
 
@@ -135,7 +137,7 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "sort `cat folder/*; cat < test1.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("cat: Could not read file", expected.trim());
+		assertEquals("cat: This is a directory", expected.trim());
 	}
 
 	@Test
@@ -167,7 +169,7 @@ public class ChainOfInteractionCommandSub {
 
 	@Test
 	public void testPwd() throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo `pwd; head " + grepSortFilePath + "test.txt`";
+		String cmdLine = "echo `pwd; head " + grepSortMoreFilesFilePath + "test.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(Environment.currentDirectory + " Just To Test "
 				+ System.lineSeparator(), expected);
@@ -194,7 +196,7 @@ public class ChainOfInteractionCommandSub {
 	@Test
 	public void testEchoTailIODirection()
 			throws ShellException, AbstractApplicationException {
-		String cmdLine = "echo `tail -n 2  < " + grepSortFilePath
+		String cmdLine = "echo `tail -n 2  < " + grepSortMoreFilesFilePath
 				+ "TestSortMethods.txt" + "`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("5", expected.trim());
@@ -239,7 +241,7 @@ public class ChainOfInteractionCommandSub {
 			throws ShellException, AbstractApplicationException {
 		String cmdLine = "echo \"this is a test `grep F " + grepSortFilePath
 				+ "greptestdoc2.txt`\"; echo \"this is another test `sort "
-				+ grepSortFilePath + "TestSortMethods.txt`\"";
+				+ grepSortMoreFilesFilePath + "TestSortMethods.txt`\"";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals("this is a test DEF FGH " + System.lineSeparator()
 				+ "this is another test  + 1 2 5 A B a b "
