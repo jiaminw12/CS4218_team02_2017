@@ -119,7 +119,7 @@ public class SeqCommand implements Command {
 			}
 
 		} catch (NullPointerException e) {
-			throw new ShellException("Invalid quoting.");
+			throw new ShellException("cannot be null.");
 		}
 	}
 
