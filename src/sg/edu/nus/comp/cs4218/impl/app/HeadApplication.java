@@ -136,6 +136,8 @@ public class HeadApplication implements Application {
 			while (matcher.find()) {
 				options = matcher.group("number");
 			}
+		} else if (isLastArgumentFile(args) == false) {
+			throw new HeadException("File does not found");
 		} else {
 			throw new HeadException("Invalid arguments");
 		}
@@ -143,7 +145,7 @@ public class HeadApplication implements Application {
 		if (isLastArgumentFile(args)) {
 			return new String[] { args[0], options, args[args.length - 1] };
 		}
-
+		
 		return new String[] { args[0], options };
 	}
 

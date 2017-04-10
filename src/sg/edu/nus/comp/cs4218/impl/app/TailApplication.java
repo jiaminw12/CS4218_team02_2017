@@ -143,6 +143,8 @@ public class TailApplication implements Application {
 			while (matcher.find()) {
 				options = matcher.group("number");
 			}
+		}  else if (isLastArgumentFile(args) == false) {
+			throw new TailException("File does not found");
 		} else {
 			throw new TailException("Invalid arguments");
 		}

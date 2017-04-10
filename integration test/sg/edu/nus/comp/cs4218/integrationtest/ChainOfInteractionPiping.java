@@ -188,7 +188,7 @@ public class ChainOfInteractionPiping {
 			throws AbstractApplicationException, ShellException {
 		expected = shellImpl.pipeWithException(
 				"head -n 3 nosuchfile.txt | wc -w | grep lia*");
-		assertEquals("head: Invalid arguments", expected);
+		assertEquals("head: File does not found", expected);
 	}
 	
 	@Test
