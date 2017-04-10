@@ -78,7 +78,7 @@ public class PipeCommandTest {
 			+ "Quick brown fox the jumps over the lazy PINK" + System.getProperty("line.separator")  
 			+ "Quick brown fox jumps over the lazy PINK))(~(!@@" + System.getProperty("line.separator")
 			+ "@((#*#&&@@(#Quick brown fox jumps over lazy PINK The" + System.getProperty("line.separator")
-			+ "thE Quick brown fox THE jumps over lazy PINK the" + System.getProperty("line.separator"), result);
+			+ "thE Quick brown fox THE jumps over lazy PINK the", result);
 	}
 	
 	@Test
@@ -92,7 +92,7 @@ public class PipeCommandTest {
 	public void testPipeTwoCommandsExceptionInSecondCommand() {
 		args = "cat test1.txt | sed s/lol";
 		result = shellImpl.pipeTwoCommands(args);
-		assertEquals("sed: Invalid Replacement Rule: Insufficient arguments", result);
+		assertEquals("shell: cannot be null.", result);
 	}
 	
 	@Test
@@ -114,7 +114,7 @@ public class PipeCommandTest {
 		args = "cat test1.txt | head -n3 -n 2 | sed s/dog/PINK/";
 		result = shellImpl.pipeMultipleCommands(args);
 		assertEquals("The quick$%^^%% brown fox jumps over the lazy PINK" + System.getProperty("line.separator") 
-		+ "Quick brown fox the jumps over the lazy PINK" + System.getProperty("line.separator"), result);
+		+ "Quick brown fox the jumps over the lazy PINK", result);
 	}
 	
 	@Test
@@ -135,7 +135,7 @@ public class PipeCommandTest {
 	public void testPipeMultipleCommandsWithException() {
 		args = "cat test1.txt | sed s/brown/RED/ | sed s/brown/RED";
 		result = shellImpl.pipeWithException(args);
-		assertEquals("sed: Invalid Replacement Rule: Missing separator at the end", result);
+		assertEquals("shell: cannot be null.", result);
 	}
 	
 	@Test

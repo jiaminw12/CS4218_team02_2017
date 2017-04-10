@@ -2,6 +2,7 @@ package sg.edu.nus.comp.cs4218.impl.app;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,6 +72,7 @@ public class SedApplication implements Application, Sed {
 	private static final int TYPE_FILE = 3;
 	private static final int REPLACE_FIRST_SUBSTRING = 3;
 	private static final int REPLACE_ALL_SUBSTRING = 4;
+	private static boolean isClosed = false;
 
 	/**
 	 * Runs the sed application with the specified arguments.
@@ -110,14 +112,13 @@ public class SedApplication implements Application, Sed {
 
 				if(args.length == 2) {
 					// Input type stdin
-
 					if(replacementType == REPLACE_FIRST_SUBSTRING) {
 						text = replaceFirstSubStringFromStdin(text, stdin);
 					} else if(replacementType == REPLACE_ALL_SUBSTRING) { 
 						text = replaceAllSubstringsInStdin(text, stdin);
 					} 
 
-					byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
+					byte[] byteString = (text).getBytes();
 					stdout.write(byteString);
 				} else if(args.length == 3) {
 					// Input type file
@@ -128,7 +129,7 @@ public class SedApplication implements Application, Sed {
 						text = replaceAllSubstringsInFile(text);
 					}
 
-					byte[] byteString = (text + System.getProperty("line.separator")).getBytes();
+					byte[] byteString = (text).getBytes();
 					stdout.write(byteString);
 				}
 
@@ -173,7 +174,7 @@ public class SedApplication implements Application, Sed {
 			throw new SedException("Invalid Input");
 		} 
 
-		return text.toString().trim();
+		return text.toString();
 	}
 
 	/**
@@ -203,7 +204,7 @@ public class SedApplication implements Application, Sed {
 				// file could be read. perform sed command
 				try {
 					byte[] byteFileArray = Files.readAllBytes(filePath);
-					String currText = new String(byteFileArray).replaceAll("\\s{2,}", " ").trim();
+					String currText = new String(byteFileArray).replaceAll("\\s{2,}", " ");
 
 					if(currText != null && !currText.isEmpty()) {
 						text = currText;
@@ -268,20 +269,22 @@ public class SedApplication implements Application, Sed {
 		String[] splitReplacementRule = null;
 		
 		try {
-			splitReplacementRule = replacementRule.split("\\" + separator);
+			replacementRule.substring(0, replacementRule.length() - 2);
+			splitReplacementRule = Pattern.compile(separator, Pattern.LITERAL).split(replacementRule);
 		} catch (PatternSyntaxException e) {
 			throw new SedException(replaceSubstringWithInvalidRule(cmdline));
 		}
 		
 		int length = splitReplacementRule.length;
 
-		if(replacementRule.contains(separator + separator) || length < 3 || length > 4 
+		if(length < 3 || length > 4 
 				|| !splitReplacementRule[0].equals("s")
 				|| (length == 3 && !replacementRule.substring(replacementRule.length() - 1, 
 						replacementRule.length()).equals(separator))
 				|| (length == 4 && (!splitReplacementRule[3].equals("g") 
 						|| replacementRule.substring(replacementRule.length() - 1, 
 								replacementRule.length()).equals(separator)))) {
+			System.out.println("HERE");
 			throw new SedException(replaceSubstringWithInvalidRule(cmdline));
 		}
 
@@ -436,7 +439,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceFirstSubStringInFile(String args) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " "), TYPE_FILE);	//TODO: Replace
 		String text;
 
 		try {
@@ -452,7 +455,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceAllSubstringsInFile(String args) {
 
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_FILE);	//TODO: Replace
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " "), TYPE_FILE);	//TODO: Replace
 		String text = "";
 
 		try {
@@ -468,7 +471,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceFirstSubStringFromStdin(String args, InputStream stdin) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " "), TYPE_STDIN);	//TODO: Replace
 		String text;
 		try {
 			text = readFromStdin(splitArgs, stdin);
@@ -483,7 +486,7 @@ public class SedApplication implements Application, Sed {
 	@Override
 	public String replaceAllSubstringsInStdin(String args, InputStream stdin) {
 		
-		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " ").trim(), TYPE_STDIN);	//TODO: Replace
+		String[] splitArgs = splitArguments(args.replaceAll("\\s{2,}", " "), TYPE_STDIN);	//TODO: Replace
 		String text;
 
 		try {
@@ -504,14 +507,10 @@ public class SedApplication implements Application, Sed {
 		String replacementRule = splitArgs[1];
 		String separator = replacementRule.substring(1, 2);
 		
-		if(replacementRule.contains(separator + separator)) {
-			return errorMessage + "Empty arguments";
-		} 
-		
 		String[] splitReplacementRule = null;
 		
 		try {
-			splitReplacementRule = replacementRule.split("\\" + separator);
+			splitReplacementRule = Pattern.compile(separator, Pattern.LITERAL).split(replacementRule);
 		} catch (PatternSyntaxException e) {
 			return errorMessage + "Invalid separator";
 		}

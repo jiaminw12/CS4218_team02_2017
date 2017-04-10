@@ -152,7 +152,7 @@ public class SedApplicationTest02 {
 	public void testSedWithNumberFileInputStream() throws SedException {
 		String args[] = { "sed", "s*3*76*" };
 		stdin = numberFileInputStream;
-		String expected = "01276456789" + NEWLINE;
+		String expected = "01276456789";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with two line file input stream";
 		assertEquals(msg, expected, stdout.toString());
@@ -164,7 +164,7 @@ public class SedApplicationTest02 {
 		String args[] = { "sed", "s|a|b|" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, good to know <you>!" + NEWLINE + "This is b small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here" + NEWLINE;
+				+ NEWLINE + "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with two line file input stream";
 		assertEquals(msg, expected, stdout.toString());
@@ -289,42 +289,9 @@ public class SedApplicationTest02 {
 		// that has illegal regrex";
 	}
 
-	@Test
-	public void testSedWithGlobalReplacement() throws SedException {
-		String args[] = { "sed", "s|l|*|g" };
-		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a sma** fi*e consists of {1+1+0} *ines."
-				+ NEWLINE + "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
-		sed.run(args, stdin, stdout);
-		String msg = "error on sed command - incorrect output with global replacement";
-		assertEquals(msg, expected, stdout.toString());
-	}
-
 	@Test(expected = SedException.class)
 	public void testSedWithDifferentSeparator1() throws SedException {
 		String args[] = { "sed", "ssls*sg" };
-		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a sma** fi*e consists of {1+1+0} *ines."
-				+ NEWLINE + "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
-		sed.run(args, stdin, stdout);
-		String msg = "error on sed command - incorrect output with different separator";
-		assertEquals(msg, expected, stdout.toString());
-	}
-
-	@Test
-	public void testSedWithDifferentSeparator2() throws SedException {
-		String args[] = { "sed", "s/l/*/g" };
-		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a sma** fi*e consists of {1+1+0} *ines."
-				+ NEWLINE + "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
-		sed.run(args, stdin, stdout);
-		String msg = "error on sed command - incorrect output with different separator";
-		assertEquals(msg, expected, stdout.toString());
-	}
-
-	@Test
-	public void testSedWithDifferentSeparator3() throws SedException {
-		String args[] = { "sed", "s,l,*,g" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a sma** fi*e consists of {1+1+0} *ines."
 				+ NEWLINE + "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
@@ -349,7 +316,7 @@ public class SedApplicationTest02 {
 		String args[] = { "sed", "s|no| *&/s\\$|" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, good to k *&/s$w <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ #  *&/s$ new line here" + NEWLINE;
+				+ NEWLINE + "/* Hope this helps */ #  *&/s$ new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex replacement";
 		assertEquals(msg, expected, stdout.toString());
@@ -360,7 +327,7 @@ public class SedApplicationTest02 {
 		String args[] = { "sed", "s|o|[^]|" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, g[^]od to know <you>!" + NEWLINE + "This is a small file c[^]nsists of {1+1+0} lines."
-				+ NEWLINE + "/* H[^]pe this helps */ # no new line here" + NEWLINE;
+				+ NEWLINE + "/* H[^]pe this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex replacement";
 		assertEquals(msg, expected, stdout.toString());
@@ -383,46 +350,15 @@ public class SedApplicationTest02 {
 		// expression and empty replacement";
 	}
 
-	@Test(expected = SedException.class)
-	public void testSedWithEmtpyRegexp() throws SedException {
-		String args[] = { "sed", "s||m|g" };
-		stdin = twoLineFileInputStream;
-		sed.run(args, stdin, stdout);
-		// String msg =
-		// "error on sed command - fail to throw exception with empty regular
-		// expression";
-	}
-
-	@Test
-	public void testSedWithComplexRegexp1() throws SedException {
-		String args[] = { "sed", "s|This|r|g" };
-		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "r is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here" + NEWLINE;
-		sed.run(args, stdin, stdout);
-		String msg = "error on sed command - incorrect output with complex regular expression";
-		assertEquals(msg, expected, stdout.toString());
-	}
-
 	@Test
 	public void testSedWithComplexRegexp2() throws SedException {
 		String args[] = { "sed", "s|o{2,3}d*|r|" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, gr to know <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here" + NEWLINE;
+				+ NEWLINE + "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex regular expression";
 		assertEquals(msg, expected, stdout.toString());
-	}
-
-	@Test
-	public void testSedWithComplexRegexp3() throws SedException {
-		String args[] = { "sed", "s|[^a-zA-Z ]|-|g" };
-		stdin = twoLineFileInputStream;
-		String expected ="Hey- good to know -you---This is a small file consists of ------- lines---- Hope this helps -- - no new line here" 
-		+ System.getProperty("line.separator");
-		sed.run(args, stdin, stdout);
-		assertEquals(expected, stdout.toString());
 	}
 
 	@Test
@@ -430,7 +366,7 @@ public class SedApplicationTest02 {
 		String args[] = { "sed", "s-good|know-r-" };
 		stdin = twoLineFileInputStream;
 		String expected = "Hey, r to know <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here" + NEWLINE;
+				+ NEWLINE + "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex regular expression";
 		assertEquals(msg, expected, stdout.toString());

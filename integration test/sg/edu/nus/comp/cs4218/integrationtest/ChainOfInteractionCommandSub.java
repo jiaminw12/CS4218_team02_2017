@@ -127,9 +127,8 @@ public class ChainOfInteractionCommandSub {
 				+ "sed s/a/bbbb/ slicing.txt > test1.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
 		assertEquals(readFile("test1.txt"),
-				"Progrbbbbm slicing can be used in debugging to locate source of errors more easily."
-						+ System.lineSeparator());
-		assertEquals("" + System.lineSeparator(), expected);
+				"Progrbbbbm slicing can be used in debugging to locate source of errors more easily.");
+		assertEquals(System.lineSeparator(), expected);
 	}
 
 	@Test
@@ -283,7 +282,7 @@ public class ChainOfInteractionCommandSub {
 				+ "singleWord.txt`\"; echo `cat " + grepSortFilePath
 				+ "greptestdoc.txt`";
 		expected = shellImpl.performCommandSubstitution(cmdLine);
-		assertEquals("this is a test hallo world " + System.lineSeparator()
+		assertEquals("this is a test hallo world" + System.lineSeparator()
 				+ "this is another test        0 folder/SedAndWCFiles/wcTestFiles/singleWord.txt "
 				+ System.lineSeparator()
 				+ "Hi Hello Hello ABC Hello ABCDEFGHI Heli "

@@ -284,20 +284,6 @@ public class SedApplicationTest {
 	}
 	
 	@Test
-	public void testReplaceSubstringWithInvalidRuleExtraSeparator() throws SedException {
-		String args = "sed s/hi//bye/";
-		String result = sedApplication.replaceSubstringWithInvalidRule(args);
-		assertEquals("Invalid Replacement Rule: Empty arguments", result);
-	}
-	
-	@Test
-	public void testReplaceSubstringWithInvalidRuleExtraSeparators() throws SedException {
-		String args = "sed s/hi///g";
-		String result = sedApplication.replaceSubstringWithInvalidRule(args);
-		assertEquals("Invalid Replacement Rule: Empty arguments", result);
-	}
-	
-	@Test
 	public void testReplaceSubstringWithInvalidRuleExtraSpace() throws SedException {
 		String args = "sed s/hi/ /bye/";
 		String result = sedApplication.replaceSubstringWithInvalidRule(args);
@@ -337,13 +323,6 @@ public class SedApplicationTest {
 		String args = "sed s/hi/bye/s";
 		String result = sedApplication.replaceSubstringWithInvalidRule(args);
 		assertEquals("Invalid Replacement Rule: Missing \"g\" at the end", result);
-	}
-	
-	@Test
-	public void testReplaceSubstringWithInvalidRuleLongS() throws SedException {
-		String args = "sed sss/hi/bye/";
-		String result = sedApplication.replaceSubstringWithInvalidRule(args);
-		assertEquals("Invalid Replacement Rule: Empty arguments", result);
 	}
 	
 	@Test
@@ -403,7 +382,7 @@ public class SedApplicationTest {
 		String args = "sed s/the/to-her/g";
 		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
-		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
+		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^" + System.getProperty("line.separator") , result);
 	}
 	
 	@Test
@@ -411,7 +390,7 @@ public class SedApplicationTest {
 		String args = "sed s/lol/~yea~/";
 		InputStream stdin = new ByteArrayInputStream(TEXT2.getBytes());
 		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
-		assertEquals("~yea~o~yea~o~yea~o~yea~o~yea~o~yea~olloo~yea~o", result);
+		assertEquals("~yea~o~yea~o~yea~o~yea~o~yea~o~yea~olloo~yea~o" + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
@@ -442,7 +421,7 @@ public class SedApplicationTest {
 				+ "Quick brown fox to-her jumps over to-her lazy dog" + System.getProperty("line.separator")   
 				+ "Quick brown fox jumps over to-her lazy dog))(~(!@@" + System.getProperty("line.separator")  
 				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE jumps over lazy dog to-her", result);
+				+ "thE Quick brown fox THE jumps over lazy dog to-her" + System.getProperty("line.separator") , result);
 	}
 	
 	@Test
@@ -451,7 +430,7 @@ public class SedApplicationTest {
 		String result = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("~yea~olll~yea~o~yea~l~yea~o~yea~" + System.getProperty("line.separator") 
 				+ "lloo~yea~o~yea~o~yea~ll~yea~ol~yea~olooll~yea~o~yea~oo" + System.getProperty("line.separator")
-				+ "ooool~yea~o~yea~o~yea~ll~yea~o~yea~l~yea~o~yea~", result);
+				+ "ooool~yea~o~yea~o~yea~ll~yea~o~yea~l~yea~o~yea~"+ System.getProperty("line.separator") , result);
 	}
 	
 	@Test
@@ -475,7 +454,7 @@ public class SedApplicationTest {
 		String args = "sed s/the/'to-her'/g";
 		InputStream stdin = new ByteArrayInputStream(TEXT1.getBytes());
 		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
-		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^", result);
+		assertEquals("The quick brown fox&@#**#HDN(*#&&#*#*# jumps over((@*@&*#)_$ to-her(***&& lazy @@dog#*#*#))(*&^^" + System.getProperty("line.separator"), result);
 	}
 	
 	@Test
@@ -483,7 +462,7 @@ public class SedApplicationTest {
 		String args = "sed s/\"olol olo\"/'~yea man~'/";
 		InputStream stdin = new ByteArrayInputStream(TEXT3.getBytes());
 		String result = sedApplication.replaceAllSubstringsInStdin(args, stdin);
-		assertEquals("lol ololo ~yea man~ lol ~yea man~l olo lolloololo ~yea man~", result);
+		assertEquals("lol ololo ~yea man~ lol ~yea man~l olo lolloololo ~yea man~" + System.getProperty("line.separator") , result);
 	}
 	
 	@Test
@@ -514,7 +493,7 @@ public class SedApplicationTest {
 				+ "Quick brown fox to her jumps over to her lazy dog" + System.getProperty("line.separator")   
 				+ "Quick brown fox jumps over to her lazy dog))(~(!@@" + System.getProperty("line.separator")  
 				+ "@((#*#&&@@(#Quick brown fox jumps over lazy dog The" + System.getProperty("line.separator") 
-				+ "thE Quick brown fox THE jumps over lazy dog to her", result);
+				+ "thE Quick brown fox THE jumps over lazy dog to her"+ System.getProperty("line.separator") , result);
 	}
 	
 	@Test
@@ -523,7 +502,7 @@ public class SedApplicationTest {
 		String result = sedApplication.replaceAllSubstringsInFile(args);
 		assertEquals("~yea man~olll~yea man~o~yea man~l~yea man~o~yea man~" + System.getProperty("line.separator") 
 				+ "lloo~yea man~o~yea man~o~yea man~ll~yea man~ol~yea man~olooll~yea man~o~yea man~oo" + System.getProperty("line.separator")
-				+ "ooool~yea man~o~yea man~o~yea man~ll~yea man~o~yea man~l~yea man~o~yea man~", result);
+				+ "ooool~yea man~o~yea man~o~yea man~ll~yea man~o~yea man~l~yea man~o~yea man~"+ System.getProperty("line.separator") , result);
 	}
 	
 	@After
