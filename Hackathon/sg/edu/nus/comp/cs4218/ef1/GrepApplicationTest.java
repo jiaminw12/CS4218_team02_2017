@@ -1,4 +1,4 @@
-package sg.edu.nus.comp.cs4218.app;
+package sg.edu.nus.comp.cs4218.ef1;
 
 import java.io.IOException;
 import org.junit.AfterClass;
