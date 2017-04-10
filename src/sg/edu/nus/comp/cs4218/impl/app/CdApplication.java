@@ -39,7 +39,6 @@ public class CdApplication implements Application {
 		try {
 			setDirectory(args);
 		} catch (DirectoryNotFoundException e) {
-			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
 	}
