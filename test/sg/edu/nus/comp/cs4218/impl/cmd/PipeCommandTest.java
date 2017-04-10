@@ -92,7 +92,7 @@ public class PipeCommandTest {
 	public void testPipeTwoCommandsExceptionInSecondCommand() {
 		args = "cat test1.txt | sed s/lol";
 		result = shellImpl.pipeTwoCommands(args);
-		assertEquals("shell: cannot be null.", result);
+		assertEquals("sed: Invalid Replacement Rule: Insufficient arguments", result);
 	}
 	
 	@Test
@@ -135,7 +135,7 @@ public class PipeCommandTest {
 	public void testPipeMultipleCommandsWithException() {
 		args = "cat test1.txt | sed s/brown/RED/ | sed s/brown/RED";
 		result = shellImpl.pipeWithException(args);
-		assertEquals("shell: cannot be null.", result);
+		assertEquals("sed: Invalid Replacement Rule: Missing separator at the end", result);
 	}
 	
 	@Test
