@@ -30,15 +30,6 @@ public final class Environment {
 		return file.exists();
 	}
 
-	public static boolean isFile(String absPath) {
-
-		if (absPath == null) {
-			return false;
-		}
-		File file = new File(absPath);
-		return file.isFile();
-	}
-
 	public static boolean isDirectory(String absPath) {
 
 		if (absPath == null) {
@@ -46,15 +37,6 @@ public final class Environment {
 		}
 		File file = new File(absPath);
 		return file.isDirectory();
-	}
-
-	public static boolean isHidden(String absPath) {
-
-		if (absPath == null) {
-			return false;
-		}
-		File file = new File(absPath);
-		return file.isHidden();
 	}
 
 	public static boolean isAbsPath(String path) {
@@ -98,24 +80,6 @@ public final class Environment {
 		return absPath;
 	}
 
-	/*
-	 * WARNING: This method only constructs the parent path. It does NOT mean
-	 * that the path constructed exists [ Use isFile() or isExists() or
-	 * isDirectory() ].
-	 * 
-	 * Returns empty string if parent path cannot be created
-	 */
-	public static String getParentPathFrom(String filePath) {
-		String path = filePath;
-
-		if (path == null) {
-			return "";
-		}
-		File file = new File(path);
-		path = file.getParent();
-		return (path != null ? path : "");
-	}
-
 	public static boolean createNewFile(String absPath) {
 
 		if (absPath == null) {
@@ -127,38 +91,6 @@ public final class Environment {
 		try {
 			isCreated = file.createNewFile();
 		} catch (IOException | SecurityException e) {
-		}
-
-		return isCreated;
-	}
-
-	public static boolean deleteFile(String absPath) {
-
-		if (absPath == null) {
-			return false;
-		}
-
-		boolean isDeleted = false;
-		File file = new File(absPath);
-		try {
-			isDeleted = file.delete();
-		} catch (SecurityException e) {
-		}
-
-		return isDeleted;
-	}
-
-	public static boolean createNewDirectory(String absPath) {
-
-		if (absPath == null) {
-			return false;
-		}
-
-		boolean isCreated = false;
-		File file = new File(absPath);
-		try {
-			isCreated = file.mkdir();
-		} catch (SecurityException e) {
 		}
 
 		return isCreated;
