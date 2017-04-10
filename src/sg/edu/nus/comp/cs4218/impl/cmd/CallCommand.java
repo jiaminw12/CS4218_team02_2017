@@ -142,7 +142,25 @@ public class CallCommand implements Command {
 			} else {
 				outputStream = ShellImpl.openOutputRedir(outputStreamS);
 			}
-
+			
+			if (resultArr.size() > 0){
+				argsArray = new String[resultArr.size()];
+				for (int i = 0; i < resultArr.size(); i++) {
+					String tempLine = resultArr.get(i);
+					if(tempLine.contains("'")){
+						int startSQ = tempLine.indexOf("'");
+						int startDQ = tempLine.indexOf("\"");
+						int startBQ = tempLine.indexOf("`");
+						if (startSQ != -1 && (startDQ != -1 || startBQ != -1)){
+							if ((startSQ < startDQ) || (startSQ < startBQ)){
+								tempLine = tempLine.replaceAll("'", "");
+							}
+						}
+					}
+					argsArray[i] = tempLine;
+				}
+			}
+			
 			ShellImpl.runApp(app, argsArray, inputStream, outputStream);
 			ShellImpl.closeInputStream(inputStream);
 			ShellImpl.closeOutputStream(outputStream);
@@ -167,21 +185,36 @@ public class CallCommand implements Command {
 		Boolean result = true;
 		int endIdx = 0;
 		String str = " " + cmdline + " ";
+		
+		try {
+			int startSQ = cmdline.indexOf("'");
+			int startDQ = cmdline.indexOf("\"");
+			int startBQ = cmdline.indexOf("`");
+			if (startSQ != -1 && startDQ == -1 && startBQ == -1) {
+				str = str.replaceAll("'", "");
+			}
+		} catch (NullPointerException e){
+			throw new ShellException("cannot be null.");
+		}
+		
 		try {
 			endIdx = extractArgs(str, cmdVector);
 			cmdVector.add(""); // reserved for input redir
 			cmdVector.add(""); // reserved for output redir
 			endIdx = extractInputRedir(str, cmdVector, endIdx);
 			endIdx = extractOutputRedir(str, cmdVector, endIdx);
-			// System.out.println(cmdVector.toString());
+			//System.out.println("cmdVector :: " + cmdVector.toString());
 		} catch (ShellException e) {
 			result = false;
 		}
+		
 		if (str.substring(endIdx).trim().isEmpty()) {
 			result = true;
 		} else {
 			result = false;
 		}
+		
+		
 		if (!result) {
 			this.app = cmdVector.get(0);
 			error = true;
