@@ -3,7 +3,6 @@ package sg.edu.nus.comp.cs4218.impl;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 
 import org.junit.After;
