@@ -146,11 +146,6 @@ public class CatApplication implements Application {
 		} catch (IOException e) {
 			throw new CatException("Could not read input");
 		}
-		
-		// try to replace substrings
-		if(text == null || text.toString().isEmpty()) {
-			throw new CatException("Invalid Input");
-		} 
 
 		return text.toString().trim();
 	}
