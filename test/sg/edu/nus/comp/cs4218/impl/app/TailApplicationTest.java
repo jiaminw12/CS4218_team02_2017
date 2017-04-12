@@ -51,12 +51,12 @@ public class TailApplicationTest {
 
 	@Test
 	public void testCheckTxtFile() throws TailException {
-		assertTrue(tailApp.checkValidFile(new File("muttest.txt")));
+		assertTrue(tailApp.checkValidFile(new File("muttest.txt").toPath()));
 	}
 
 	@Test
 	public void testOtherFileType() throws TailException {
-		assertTrue(tailApp.checkValidFile(new File("README.md")));
+		assertTrue(tailApp.checkValidFile(new File("README.md").toPath()));
 	}
 
 	@Test(expected = TailException.class)

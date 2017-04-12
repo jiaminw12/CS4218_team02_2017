@@ -30,7 +30,7 @@ public class ShellImplTest {
 	}
 
 	@Test(expected = ShellException.class)
-	public void testNullArg()
+	public void testSingleQuoteNullArg()
 			throws AbstractApplicationException, ShellException {
 		shell.parseAndEvaluate(null, System.out);
 		String expectedOut = null;

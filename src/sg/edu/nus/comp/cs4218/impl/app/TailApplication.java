@@ -9,14 +9,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import sg.edu.nus.comp.cs4218.Application;
-import sg.edu.nus.comp.cs4218.exception.HeadException;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.TailException;
-import sg.edu.nus.comp.cs4218.impl.cmd.PipeCommand;
 
 /*
  * Assumptions:
@@ -104,7 +103,7 @@ public class TailApplication implements Application {
 					}
 				} else if (afterParseTail.length == 3) {
 					file = new File(afterParseTail[2]);
-					if (checkValidFile(file)) {
+					if (checkValidFile(file.toPath())) {
 						printLine(Integer.parseInt(afterParseTail[1]), file,
 								stdin, stdout);
 					}
@@ -186,11 +185,12 @@ public class TailApplication implements Application {
 	 *            
 	 */
 	private boolean isLastArgumentFile(String[] args) {
-
+		Path currentDir = Paths.get(Environment.currentDirectory);
+		Path filePath = currentDir.resolve(args[args.length - 1].trim());
+		
 		boolean isLastArgFile = false;
-
 		try {
-			if (checkValidFile(new File(args[args.length - 1].trim()))) {
+			if (checkValidFile(filePath)) {
 				isLastArgFile = true;
 			}
 		} catch (TailException e) {
@@ -284,10 +284,7 @@ public class TailApplication implements Application {
 	 * 			  File.           
 	 *            
 	 */
-	public boolean checkValidFile(File file) throws TailException {
-
-		Path filePath = file.toPath();
-
+	public boolean checkValidFile(Path filePath) throws TailException {
 		if (!Files.exists(filePath)) {
 			throw new TailException("File does not exist.");
 		} else if (!Files.isReadable(filePath)) {

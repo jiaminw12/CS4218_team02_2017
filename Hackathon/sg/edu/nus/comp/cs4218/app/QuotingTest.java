@@ -142,15 +142,4 @@ public class QuotingTest {
 		assertEquals(expected, out.toString());
 	}
 
-	@Test
-	public void testIntegrateSedPwd()
-			throws AbstractApplicationException, ShellException {
-		shell.parseAndEvaluate(
-				"sed s/sub/' '/g sedIntegration; pwd", out);
-		String expected = "    string" + LINE_SEPARATOR + "replacement  string"
-				+ LINE_SEPARATOR + " stitution";
-		assertEquals(expected + LINE_SEPARATOR + Environment.currentDirectory
-				+ LINE_SEPARATOR, out.toString());
-	}
-
 }
