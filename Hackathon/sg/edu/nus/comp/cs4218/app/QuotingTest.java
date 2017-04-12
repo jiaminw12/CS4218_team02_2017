@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.AbstractApplicationException;
 import sg.edu.nus.comp.cs4218.exception.ShellException;
 import sg.edu.nus.comp.cs4218.impl.ShellImpl;
@@ -16,6 +17,7 @@ public class QuotingTest {
 	ShellImpl shell;
 	ByteArrayOutputStream out;
 	String input = "";
+	private static final String LINE_SEPARATOR = System.lineSeparator();
 
 	@Before
 	public void setupBeforeTest() {
@@ -30,6 +32,16 @@ public class QuotingTest {
 	}
 
 	@Test
+	public void testEchoSpecialSymbolInQuotes()
+			throws AbstractApplicationException, ShellException {
+		String command = "echo '|'";
+		shell.parseAndEvaluate(command, out);
+		String expected = "|" + System.lineSeparator();
+		String output = out.toString();
+		assertEquals(expected, output);
+	}
+
+	@Test
 	public void testEmptyQuotesAppendedToAppName()
 			throws AbstractApplicationException, ShellException {
 		input = "echo'' hi there";
@@ -38,19 +50,40 @@ public class QuotingTest {
 	}
 
 	@Test(expected = ShellException.class)
-	public void testUnclosedDoubleQuoteWithinBackQuotes()
+	public void testUnclosedDoubleQuoteWithinBackQuotes01()
 			throws AbstractApplicationException, ShellException {
 		input = "echo `echo hi \" there`";
 		shell.parseAndEvaluate(input, out);
 	}
+	
+	@Test(expected = ShellException.class)
+	public void testUnclosedDoubleQuoteWithinBackQuotes02()
+			throws AbstractApplicationException, ShellException {
+		input = " echo `echo \"hi` ";
+		shell.parseAndEvaluate(input, out);
+	}
 
 	@Test(expected = ShellException.class)
-	public void testUnclosedSingleQuoteWithinDoubleQuotes()
+	public void testUnclosedSingleQuoteWithinDoubleQuotes01()
 			throws AbstractApplicationException, ShellException {
 		input = "echo \"hi ' there\"";
 		shell.parseAndEvaluate(input, out);
 	}
-
+	
+	@Test(expected = ShellException.class)
+	public void testUnclosedSingleQuoteWithinDoubleQuotes02()
+			throws AbstractApplicationException, ShellException {
+		input = " echo \"'echo hi\" ";
+		shell.parseAndEvaluate(input, out);
+	}
+	
+	@Test(expected = ShellException.class)
+	public void testTailWithSortNegativeUnclosedBackQuotes()
+			throws AbstractApplicationException, ShellException {
+		input = "echo hi|tail `echo -m 1``|sort";
+		shell.parseAndEvaluate(input, out);
+	}
+	
 	@Test
 	public void testBackQuotesWithinSingleQuotesWithinDoubleQuotes()
 			throws AbstractApplicationException, ShellException {
@@ -66,17 +99,12 @@ public class QuotingTest {
 		shell.parseAndEvaluate(input, out);
 		assertEquals(" \"hi\" " + System.lineSeparator(), out.toString());
 	}
-	
-	@Test(expected = ShellException.class)
-	public void testTailWithSortNegativeUnclosedBackQuotes()
-			throws AbstractApplicationException, ShellException {
-		input = "echo hi|tail `echo -m 1``|sort";
-		shell.parseAndEvaluate(input, out);
-	}
-	
+
 	@Test
-	public void testInvalidSubCmdSyntax() throws AbstractApplicationException, ShellException {
-		String output = shell.performCommandSubstitutionWithException("echo `hi");
+	public void testInvalidSubCmdSyntax()
+			throws AbstractApplicationException, ShellException {
+		String output = shell
+				.performCommandSubstitutionWithException("echo `hi");
 		String expectedOut = "shell: Invalid quoting.";
 		assertEquals(expectedOut, output);
 	}
@@ -103,15 +131,26 @@ public class QuotingTest {
 			throws AbstractApplicationException, ShellException {
 		input = "cal `echo 4 2017`";
 		shell.parseAndEvaluate(input, out);
-		String expected = "      April 2017    " + System.lineSeparator()
-				+ "Su Mo Tu We Th Fr Sa" + System.lineSeparator()
-				+ "                  1 " + System.lineSeparator()
-				+ "2  3  4  5  6  7  8 " + System.lineSeparator()
-				+ "9  10 11 12 13 14 15" + System.lineSeparator()
-				+ "16 17 18 19 20 21 22" + System.lineSeparator()
-				+ "23 24 25 26 27 28 29" + System.lineSeparator()
-				+ "30                  " + System.lineSeparator();
+		String expected = "      April 2017    " + LINE_SEPARATOR
+				+ "Su Mo Tu We Th Fr Sa" + LINE_SEPARATOR
+				+ "                  1 " + LINE_SEPARATOR
+				+ "2  3  4  5  6  7  8 " + LINE_SEPARATOR
+				+ "9  10 11 12 13 14 15" + LINE_SEPARATOR
+				+ "16 17 18 19 20 21 22" + LINE_SEPARATOR
+				+ "23 24 25 26 27 28 29" + LINE_SEPARATOR
+				+ "30                  " + LINE_SEPARATOR;
 		assertEquals(expected, out.toString());
+	}
+
+	@Test
+	public void testIntegrateSedPwd()
+			throws AbstractApplicationException, ShellException {
+		shell.parseAndEvaluate(
+				"sed s/sub/' '/g sedIntegration; pwd", out);
+		String expected = "    string" + LINE_SEPARATOR + "replacement  string"
+				+ LINE_SEPARATOR + " stitution";
+		assertEquals(expected + LINE_SEPARATOR + Environment.currentDirectory
+				+ LINE_SEPARATOR, out.toString());
 	}
 
 }
