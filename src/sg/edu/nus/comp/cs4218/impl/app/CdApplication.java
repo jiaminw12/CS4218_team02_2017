@@ -55,10 +55,11 @@ public class CdApplication implements Application {
 		if (args == null) {
 			throw new DirectoryNotFoundException("Invalid Arguments.");
 		} else if (args.length == 1) {
-			throw new DirectoryNotFoundException("Insufficient Argument: Input directory required.");
+			throw new DirectoryNotFoundException(
+					"Insufficient Argument: Input directory required.");
 		} else if (args.length > 2) {
 			throw new DirectoryNotFoundException("Too many Arguments.");
-		}  else {
+		} else {
 			String filePath = args[1];
 			File file = new File(filePath);
 
@@ -69,7 +70,15 @@ public class CdApplication implements Application {
 			}
 
 			try {
-				Environment.currentDirectory = file.getCanonicalPath();
+				if (!(filePath.equals("."))) {
+					if (filePath.equals("..")) {
+						String path = Environment.currentDirectory;
+						Environment.currentDirectory = path.substring(0,
+								path.lastIndexOf(File.separator));
+					} else {
+						Environment.currentDirectory = file.getCanonicalPath();
+					}
+				}
 			} catch (IOException e) {
 				new IOException("Unable to change Directory.");
 			}
