@@ -52,29 +52,30 @@ public class CdApplicationTest {
 		String command = "cd .. ; cd . ; pwd";
 		ShellImpl shell = new ShellImpl();
 		shell.parseAndEvaluate(command, System.out);
-		assertEquals(outContent.toString().trim(), Environment.currentDirectory);
+		assertEquals(outContent.toString().trim(),
+				Environment.currentDirectory);
 	}
 
 	@Test
 	public void testCdToADirectoryThenCdToPreviousDirectory()
 			throws AbstractApplicationException, ShellException {
 		ShellImpl shell = new ShellImpl();
-		String command = "cd src" + PATH_SEPARATOR
-				+ "sg ; cd .. ; pwd";
+		String command = "cd src" + PATH_SEPARATOR + "sg ; cd .. ; pwd";
 		shell.parseAndEvaluate(command, System.out);
-		assertEquals(outContent.toString().trim(), Environment.currentDirectory);
+		assertEquals(outContent.toString().trim(),
+				Environment.currentDirectory);
 	}
 
 	@Test
 	public void testCdWithHead()
 			throws AbstractApplicationException, ShellException {
-
 		String command = "cd folder" + PATH_SEPARATOR + "SedAndWCFiles"
-				+ PATH_SEPARATOR + "| head -n 2 titles.txt";
-		String expected = " ";
+				+ PATH_SEPARATOR + " | head -n 2 titles.txt";
+		String expected = "The Shawshank Redemption" + System.lineSeparator()
+				+ "The Godfather";
 		ShellImpl shell = new ShellImpl();
 		shell.parseAndEvaluate(command, System.out);
-		assertEquals(expected, outContent.toString());
+		assertEquals(expected, outContent.toString().trim());
 	}
 
 }

@@ -9,10 +9,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import sg.edu.nus.comp.cs4218.Application;
+import sg.edu.nus.comp.cs4218.Environment;
 import sg.edu.nus.comp.cs4218.exception.HeadException;
 
 /*
@@ -97,7 +99,7 @@ public class HeadApplication implements Application {
 					}
 				} else if (afterParseHead.length == 3) {
 					file = new File(afterParseHead[2].trim());
-					if (checkValidFile(file)) {
+					if (checkValidFile(file.toPath())) {
 						printLine(Integer.parseInt(afterParseHead[1]), file,
 								stdin, stdout);
 					}
@@ -143,7 +145,9 @@ public class HeadApplication implements Application {
 		}
 
 		if (isLastArgumentFile(args)) {
-			return new String[] { args[0], options, args[args.length - 1] };
+			Path currentDir = Paths.get(Environment.currentDirectory);
+			Path filePath = currentDir.resolve(args[args.length - 1].trim());
+			return new String[] { args[0], options, filePath.toString() };
 		}
 		
 		return new String[] { args[0], options };
@@ -179,11 +183,12 @@ public class HeadApplication implements Application {
 	 *            
 	 */
 	private boolean isLastArgumentFile(String[] args) {
-
+		Path currentDir = Paths.get(Environment.currentDirectory);
+		Path filePath = currentDir.resolve(args[args.length - 1].trim());
+		
 		boolean isLastArgFile = false;
-
 		try {
-			if (checkValidFile(new File(args[args.length - 1].trim()))) {
+			if (checkValidFile(filePath)) {
 				isLastArgFile = true;
 			}
 		} catch (HeadException e) {
@@ -258,10 +263,7 @@ public class HeadApplication implements Application {
 	 * 			  File.           
 	 *            
 	 */
-	public boolean checkValidFile(File file) throws HeadException {
-
-		Path filePath = file.toPath();
-
+	public boolean checkValidFile(Path filePath) throws HeadException {
 		if (!Files.exists(filePath)) {
 			throw new HeadException("File does not exist.");
 		} else if (!Files.isReadable(filePath)) {

@@ -52,12 +52,12 @@ public class HeadApplicationTest {
 
 	@Test
 	public void testCheckTxtFile() throws HeadException {
-		assertTrue(headApp.checkValidFile(new File("slicing.txt")));
+		assertTrue(headApp.checkValidFile(new File("slicing.txt").toPath()));
 	}
 
 	@Test
 	public void testOtherFileType() throws HeadException {
-		assertTrue(headApp.checkValidFile(new File("README.md")));
+		assertTrue(headApp.checkValidFile(new File("README.md").toPath()));
 	}
 
 	@Test(expected = HeadException.class)
