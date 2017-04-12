@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,6 +24,15 @@ public class ShellRedirTest {
 		shell = new ShellImpl();
 		out = new ByteArrayOutputStream();
 	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		File file = new File("out");
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
 
 	@Test
 	public void nullInputWithEcho()
