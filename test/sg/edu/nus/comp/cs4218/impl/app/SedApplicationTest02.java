@@ -23,10 +23,14 @@ import sg.edu.nus.comp.cs4218.exception.SedException;
 public class SedApplicationTest02 {
 	private static final String FS = File.separator;
 	private static final String NEWLINE = System.lineSeparator();
-	private static final String TWO_LINE_FILE_PATH = "files" + FS + "sedTestFiles" + FS + "two-lines.txt";
-	private static final String EMPTY_FILE_PATH = "files" + FS + "sedTestFiles" + FS + "empty.txt";
-	private static final String NUMBER_FILE_PATH = "files" + FS + "sedTestFiles" + FS + "number.txt";
-	private static final String HELLO_WORLD_FILE_PATH = "files" + FS + "sedTestFiles" + FS + "hello world.txt";
+	private static final String TWO_LINE_FILE_PATH = "files" + FS
+			+ "sedTestFiles" + FS + "two-lines.txt";
+	private static final String EMPTY_FILE_PATH = "files" + FS + "sedTestFiles"
+			+ FS + "empty.txt";
+	private static final String NUMBER_FILE_PATH = "files" + FS + "sedTestFiles"
+			+ FS + "number.txt";
+	private static final String HELLO_WORLD_FILE_PATH = "files" + FS
+			+ "sedTestFiles" + FS + "hello world.txt";
 
 	private static SedApplication sed;
 	private OutputStream stdout;
@@ -38,14 +42,14 @@ public class SedApplicationTest02 {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		Environment.resetCurrentDirectory();
+		// Environment.resetCurrentDirectory();
 		sed = new SedApplication();
 
 	}
 
 	@AfterClass
 	public static void reset() {
-//		Environment.resetCurrentDirectory();
+		// Environment.resetCurrentDirectory();
 	}
 
 	@Before
@@ -56,8 +60,10 @@ public class SedApplicationTest02 {
 		stdout = new ByteArrayOutputStream();
 		twoLineFileInputStream = new ByteArrayInputStream(complex.getBytes());
 		emptyFileInputStream = new ByteArrayInputStream("".getBytes());
-		numberFileInputStream =  new ByteArrayInputStream("0123456789".getBytes());
-		hellowWorldFileInputStream = new ByteArrayInputStream("hello world".getBytes());
+		numberFileInputStream = new ByteArrayInputStream(
+				"0123456789".getBytes());
+		hellowWorldFileInputStream = new ByteArrayInputStream(
+				"hello world".getBytes());
 	}
 
 	@Test(expected = SedException.class)
@@ -127,8 +133,9 @@ public class SedApplicationTest02 {
 	public void testSedWithTwoLineFile() throws SedException {
 		String args[] = { "sed", "s|a|b|", TWO_LINE_FILE_PATH };
 		stdin = null;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is b small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here" + NEWLINE;
+		String expected = "Hey, good to know <you>!" + NEWLINE
+				+ "This is b small file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this helps */ # no new line here" + NEWLINE;
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with two line file";
 		assertEquals(msg, expected, stdout.toString());
@@ -163,15 +170,17 @@ public class SedApplicationTest02 {
 		// mock current directory to a fake non-root one
 		String args[] = { "sed", "s|a|b|" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is b small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here";
+		String expected = "Hey, good to know <you>!" + NEWLINE
+				+ "This is b small file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with two line file input stream";
 		assertEquals(msg, expected, stdout.toString());
 	}
 
 	@Test
-	public void testSedWithTwoLineFileInputStreamAndEmptyFile() throws SedException {
+	public void testSedWithTwoLineFileInputStreamAndEmptyFile()
+			throws SedException {
 		String args[] = { "sed", "s|a|b|", EMPTY_FILE_PATH };
 		stdin = twoLineFileInputStream;
 		sed.run(args, stdin, stdout);
@@ -189,7 +198,8 @@ public class SedApplicationTest02 {
 
 	@Test(expected = SedException.class)
 	public void testSedWithExtraArgs2() throws SedException {
-		String args[] = { "sed", "s|0|1|", NUMBER_FILE_PATH, TWO_LINE_FILE_PATH, "-l" };
+		String args[] = { "sed", "s|0|1|", NUMBER_FILE_PATH, TWO_LINE_FILE_PATH,
+				"-l" };
 		stdin = null;
 		String expected = "1123456789" + NEWLINE;
 		sed.run(args, stdin, stdout);
@@ -198,7 +208,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat1() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat1()
+			throws SedException {
 		String args[] = { "sed", "|0|1|", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -207,7 +218,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat2() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat2()
+			throws SedException {
 		// mock current directory to a fake non-root one
 		String args[] = { "sed", "s|0|1|gg", NUMBER_FILE_PATH };
 		stdin = null;
@@ -217,7 +229,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat3() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat3()
+			throws SedException {
 		String args[] = { "sed", "s-0|1|g", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -226,7 +239,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat4() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat4()
+			throws SedException {
 		String args[] = { "sed", "s-0|1g", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -235,7 +249,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat5() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat5()
+			throws SedException {
 		String args[] = { "sed", "s|0| m| |g", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -244,7 +259,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalRegex1() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalRegex1()
+			throws SedException {
 		String args[] = { "sed", "s|0| m| |g", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -253,7 +269,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat6() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat6()
+			throws SedException {
 		String args[] = { "sed", "s||0||1||", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -262,7 +279,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat7() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat7()
+			throws SedException {
 		// mock current directory to a fake non-root one
 		String args[] = { "sed", "s|", NUMBER_FILE_PATH };
 		stdin = null;
@@ -272,7 +290,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalFormat8() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalFormat8()
+			throws SedException {
 		String args[] = { "sed", "m|1|2|", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -281,7 +300,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithInvalidReplacementOnIllegalRegrex() throws SedException {
+	public void testSedWithInvalidReplacementOnIllegalRegrex()
+			throws SedException {
 		String args[] = { "sed", "s|[|1|", NUMBER_FILE_PATH };
 		stdin = null;
 		sed.run(args, stdin, stdout);
@@ -293,8 +313,9 @@ public class SedApplicationTest02 {
 	public void testSedWithDifferentSeparator1() throws SedException {
 		String args[] = { "sed", "ssls*sg" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a sma** fi*e consists of {1+1+0} *ines."
-				+ NEWLINE + "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
+		String expected = "Hey, good to know <you>!" + NEWLINE
+				+ "This is a sma** fi*e consists of {1+1+0} *ines." + NEWLINE
+				+ "/* Hope this he*ps */ # no new *ine here" + NEWLINE;
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with different separator";
 		assertEquals(msg, expected, stdout.toString());
@@ -304,8 +325,9 @@ public class SedApplicationTest02 {
 	public void testSedWithEmptyReplacment() throws SedException {
 		String args[] = { "sed", "s|l||" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to know <you>!" + NEWLINE + "This is a smal file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this heps */ # no new line here" + NEWLINE;
+		String expected = "Hey, good to know <you>!" + NEWLINE
+				+ "This is a smal file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this heps */ # no new line here" + NEWLINE;
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with empty replacement";
 		assertEquals(msg, expected, stdout.toString());
@@ -315,8 +337,9 @@ public class SedApplicationTest02 {
 	public void testSedWithComplexReplacement1() throws SedException {
 		String args[] = { "sed", "s|no| *&/s\\$|" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, good to k *&/s$w <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ #  *&/s$ new line here";
+		String expected = "Hey, good to k *&/s$w <you>!" + NEWLINE
+				+ "This is a small file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this helps */ #  *&/s$ new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex replacement";
 		assertEquals(msg, expected, stdout.toString());
@@ -326,8 +349,9 @@ public class SedApplicationTest02 {
 	public void testSedWithComplexReplacement2() throws SedException {
 		String args[] = { "sed", "s|o|[^]|" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, g[^]od to know <you>!" + NEWLINE + "This is a small file c[^]nsists of {1+1+0} lines."
-				+ NEWLINE + "/* H[^]pe this helps */ # no new line here";
+		String expected = "Hey, g[^]od to know <you>!" + NEWLINE
+				+ "This is a small file c[^]nsists of {1+1+0} lines." + NEWLINE
+				+ "/* H[^]pe this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex replacement";
 		assertEquals(msg, expected, stdout.toString());
@@ -341,7 +365,8 @@ public class SedApplicationTest02 {
 	}
 
 	@Test(expected = SedException.class)
-	public void testSedWithEmtpyRegexpAndEmptyReplacement() throws SedException {
+	public void testSedWithEmtpyRegexpAndEmptyReplacement()
+			throws SedException {
 		String args[] = { "sed", "s|||" };
 		stdin = twoLineFileInputStream;
 		sed.run(args, stdin, stdout);
@@ -354,8 +379,9 @@ public class SedApplicationTest02 {
 	public void testSedWithComplexRegexp2() throws SedException {
 		String args[] = { "sed", "s|o{2,3}d*|r|" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, gr to know <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here";
+		String expected = "Hey, gr to know <you>!" + NEWLINE
+				+ "This is a small file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex regular expression";
 		assertEquals(msg, expected, stdout.toString());
@@ -365,8 +391,9 @@ public class SedApplicationTest02 {
 	public void testSedWithComplexRegexp4() throws SedException {
 		String args[] = { "sed", "s-good|know-r-" };
 		stdin = twoLineFileInputStream;
-		String expected = "Hey, r to know <you>!" + NEWLINE + "This is a small file consists of {1+1+0} lines."
-				+ NEWLINE + "/* Hope this helps */ # no new line here";
+		String expected = "Hey, r to know <you>!" + NEWLINE
+				+ "This is a small file consists of {1+1+0} lines." + NEWLINE
+				+ "/* Hope this helps */ # no new line here";
 		sed.run(args, stdin, stdout);
 		String msg = "error on sed command - incorrect output with complex regular expression";
 		assertEquals(msg, expected, stdout.toString());
@@ -384,11 +411,13 @@ public class SedApplicationTest02 {
 		sed.replaceAllSubstringsInFile(cmd);
 	}
 
-	public void testReplaceSubstringWithInvalidReplacement() throws SedException {
+	public void testReplaceSubstringWithInvalidReplacement()
+			throws SedException {
 		String cmd = "cat " + TWO_LINE_FILE_PATH + " | sed \"s|||g\" ";
 		String expected = "";
 		String msg = "error on sed command - incorrect output with method replaceSubstringWithInvalidReplacement";
-		assertEquals(msg, expected, sed.replaceSubstringWithInvalidReplacement(cmd));
+		assertEquals(msg, expected,
+				sed.replaceSubstringWithInvalidReplacement(cmd));
 	}
 
 	@Test
